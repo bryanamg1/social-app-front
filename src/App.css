@@ -1,0 +1,61 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  --color-bg: #07111f;
+  --color-bg-soft: #0b1628;
+  --color-surface: #101d33;
+  --color-surface-soft: #16243a;
+
+  --color-border: #22314d;
+
+  --color-text: #e6edf3;
+  --color-muted: #8b949e;
+
+  --color-accent: #00d4ff;
+  --color-accent-strong: #2f81f7;
+
+  --color-danger: #ff5c7a;
+  --color-success: #2ecc71;
+
+  color: var(--color-text);
+  background: var(--color-bg);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(0, 212, 255, 0.08), transparent 32rem),
+    radial-gradient(circle at top right, rgba(47, 129, 247, 0.08), transparent 28rem),
+    var(--color-bg);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
