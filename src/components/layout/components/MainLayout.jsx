@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
-import { LeftSidebar } from "./LeftSidebar";
+import { LeftSidebarContainer } from "./LeftSidebarContainer";
 import { RightSidebar } from "./RightSidebar";
 import styles from "../styles/MainLayout.module.css";
 
 export function MainLayout() {
     return (
         <div className={styles.layout}>
-        <LeftSidebar />
+        <LeftSidebarContainer />
 
         <main className={styles.mainContent}>
             <Outlet />

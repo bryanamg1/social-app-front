@@ -28,51 +28,17 @@
 .composer,
 .placeholderPost {
     margin: 18px;
-    padding: 18px;
-    border: 1px solid var(--color-border);
-    border-radius: 24px;
-    background: rgba(16, 29, 51, 0.72);
     box-shadow: 0 16px 46px rgba(0, 0, 0, 0.2);
 }
 
-.composer {
+.composerContent {
     display: flex;
     gap: 14px;
 }
 
-.avatar {
-    width: 44px;
-    height: 44px;
-    flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--color-surface-soft);
-    color: var(--color-accent);
-    font-weight: 900;
-}
-
 .composerBody {
     flex: 1;
-}
-
-.composerBody p {
-    margin: 4px 0 14px;
-    color: var(--color-muted);
-}
-
-.composerBody button {
-    min-height: 40px;
-    padding: 0 18px;
-    border: none;
-    border-radius: 999px;
-    background: linear-gradient(
-        135deg,
-        var(--color-accent),
-        var(--color-accent-strong)
-    );
-    color: #06111f;
-    font-weight: 900;
+    min-width: 0;
 }
 
 .postHeader {
@@ -91,7 +57,8 @@
     color: var(--color-muted);
 }
 
-.placeholderPost p {
+.description {
+    margin-top: 16px;
     color: var(--color-text);
     line-height: 1.6;
 }
@@ -106,22 +73,6 @@
     border: 1px solid var(--color-border);
 }
 
-.reactions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 16px;
-}
-
-.reactions span {
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.045);
-    color: var(--color-muted);
-    font-size: 0.8rem;
-    font-weight: 800;
-}
-
 @media (max-width: 760px) {
     .header {
         padding: 18px;
@@ -130,7 +81,10 @@
     .composer,
     .placeholderPost {
         margin: 14px;
-        border-radius: 20px;
+    }
+
+    .composerContent {
+        align-items: flex-start;
     }
 
     .fakeImage {
