@@ -1,0 +1,223 @@
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 24px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 34px;
+}
+
+.logo {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: linear-gradient(
+        135deg,
+        var(--color-accent),
+        var(--color-accent-strong)
+    );
+    color: #06111f;
+    font-weight: 900;
+    font-size: 1.3rem;
+    box-shadow: 0 14px 32px rgba(0, 212, 255, 0.22);
+}
+
+.brandText {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.brandText strong {
+    color: var(--color-text);
+    font-size: 1.05rem;
+}
+
+.brandText small {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.navItem {
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-muted);
+    font-weight: 700;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.navItem:hover {
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.045);
+    transform: translateX(3px);
+}
+
+.active {
+    color: var(--color-accent);
+    background: rgba(0, 212, 255, 0.09);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.icon {
+    font-size: 1.15rem;
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.userCard {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    background: rgba(16, 29, 51, 0.75);
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-surface-soft);
+    color: var(--color-accent);
+    font-weight: 900;
+}
+
+.userInfo {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.userInfo strong,
+.userInfo small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.userInfo strong {
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.userInfo small {
+    color: var(--color-muted);
+    font-size: 0.76rem;
+}
+
+.logoutButton {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid rgba(255, 92, 122, 0.3);
+    border-radius: 14px;
+    background: rgba(255, 92, 122, 0.08);
+    color: var(--color-danger);
+    font-weight: 800;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.logoutButton:hover {
+    background: rgba(255, 92, 122, 0.14);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1100px) {
+    .sidebar {
+        padding: 24px 14px;
+        align-items: center;
+    }
+
+    .brandText,
+    .label,
+    .userInfo,
+    .logoutButton {
+        display: none;
+    }
+
+    .brand {
+        justify-content: center;
+    }
+
+    .navItem {
+        width: 56px;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .userCard {
+        padding: 8px;
+        border-radius: 999px;
+    }
+}
+
+@media (max-width: 760px) {
+    .sidebar {
+        position: fixed;
+        z-index: 20;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 68px;
+        padding: 8px 14px;
+        flex-direction: row;
+        align-items: center;
+        border-top: 1px solid var(--color-border);
+        background: rgba(7, 17, 31, 0.92);
+        backdrop-filter: blur(18px);
+    }
+
+    .brand,
+    .footer {
+        display: none;
+    }
+
+    .nav {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    .navItem {
+        width: 54px;
+        height: 48px;
+        min-height: 48px;
+    }
+
+    .active {
+        box-shadow: inset 0 -3px 0 var(--color-accent);
+    }
+}
