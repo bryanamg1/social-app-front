@@ -18,7 +18,46 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import styles from "../styles/AuthPage.module.css";
 
-export const LoginForm = ({ formValues, showPassword, loadingLogin, error, onChange, onSubmit, onTogglePasswordVisibility, }) => {
+const getTextValue = (value) => {
+    if (!value) return "";
+
+    if (typeof value === "string") return value;
+
+    if (Array.isArray(value)) {
+        return value
+        .map((item) => getTextValue(item))
+        .filter(Boolean)
+        .join(" ");
+    }
+
+    if (typeof value === "object") {
+        if (typeof value.message === "string") return value.message;
+        if (typeof value.error === "string") return value.error;
+        if (value.details) return getTextValue(value.details);
+
+        try {
+        return JSON.stringify(value);
+        } catch {
+        return AUTH_TEXTS.ERRORS.LOGIN_FAILED;
+        }
+    }
+
+    return String(value);
+};
+
+export const LoginForm = ({
+    formValues,
+    showPassword,
+    loadingLogin,
+    error,
+    successMessage,
+    onChange,
+    onSubmit,
+    onTogglePasswordVisibility,
+    }) => {
+    const errorMessage = getTextValue(error);
+    const successText = getTextValue(successMessage);
+
     return (
         <Card className={styles.authCard}>
         <CardContent className={styles.authCardContent}>
@@ -32,9 +71,15 @@ export const LoginForm = ({ formValues, showPassword, loadingLogin, error, onCha
             </Typography>
             </Box>
 
-            {error && (
+            {successText && (
+            <Alert severity="success" className={styles.authAlert}>
+                {successText}
+            </Alert>
+            )}
+
+            {errorMessage && (
             <Alert severity="error" className={styles.authAlert}>
-                {error}
+                {errorMessage}
             </Alert>
             )}
 
@@ -45,10 +90,11 @@ export const LoginForm = ({ formValues, showPassword, loadingLogin, error, onCha
                 name="email"
                 label={AUTH_TEXTS.LOGIN.EMAIL_LABEL}
                 placeholder={AUTH_TEXTS.LOGIN.EMAIL_PLACEHOLDER}
-                value={formValues.email}
+                value={formValues?.email || ""}
                 onChange={onChange}
                 disabled={loadingLogin}
                 className={styles.authInput}
+                autoComplete="email"
             />
 
             <TextField
@@ -57,27 +103,32 @@ export const LoginForm = ({ formValues, showPassword, loadingLogin, error, onCha
                 label={AUTH_TEXTS.LOGIN.PASSWORD_LABEL}
                 placeholder={AUTH_TEXTS.LOGIN.PASSWORD_PLACEHOLDER}
                 type={showPassword ? "text" : "password"}
-                value={formValues.password}
+                value={formValues?.password || ""}
                 onChange={onChange}
                 disabled={loadingLogin}
                 className={styles.authInput}
-                InputProps={{
-                endAdornment: (
+                autoComplete="current-password"
+                slotProps={{
+                input: {
+                    endAdornment: (
                     <InputAdornment position="end">
-                    <IconButton
+                        <IconButton
+                        type="button"
                         onClick={onTogglePasswordVisibility}
                         edge="end"
                         aria-label={AUTH_TEXTS.LOGIN.SHOW_PASSWORD_ARIA}
                         className={styles.passwordButton}
-                    >
+                        disabled={loadingLogin}
+                        >
                         {showPassword ? (
-                        <VisibilityOffOutlinedIcon />
+                            <VisibilityOffOutlinedIcon />
                         ) : (
-                        <VisibilityOutlinedIcon />
+                            <VisibilityOutlinedIcon />
                         )}
-                    </IconButton>
+                        </IconButton>
                     </InputAdornment>
-                ),
+                    ),
+                },
                 }}
             />
 

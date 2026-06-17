@@ -10,8 +10,7 @@ import {
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-
-import { FEED_TEXTS } from "../../../constants";
+import { FEED_TEXTS, LAYOUT_TEXTS } from "../../../constants";
 import styles from "../styles/FeedPage.module.css";
 
 export const PostComposer = ({
@@ -25,7 +24,9 @@ export const PostComposer = ({
   onRemoveImage,
   onSubmit,
 }) => {
-    const avatarLetter = user?.email?.charAt(0)?.toUpperCase() || "U";
+    const avatarLetter =
+        user?.email?.charAt(0)?.toUpperCase() ||
+        LAYOUT_TEXTS.DEFAULT_USER.charAt(0).toUpperCase();
 
     return (
         <Card className={styles.composerCard}>

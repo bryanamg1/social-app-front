@@ -1,48 +1,46 @@
 import { Box, Typography } from "@mui/material";
 
 import { AUTH_TEXTS } from "../../../constants";
-import { LoginForm } from "../components/LoginForm";
-import { useLogin } from "../hooks/useLogin";
+import { RegisterForm } from "../components/RegisterForm";
+import { useRegister } from "../hooks/useRegister";
 
 import styles from "../styles/AuthPage.module.css";
 
-const LoginPage = () => {
+const RegisterPage = () => {
     const {
         formValues,
         showPassword,
-        loadingLogin,
+        loadingRegister,
         error,
-        successMessage,
         handleChange,
         handleSubmit,
         togglePasswordVisibility,
-    } = useLogin();
+    } = useRegister();
 
     return (
         <main className={styles.authPage}>
         <section className={styles.authHero}>
             <Box className={styles.brandBlock}>
             <Typography className={styles.brandEyebrow}>
-                {AUTH_TEXTS.LOGIN.HERO_EYEBROW}
+                {AUTH_TEXTS.REGISTER.HERO_EYEBROW}
             </Typography>
 
             <Typography component="h2" className={styles.heroTitle}>
-                {AUTH_TEXTS.LOGIN.HERO_TITLE}
+                {AUTH_TEXTS.REGISTER.HERO_TITLE}
             </Typography>
 
             <Typography className={styles.heroDescription}>
-                {AUTH_TEXTS.LOGIN.HERO_DESCRIPTION}
+                {AUTH_TEXTS.REGISTER.HERO_DESCRIPTION}
             </Typography>
             </Box>
         </section>
 
         <section className={styles.authPanel}>
-            <LoginForm
+            <RegisterForm
             formValues={formValues}
             showPassword={showPassword}
-            loadingLogin={loadingLogin}
+            loadingRegister={loadingRegister}
             error={error}
-            successMessage={successMessage}
             onChange={handleChange}
             onSubmit={handleSubmit}
             onTogglePasswordVisibility={togglePasswordVisibility}
@@ -52,4 +50,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

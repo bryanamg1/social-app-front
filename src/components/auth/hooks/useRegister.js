@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
-import { useAuth } from "../../../hooks/useAuth";
-import { loginUser } from "../services/authService";
+import { registerUser } from "../services/authService";
 
 const getReadableErrorValue = (value) => {
     if (!value) return null;
@@ -25,14 +24,14 @@ const getReadableErrorValue = (value) => {
         try {
         return JSON.stringify(value);
         } catch {
-        return AUTH_TEXTS.ERRORS.LOGIN_FAILED;
+        return AUTH_TEXTS.ERRORS.REGISTER_FAILED;
         }
     }
 
     return String(value);
 };
 
-const getLoginErrorMessage = (error) => {
+const getRegisterErrorMessage = (error) => {
     const data = error?.response?.data;
 
     return (
@@ -42,26 +41,23 @@ const getLoginErrorMessage = (error) => {
         getReadableErrorValue(data?.details) ||
         getReadableErrorValue(data) ||
         getReadableErrorValue(error?.message) ||
-        AUTH_TEXTS.ERRORS.LOGIN_FAILED
+        AUTH_TEXTS.ERRORS.REGISTER_FAILED
     );
 };
 
-export const useLogin = () => {
+export const useRegister = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { login } = useAuth();
 
     const [formValues, setFormValues] = useState({
-        email: location.state?.registeredEmail ?? "",
+        user_name: "",
+        email: "",
         password: "",
+        confirmPassword: "",
     });
 
     const [showPassword, setShowPassword] = useState(false);
-    const [loadingLogin, setLoadingLogin] = useState(false);
+    const [loadingRegister, setLoadingRegister] = useState(false);
     const [error, setError] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(
-        location.state?.successMessage ?? null
-    );
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -74,10 +70,6 @@ export const useLogin = () => {
         if (error) {
         setError(null);
         }
-
-        if (successMessage) {
-        setSuccessMessage(null);
-        }
     };
 
     const togglePasswordVisibility = () => {
@@ -85,12 +77,28 @@ export const useLogin = () => {
     };
 
     const validateForm = () => {
+        if (!formValues.user_name.trim()) {
+        return AUTH_TEXTS.ERRORS.USER_NAME_REQUIRED;
+        }
+
         if (!formValues.email.trim()) {
         return AUTH_TEXTS.ERRORS.EMAIL_REQUIRED;
         }
 
         if (!formValues.password.trim()) {
         return AUTH_TEXTS.ERRORS.PASSWORD_REQUIRED;
+        }
+
+        if (!formValues.confirmPassword.trim()) {
+        return AUTH_TEXTS.ERRORS.CONFIRM_PASSWORD_REQUIRED;
+        }
+
+        if (formValues.password.length < 6) {
+        return AUTH_TEXTS.ERRORS.PASSWORD_MIN_LENGTH;
+        }
+
+        if (formValues.password !== formValues.confirmPassword) {
+        return AUTH_TEXTS.ERRORS.PASSWORDS_DO_NOT_MATCH;
         }
 
         return null;
@@ -107,35 +115,34 @@ export const useLogin = () => {
         }
 
         try {
-        setLoadingLogin(true);
+        setLoadingRegister(true);
         setError(null);
-        setSuccessMessage(null);
 
-        const authData = await loginUser({
+        await registerUser({
+            user_name: formValues.user_name.trim(),
             email: formValues.email.trim(),
             password: formValues.password,
         });
 
-        login(authData);
-
-        const redirectTo = location.state?.from?.pathname || ROUTES.HOME;
-
-        navigate(redirectTo, {
+        navigate(ROUTES.LOGIN, {
             replace: true,
+            state: {
+            successMessage: AUTH_TEXTS.REGISTER.SUCCESS_MESSAGE,
+            registeredEmail: formValues.email.trim(),
+            },
         });
         } catch (error) {
-        setError(getLoginErrorMessage(error));
+        setError(getRegisterErrorMessage(error));
         } finally {
-        setLoadingLogin(false);
+        setLoadingRegister(false);
         }
     };
 
     return {
         formValues,
         showPassword,
-        loadingLogin,
+        loadingRegister,
         error,
-        successMessage,
         handleChange,
         handleSubmit,
         togglePasswordVisibility,

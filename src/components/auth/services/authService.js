@@ -32,7 +32,7 @@ const getUserFromToken = (token) => {
     return {
         id: payload.id ?? payload.userId ?? payload.userid ?? payload.sub,
         email: payload.email,
-        name: payload.name ?? payload.username,
+        name: payload.name ?? payload.username ?? payload.user_name,
     };
 };
 
@@ -78,4 +78,14 @@ export const loginUser = async ({ email, password }) => {
     });
 
     return normalizeLoginResponse(response, email);
+};
+
+export const registerUser = async ({ user_name, userName, email, password }) => {
+    const response = await apiClient.post("/auth/register", {
+        user_name: user_name ?? userName,
+        email,
+        password,
+    });
+
+    return response.data;
 };

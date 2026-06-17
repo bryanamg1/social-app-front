@@ -2,18 +2,44 @@ import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 
 import { FEED_TEXTS } from "../../../constants";
 import { PostCard } from "./PostCard";
-import { getPostId, getPostOwnerId } from "../utils/postAdapter";
 
 import styles from "../styles/FeedPage.module.css";
 
+const getTextValue = (value) => {
+    if (!value) return "";
+
+    if (typeof value === "string") return value;
+
+    if (Array.isArray(value)) {
+        return value
+        .map((item) => getTextValue(item))
+        .filter(Boolean)
+        .join(" ");
+    }
+
+    if (typeof value === "object") {
+        if (typeof value.message === "string") return value.message;
+        if (typeof value.error === "string") return value.error;
+        if (value.details) return getTextValue(value.details);
+
+        try {
+        return JSON.stringify(value);
+        } catch {
+        return FEED_TEXTS.POSTS.ERROR;
+        }
+    }
+
+    return String(value);
+};
+
 export const PostList = ({
-  posts,
-  currentUserId,
-  loadingPosts,
-  deletingPostId,
-  error,
-  onDeletePost,
-}) => {
+    posts = [],
+    currentUserId,
+    loadingPosts,
+    deletingPostId,
+    error,
+    onDeletePost,
+    }) => {
     if (loadingPosts) {
         return (
         <Box className={styles.centerState}>
@@ -26,7 +52,7 @@ export const PostList = ({
     if (error) {
         return (
         <Alert severity="error" className={styles.alert}>
-            {error}
+            {getTextValue(error)}
         </Alert>
         );
     }
@@ -43,14 +69,19 @@ export const PostList = ({
 
     return (
         <Box className={styles.postsList}>
-        {posts.map((post) => {
-            const postId = getPostId(post);
-            const ownerId = getPostOwnerId(post);
+        {posts.map((post, index) => {
+            const postId = post?.post_id;
+            const ownerId = post?.user_id;
+
             const isOwner = String(ownerId) === String(currentUserId);
+
+            const postKey = postId
+            ? `post-${postId}`
+            : `post-fallback-${index}-${post?.created_at || "no-date"}`;
 
             return (
             <PostCard
-                key={postId}
+                key={postKey}
                 post={post}
                 isOwner={isOwner}
                 deletingPostId={deletingPostId}
