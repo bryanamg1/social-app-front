@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import { FeedPage } from "../components/feed/pages/FeedPage";
+import LoginPage from "../components/auth/pages/LoginPage";
+import FeedPage from "../components/feed/pages/FeedPage";
 import { MainLayout } from "../components/layout/components/MainLayout";
 import { ProfilePage } from "../components/users/pages/ProfilePage";
 import { ROUTES, UI_TEXTS } from "../constants";
@@ -10,10 +11,7 @@ export function AppRoutes() {
     return (
         <Routes>
         <Route element={<PublicRoute />}>
-            <Route
-            path={ROUTES.LOGIN}
-            element={<h1>{UI_TEXTS.PAGES.LOGIN_TITLE}</h1>}
-            />
+            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
 
             <Route
             path={ROUTES.REGISTER}

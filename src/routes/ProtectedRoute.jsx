@@ -4,10 +4,10 @@ import { ROUTES, UI_TEXTS } from "../constants";
 import { useAuth } from "../hooks/useAuth";
 
 export function ProtectedRoute() {
-    const { isAuthenticated, authLoading } = useAuth();
+    const { isAuthenticated, loadingAuth } = useAuth();
     const location = useLocation();
 
-    if (authLoading) {
+    if (loadingAuth) {
         return <FullPageLoader text={UI_TEXTS.LOADER.VERIFYING_SESSION} />;
     }
 

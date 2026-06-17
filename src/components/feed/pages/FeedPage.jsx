@@ -1,81 +1,92 @@
-import {Avatar, Button, Card, CardContent, Chip, Stack, Typography, } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
-import { FEED_TEXTS, PREVIEW_REACTIONS } from "../../../constants";
-import styles from "./FeedPage.module.css";
+import { Box, Typography } from "@mui/material";
 
-export function FeedPage() {
+import { FEED_TEXTS } from "../../../constants";
+import { useAuth } from "../../../hooks/useAuth";
+import { PostComposer } from "../components/PostComposer";
+import { PostList } from "../components/PostList";
+import { useCreatePostForm } from "../hooks/useCreatePostForm";
+import { useFeed } from "../hooks/useFeed";
+
+import styles from "../styles/FeedPage.module.css";
+
+const getCurrentUserId = (user) => {
+    return user?.id ?? user?.userId ?? user?.userid ?? user?._id;
+};
+
+const FeedPage = () => {
+    const { user } = useAuth();
+
+    const {
+        posts,
+        loadingPosts,
+        creatingPost,
+        deletingPostId,
+        error,
+        handleCreatePost,
+        handleDeletePost,
+    } = useFeed({
+        mode: "all",
+    });
+
+    const {
+        content,
+        image,
+        imagePreview,
+        canSubmit,
+        handleContentChange,
+        handleImageChange,
+        removeImage,
+        resetForm,
+    } = useCreatePostForm();
+
+    const currentUserId = getCurrentUserId(user);
+
+    const submitPost = async () => {
+        if (!currentUserId || !canSubmit) return;
+
+        await handleCreatePost({
+        userId: currentUserId,
+        content,
+        image,
+        });
+
+        resetForm();
+    };
+
     return (
-        <section className={styles.page}>
-        <header className={styles.header}>
-            <div>
-            <span className={styles.eyebrow}>{FEED_TEXTS.EYEBROW}</span>
-            <h1>{FEED_TEXTS.TITLE}</h1>
-            </div>
-        </header>
-
-        <Card component="article" className={styles.composer}>
-            <CardContent className={styles.composerContent}>
-            <Avatar
-                sx={{
-                bgcolor: "primary.main",
-                color: "primary.contrastText",
-                fontWeight: 900,
-                }}
-            >
-                U
-            </Avatar>
-
-            <div className={styles.composerBody}>
-                <Typography color="text.secondary">
-                {FEED_TEXTS.COMPOSER_PLACEHOLDER}
-                </Typography>
-
-                <Stack direction="row" spacing={1} mt={2}>
-                <Button variant="contained" startIcon={<AddRoundedIcon />}>
-                    {FEED_TEXTS.CREATE_POST}
-                </Button>
-
-                <Button variant="outlined" startIcon={<ImageRoundedIcon />}>
-                    Imagen
-                </Button>
-                </Stack>
-            </div>
-            </CardContent>
-        </Card>
-
-        <Card component="article" className={styles.placeholderPost}>
-            <CardContent>
-            <div className={styles.postHeader}>
-                <Avatar
-                sx={{
-                    bgcolor: "background.default",
-                    color: "primary.main",
-                    fontWeight: 900,
-                }}
-                >
-                S
-                </Avatar>
-
-                <div>
-                <strong>{FEED_TEXTS.PREVIEW_AUTHOR}</strong>
-                <small>{FEED_TEXTS.PREVIEW_SUBTITLE}</small>
-                </div>
-            </div>
-
-            <Typography className={styles.description}>
-                {FEED_TEXTS.PREVIEW_DESCRIPTION}
+        <main className={styles.feedPage}>
+        <Box className={styles.feedHeader}>
+            <Typography variant="h5" className={styles.feedTitle}>
+            {FEED_TEXTS.HEADER.TITLE}
             </Typography>
 
-            <div className={styles.fakeImage} />
+            <Typography className={styles.feedSubtitle}>
+            {FEED_TEXTS.HEADER.SUBTITLE}
+            </Typography>
+        </Box>
 
-            <Stack direction="row" spacing={1} flexWrap="wrap" mt={2} useFlexGap>
-                {PREVIEW_REACTIONS.map((reaction) => (
-                <Chip key={reaction} label={reaction} size="small" />
-                ))}
-            </Stack>
-            </CardContent>
-        </Card>
-        </section>
+        <PostComposer
+            user={user}
+            content={content}
+            imagePreview={imagePreview}
+            creatingPost={creatingPost}
+            canSubmit={canSubmit}
+            onContentChange={handleContentChange}
+            onImageChange={handleImageChange}
+            onRemoveImage={removeImage}
+            onSubmit={submitPost}
+        />
+
+        <PostList
+            posts={posts}
+            currentUserId={currentUserId}
+            loadingPosts={loadingPosts}
+            deletingPostId={deletingPostId}
+            error={error}
+            onDeletePost={handleDeletePost}
+        />
+        </main>
     );
-}
+    };
+
+export default FeedPage;

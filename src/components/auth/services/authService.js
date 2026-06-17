@@ -1,31 +1,81 @@
-import { apiClient } from "../../../services/apiClient";
+import apiClient from "../../../services/apiClient";
+import { AUTH_MESSAGES } from "../../../constants";
 
-export const authService = {
-    async register(payload) {
-        const response = await apiClient.post("/api/auth/register", payload);
-        return response.data;
-    },
+const decodeJwtPayload = (token) => {
+    try {
+        const base64Url = token.split(".")[1];
 
-    async login(payload) {
-        const response = await apiClient.post("/api/auth/login", payload);
-        return response.data;
-    },
+        if (!base64Url) return null;
 
-    async updateProfile(userId, payload) {
-        const response = await apiClient.patch(`/api/auth/update/${userId}`, payload);
-        return response.data;
-    },
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
 
-    async getUserById(userId) {
-        const response = await apiClient.get(`/api/auth/userstid/${userId}`);
-        return response.data;
-    },
+        const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split("")
+            .map((char) => {
+            return `%${`00${char.charCodeAt(0).toString(16)}`.slice(-2)}`;
+            })
+            .join("")
+        );
 
-    async searchUsers(query) {
-        const response = await apiClient.get("/api/auth/usersSearch", {
-        params: { query },
-        });
+        return JSON.parse(jsonPayload);
+    } catch (error) {
+        return null;
+    }
+};
 
-        return response.data;
-    },
+const getUserFromToken = (token) => {
+    const payload = decodeJwtPayload(token);
+
+    if (!payload) return null;
+
+    return {
+        id: payload.id ?? payload.userId ?? payload.userid ?? payload.sub,
+        email: payload.email,
+        name: payload.name ?? payload.username,
+    };
+};
+
+const normalizeLoginResponse = (response, email) => {
+    const responseData = response?.data;
+    const payload = responseData?.data ?? responseData;
+
+    const token =
+        typeof payload === "string"
+        ? payload
+        : payload?.token ?? payload?.accessToken ?? payload?.jwt;
+
+    if (!token) {
+        throw new Error(AUTH_MESSAGES.TOKEN_NOT_FOUND);
+    }
+
+    const userFromApi =
+        payload?.user ??
+        payload?.profile ??
+        payload?.loggedUser ??
+        payload?.authUser ??
+        null;
+
+    const userFromToken = getUserFromToken(token);
+
+    const user = userFromApi
+        ? {
+            ...userFromToken,
+            ...userFromApi,
+        }
+        : userFromToken ?? { email };
+
+    return {
+        token,
+        user,
+    };
+};
+
+export const loginUser = async ({ email, password }) => {
+    const response = await apiClient.post("/auth/login", {
+        email,
+        password,
+    });
+
+    return normalizeLoginResponse(response, email);
 };
