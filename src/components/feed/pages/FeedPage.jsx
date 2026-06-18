@@ -19,9 +19,13 @@ const FeedPage = () => {
     const {
         posts,
         loadingPosts,
+        loadingMorePosts,
         creatingPost,
         deletingPostId,
         error,
+        paginationError,
+        pagination,
+        loadMorePosts,
         handleCreatePost,
         handleDeletePost,
     } = useFeed({
@@ -81,9 +85,13 @@ const FeedPage = () => {
             posts={posts}
             currentUserId={currentUserId}
             loadingPosts={loadingPosts}
+            loadingMorePosts={loadingMorePosts}
             deletingPostId={deletingPostId}
             error={error}
+            paginationError={paginationError}
+            hasMore={pagination.hasMore}
             onDeletePost={handleDeletePost}
+            onLoadMorePosts={loadMorePosts}
         />
         </main>
     );

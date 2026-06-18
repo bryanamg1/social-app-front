@@ -1,6 +1,13 @@
-import { Alert, Box, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
 
-import { FEED_TEXTS } from "../../../constants";
+import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
+import { usePostComments } from "../hooks/usePostComments";
+import {
+  getPostComments,
+  getPostCreatedAt,
+  getPostId,
+  getPostOwnerId,
+} from "../utils/postAdapter";
 import { PostCard } from "./PostCard";
 
 import styles from "../styles/FeedPage.module.css";
@@ -36,10 +43,23 @@ export const PostList = ({
     posts = [],
     currentUserId,
     loadingPosts,
+    loadingMorePosts,
     deletingPostId,
     error,
+    paginationError,
+    hasMore,
     onDeletePost,
+    onLoadMorePosts,
     }) => {
+    const {
+        getCommentFormState,
+        getCommentsState,
+        handleCommentDraftChange,
+        isCommentsOpen,
+        submitComment,
+        toggleComments,
+    } = usePostComments();
+
     if (loadingPosts) {
         return (
         <Box className={styles.centerState}>
@@ -70,14 +90,18 @@ export const PostList = ({
     return (
         <Box className={styles.postsList}>
         {posts.map((post, index) => {
-            const postId = post?.post_id;
-            const ownerId = post?.user_id;
+            const postId = getPostId(post);
+            const ownerId = getPostOwnerId(post);
+            const createdAt = getPostCreatedAt(post);
+            const fallbackComments = getPostComments(post);
 
             const isOwner = String(ownerId) === String(currentUserId);
 
             const postKey = postId
-            ? `post-${postId}`
-            : `post-fallback-${index}-${post?.created_at || "no-date"}`;
+            ? `${FEED_KEYS.POST_PREFIX}-${postId}`
+            : `${FEED_KEYS.POST_FALLBACK_PREFIX}-${index}-${createdAt || FEED_KEYS.NO_DATE}`;
+            const commentsState = getCommentsState(postKey);
+            const commentFormState = getCommentFormState(postKey);
 
             return (
             <PostCard
@@ -85,10 +109,55 @@ export const PostList = ({
                 post={post}
                 isOwner={isOwner}
                 deletingPostId={deletingPostId}
+                commentsOpen={isCommentsOpen(postKey)}
+                comments={commentsState.comments}
+                loadingComments={commentsState.loading}
+                commentsError={commentsState.error}
+                commentForm={commentFormState}
                 onDeletePost={onDeletePost}
+                onToggleComments={() =>
+                toggleComments({
+                    postKey,
+                    postId,
+                    fallbackComments,
+                })
+                }
+                onCommentChange={(value) => handleCommentDraftChange(postKey, value)}
+                onSubmitComment={() =>
+                submitComment({
+                    postKey,
+                    postId,
+                    userId: currentUserId,
+                })
+                }
             />
             );
         })}
+
+        <Box className={styles.paginationActions}>
+            {paginationError && (
+            <Alert severity="error" className={styles.paginationAlert}>
+                {paginationError}
+            </Alert>
+            )}
+
+            {hasMore ? (
+            <Button
+                variant="contained"
+                className={styles.loadMoreButton}
+                disabled={loadingMorePosts}
+                onClick={onLoadMorePosts}
+            >
+                {loadingMorePosts
+                ? FEED_TEXTS.POSTS.LOADING_MORE
+                : FEED_TEXTS.POSTS.LOAD_MORE_BUTTON}
+            </Button>
+            ) : (
+            <Typography className={styles.endOfResultsText}>
+                {FEED_TEXTS.POSTS.END_OF_RESULTS}
+            </Typography>
+            )}
+        </Box>
         </Box>
     );
 };

@@ -27,11 +27,34 @@ export const FEED_TEXTS = {
         DEFAULT_AUTHOR: "Usuario",
         IMAGE_ALT: "Publicación",
         LOADING: "Cargando publicaciones...",
+        LOADING_MORE: "Cargando mas publicaciones...",
         EMPTY_TITLE: "Todavía no hay publicaciones",
         EMPTY_DESCRIPTION: "Sé el primero en compartir algo con la comunidad.",
         DELETE_ARIA: "Eliminar publicación",
         REACT_BUTTON: "Reaccionar",
         COMMENTS_BUTTON: "Comentarios",
+        LOAD_MORE_BUTTON: "Cargar mas",
+        END_OF_RESULTS: "No hay mas publicaciones para mostrar.",
+        DATE_FALLBACK: "Ahora",
+    },
+
+    COMMENTS: {
+        TITLE: "Comentarios",
+        SHOW_BUTTON: "Ver comentarios",
+        HIDE_BUTTON: "Ocultar comentarios",
+        SHOW_ARIA: "Mostrar comentarios del post",
+        HIDE_ARIA: "Ocultar comentarios del post",
+        LOADING: "Cargando comentarios...",
+        EMPTY_TITLE: "Todavia no hay comentarios",
+        EMPTY_DESCRIPTION: "Los comentarios aparecerann aqui cuando esten disponibles.",
+        INPUT_PLACEHOLDER: "Escribe un comentario...",
+        SUBMIT_BUTTON: "Comentar",
+        SUBMITTING_BUTTON: "Comentando...",
+        EMPTY_VALIDATION: "Escribe un comentario antes de enviarlo.",
+        AUTH_REQUIRED: "Inicia sesion para comentar.",
+        DEFAULT_AUTHOR: "Usuario",
+        COMMENT_SINGULAR: "comentario",
+        COMMENT_PLURAL: "comentarios",
         DATE_FALLBACK: "Ahora",
     },
 
@@ -46,6 +69,9 @@ export const FEED_TEXTS = {
 
     ERRORS: {
         LOAD_POSTS: "No se pudieron cargar las publicaciones.",
+        LOAD_MORE_POSTS: "No se pudieron cargar mas publicaciones.",
+        LOAD_COMMENTS: "No se pudieron cargar los comentarios.",
+        ADD_COMMENT: "No se pudo publicar el comentario.",
         CREATE_POST: "No se pudo crear la publicación.",
         DELETE_POST: "No se pudo eliminar la publicación.",
     },
@@ -58,3 +84,16 @@ export const FEED_REACTION_OPTIONS = [
     FEED_TEXTS.REACTIONS.LOVE,
     FEED_TEXTS.REACTIONS.WOW,
 ];
+
+export const FEED_KEYS = {
+    POST_PREFIX: "post",
+    POST_FALLBACK_PREFIX: "post-fallback",
+    COMMENT_PREFIX: "comment",
+    COMMENT_FALLBACK_PREFIX: "comment-fallback",
+    NO_DATE: "no-date",
+};
+
+export const FEED_PAGINATION = {
+    INITIAL_PAGE: 1,
+    PAGE_SIZE: 10,
+};

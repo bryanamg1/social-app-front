@@ -1,25 +1,25 @@
 import apiClient from "../../../services/apiClient";
+import {
+    API_BODY_FIELDS,
+    API_ENDPOINTS,
+    API_QUERY_PARAMS,
+} from "../../../constants";
+import { getCommentsFromResponse, getPostsFromResponse } from "../utils/postAdapter";
 
-const extractPostsArray = (response) => {
-    const payload = response?.data?.data ?? response?.data;
+export const getAllPosts = async ({ page, limit } = {}) => {
+    const response = await apiClient.get(API_ENDPOINTS.POSTS.ALL, {
+        params: {
+        [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
+        [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
+        },
+    });
 
-    if (Array.isArray(payload)) return payload;
-
-    if (Array.isArray(payload?.posts)) return payload.posts;
-    if (Array.isArray(payload?.feed)) return payload.feed;
-    if (Array.isArray(payload?.results)) return payload.results;
-
-    return [];
-};
-
-export const getAllPosts = async () => {
-    const response = await apiClient.get("/posts/allpost");
-    return extractPostsArray(response);
+    return getPostsFromResponse(response);
 };
 
 export const getFollowingFeed = async () => {
-    const response = await apiClient.get("/follows/feed");
-    return extractPostsArray(response);
+    const response = await apiClient.get(API_ENDPOINTS.FOLLOWS.FEED);
+    return getPostsFromResponse(response);
 };
 
 export const createPost = async ({ userId, content, image }) => {
@@ -34,7 +34,7 @@ export const createPost = async ({ userId, content, image }) => {
         formData.append("image", image);
     }
 
-    const response = await apiClient.post(`/posts/CreatePost/${userId}`, formData, {
+    const response = await apiClient.post(API_ENDPOINTS.POSTS.CREATE(userId), formData, {
         headers: {
         "Content-Type": "multipart/form-data",
         },
@@ -44,6 +44,20 @@ export const createPost = async ({ userId, content, image }) => {
 };
 
 export const removePost = async (postId) => {
-    const response = await apiClient.delete(`/posts/removePost/${postId}`);
+    const response = await apiClient.delete(API_ENDPOINTS.POSTS.REMOVE(postId));
+    return response.data;
+};
+
+export const getCommentsByPostId = async (postId) => {
+    const response = await apiClient.get(API_ENDPOINTS.COMMENTS.READ_BY_POST(postId));
+
+    return getCommentsFromResponse(response);
+};
+
+export const createComment = async ({ userId, postId, commentText }) => {
+    const response = await apiClient.post(API_ENDPOINTS.COMMENTS.ADD(userId, postId), {
+        [API_BODY_FIELDS.COMMENTS.TEXT]: commentText.trim(),
+    });
+
     return response.data;
 };

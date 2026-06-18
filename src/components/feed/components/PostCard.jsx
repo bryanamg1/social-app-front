@@ -8,6 +8,11 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
 import { FEED_REACTION_OPTIONS, FEED_TEXTS } from "../../../constants";
 import {
@@ -18,10 +23,34 @@ import {
   getPostId,
   getPostImage,
 } from "../utils/postAdapter";
+import { PostCommentForm } from "./PostCommentForm";
+import { PostComments } from "./PostComments";
 
 import styles from "../styles/FeedPage.module.css";
 
-export const PostCard = ({ post, isOwner, deletingPostId, onDeletePost }) => {
+const getCommentsCountLabel = (commentsCount) => {
+    const label =
+        commentsCount === 1
+        ? FEED_TEXTS.COMMENTS.COMMENT_SINGULAR
+        : FEED_TEXTS.COMMENTS.COMMENT_PLURAL;
+
+    return `${commentsCount} ${label}`;
+};
+
+export const PostCard = ({
+    post,
+    isOwner,
+    deletingPostId,
+    commentsOpen,
+    comments,
+    loadingComments,
+    commentsError,
+    commentForm,
+    onDeletePost,
+    onToggleComments,
+    onCommentChange,
+    onSubmitComment,
+    }) => {
     const postId = getPostId(post);
     const authorName = getPostAuthorName(post);
     const content = getPostContent(post);
@@ -30,6 +59,7 @@ export const PostCard = ({ post, isOwner, deletingPostId, onDeletePost }) => {
 
     const isDeleting = String(deletingPostId) === String(postId);
     const avatarLetter = authorName.charAt(0).toUpperCase();
+    const commentsCount = comments?.length ?? 0;
 
     return (
         <Card className={styles.postCard}>
@@ -54,7 +84,7 @@ export const PostCard = ({ post, isOwner, deletingPostId, onDeletePost }) => {
                 className={styles.deleteButton}
                 aria-label={FEED_TEXTS.POSTS.DELETE_ARIA}
                 >
-                <span aria-hidden="true">🗑️</span>
+                <DeleteOutlineIcon />
                 </IconButton>
             )}
             </Box>
@@ -86,19 +116,58 @@ export const PostCard = ({ post, isOwner, deletingPostId, onDeletePost }) => {
 
             <Box className={styles.postActions}>
             <Button
-                startIcon={<span aria-hidden="true">👍</span>}
+                startIcon={<ThumbUpOffAltIcon />}
                 className={styles.actionButton}
             >
                 {FEED_TEXTS.POSTS.REACT_BUTTON}
             </Button>
 
             <Button
-                startIcon={<span aria-hidden="true">💬</span>}
+                startIcon={<ChatBubbleOutlineIcon />}
+                endIcon={commentsOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 className={styles.actionButton}
+                onClick={onToggleComments}
+                aria-expanded={commentsOpen}
+                aria-label={
+                commentsOpen
+                    ? FEED_TEXTS.COMMENTS.HIDE_ARIA
+                    : FEED_TEXTS.COMMENTS.SHOW_ARIA
+                }
             >
-                {FEED_TEXTS.POSTS.COMMENTS_BUTTON}
+                {commentsOpen
+                ? FEED_TEXTS.COMMENTS.HIDE_BUTTON
+                : FEED_TEXTS.COMMENTS.SHOW_BUTTON}
             </Button>
             </Box>
+
+            <Box className={styles.commentsSummary}>
+            <Typography className={styles.commentsCount}>
+                {getCommentsCountLabel(commentsCount)}
+            </Typography>
+            </Box>
+
+            {commentsOpen && (
+            <section className={styles.commentsPanel}>
+                <Typography className={styles.commentsTitle}>
+                {FEED_TEXTS.COMMENTS.TITLE}
+                </Typography>
+
+                <PostCommentForm
+                value={commentForm.value}
+                canSubmit={commentForm.canSubmit}
+                creating={commentForm.creating}
+                error={commentForm.error}
+                onChange={onCommentChange}
+                onSubmit={onSubmitComment}
+                />
+
+                <PostComments
+                comments={comments}
+                loading={loadingComments}
+                error={commentsError}
+                />
+            </section>
+            )}
         </CardContent>
         </Card>
     );
