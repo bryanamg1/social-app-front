@@ -12,24 +12,35 @@
 }
 
 .leftSidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
   display: block;
   width: 220px;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   border-right: 1px solid rgba(148, 163, 184, 0.18);
 }
 
 .rightSidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
   display: block;
   width: 280px;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   border-left: 1px solid rgba(148, 163, 184, 0.18);
 }
 
 .leftSidebarInner,
 .rightSidebarInner {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  height: 100%;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   padding: 14px;
 }
 
