@@ -1,4 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  InputAdornment,
+  Link,
+  TextField,
+  Typography,
+} from "@mui/material";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import styles from "../styles/AuthPage.module.css";
@@ -58,114 +73,120 @@ export const RegisterForm = ({
         togglePasswordVisibility || onTogglePasswordVisibility || (() => {});
 
     return (
-        <form className={styles.form} onSubmit={submitHandler}>
-        <div className={styles.formHeader}>
-            <h2 className={styles.formTitle}>{AUTH_TEXTS.REGISTER.TITLE}</h2>
+        <Card className={styles.authCard}>
+        <CardContent className={styles.authCardContent}>
+            <Box className={styles.authHeader}>
+            <Typography component="h1" className={styles.authTitle}>
+                {AUTH_TEXTS.REGISTER.TITLE}
+            </Typography>
 
-            <p className={styles.formSubtitle}>{AUTH_TEXTS.REGISTER.SUBTITLE}</p>
-        </div>
+            <Typography className={styles.authSubtitle}>
+                {AUTH_TEXTS.REGISTER.SUBTITLE}
+            </Typography>
+            </Box>
 
-        {errorMessage && (
-            <div className={styles.errorMessage}>
-            <span aria-hidden="true">ⓘ</span>
-            <span>{errorMessage}</span>
-            </div>
-        )}
+            {errorMessage && (
+            <Alert severity="error" className={styles.authAlert}>
+                {errorMessage}
+            </Alert>
+            )}
 
-        <label className={styles.field}>
-            <span className={styles.label}>
-            {AUTH_TEXTS.REGISTER.USER_NAME_LABEL}
-            </span>
-
-            <input
-            className={styles.input}
-            type="text"
-            name="user_name"
-            value={formValues?.user_name || ""}
-            onChange={changeHandler}
-            placeholder={AUTH_TEXTS.REGISTER.USER_NAME_PLACEHOLDER}
-            autoComplete="username"
-            disabled={loadingRegister}
+            <Box component="form" onSubmit={submitHandler} className={styles.authForm}>
+            <TextField
+                fullWidth
+                type="text"
+                name="user_name"
+                placeholder={AUTH_TEXTS.REGISTER.USER_NAME_PLACEHOLDER}
+                value={formValues?.user_name || ""}
+                onChange={changeHandler}
+                disabled={loadingRegister}
+                className={styles.authInput}
+                autoComplete="username"
             />
-        </label>
 
-        <label className={styles.field}>
-            <span className={styles.label}>{AUTH_TEXTS.REGISTER.EMAIL_LABEL}</span>
-
-            <input
-            className={styles.input}
-            type="email"
-            name="email"
-            value={formValues?.email || ""}
-            onChange={changeHandler}
-            placeholder={AUTH_TEXTS.REGISTER.EMAIL_PLACEHOLDER}
-            autoComplete="email"
-            disabled={loadingRegister}
+            <TextField
+                fullWidth
+                type="email"
+                name="email"
+                placeholder={AUTH_TEXTS.REGISTER.EMAIL_PLACEHOLDER}
+                value={formValues?.email || ""}
+                onChange={changeHandler}
+                disabled={loadingRegister}
+                className={styles.authInput}
+                autoComplete="email"
             />
-        </label>
 
-        <label className={styles.field}>
-            <span className={styles.label}>
-            {AUTH_TEXTS.REGISTER.PASSWORD_LABEL}
-            </span>
-
-            <div className={styles.passwordWrapper}>
-            <input
-                className={styles.input}
-                type={showPassword ? "text" : "password"}
+            <TextField
+                fullWidth
                 name="password"
+                placeholder={AUTH_TEXTS.REGISTER.PASSWORD_PLACEHOLDER}
+                type={showPassword ? "text" : "password"}
                 value={formValues?.password || ""}
                 onChange={changeHandler}
-                placeholder={AUTH_TEXTS.REGISTER.PASSWORD_PLACEHOLDER}
+                disabled={loadingRegister}
+                className={styles.authInput}
                 autoComplete="new-password"
-                disabled={loadingRegister}
+                slotProps={{
+                input: {
+                    endAdornment: (
+                    <InputAdornment position="end">
+                        <IconButton
+                        type="button"
+                        onClick={togglePasswordHandler}
+                        edge="end"
+                        aria-label={AUTH_TEXTS.REGISTER.SHOW_PASSWORD_ARIA}
+                        className={styles.passwordButton}
+                        disabled={loadingRegister}
+                        >
+                        {showPassword ? (
+                            <VisibilityOffOutlinedIcon />
+                        ) : (
+                            <VisibilityOutlinedIcon />
+                        )}
+                        </IconButton>
+                    </InputAdornment>
+                    ),
+                },
+                }}
             />
 
-            <button
-                type="button"
-                className={styles.passwordToggle}
-                onClick={togglePasswordHandler}
+            <TextField
+                fullWidth
+                name="confirmPassword"
+                placeholder={AUTH_TEXTS.REGISTER.CONFIRM_PASSWORD_PLACEHOLDER}
+                type={showPassword ? "text" : "password"}
+                value={formValues?.confirmPassword || ""}
+                onChange={changeHandler}
                 disabled={loadingRegister}
-                aria-label={AUTH_TEXTS.REGISTER.SHOW_PASSWORD_ARIA}
+                className={styles.authInput}
+                autoComplete="new-password"
+            />
+
+            <Button
+                fullWidth
+                type="submit"
+                variant="contained"
+                disabled={loadingRegister}
+                startIcon={<PersonAddAltOutlinedIcon />}
+                className={styles.authButton}
             >
-                {showPassword ? "🙈" : "👁️"}
-            </button>
-            </div>
-        </label>
+                {loadingRegister
+                ? AUTH_TEXTS.REGISTER.SUBMITTING_BUTTON
+                : AUTH_TEXTS.REGISTER.SUBMIT_BUTTON}
+            </Button>
+            </Box>
 
-        <label className={styles.field}>
-            <span className={styles.label}>
-            {AUTH_TEXTS.REGISTER.CONFIRM_PASSWORD_LABEL}
-            </span>
-
-            <input
-            className={styles.input}
-            type={showPassword ? "text" : "password"}
-            name="confirmPassword"
-            value={formValues?.confirmPassword || ""}
-            onChange={changeHandler}
-            placeholder={AUTH_TEXTS.REGISTER.CONFIRM_PASSWORD_PLACEHOLDER}
-            autoComplete="new-password"
-            disabled={loadingRegister}
-            />
-        </label>
-
-        <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={loadingRegister}
-        >
-            {loadingRegister
-            ? AUTH_TEXTS.REGISTER.SUBMITTING_BUTTON
-            : AUTH_TEXTS.REGISTER.SUBMIT_BUTTON}
-        </button>
-
-        <p className={styles.footerText}>
+            <Typography className={styles.authFooterText}>
             {AUTH_TEXTS.REGISTER.FOOTER_TEXT}{" "}
-            <Link to={ROUTES.LOGIN} className={styles.link}>
-            {AUTH_TEXTS.REGISTER.LOGIN_LINK}
+            <Link
+                component={RouterLink}
+                to={ROUTES.LOGIN}
+                className={styles.authLink}
+            >
+                {AUTH_TEXTS.REGISTER.LOGIN_LINK}
             </Link>
-        </p>
-        </form>
+            </Typography>
+        </CardContent>
+        </Card>
     );
 };
