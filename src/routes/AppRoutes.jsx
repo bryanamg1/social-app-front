@@ -5,7 +5,7 @@ import { ROUTES } from "../constants";
 import LoginPage from "../components/auth/pages/LoginPage";
 import RegisterPage from "../components/auth/pages/RegisterPage";
 import FeedPage from "../components/feed/pages/FeedPage";
-import ProfilePage from "../components/users/pages/ProfilePage";
+import {ProfilePage} from "../components/users/pages/ProfilePage";
 
 import { MainLayout } from "../components/layout/components/MainLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
