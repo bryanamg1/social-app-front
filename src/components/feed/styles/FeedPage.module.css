@@ -237,12 +237,78 @@
   border: 1px solid rgba(56, 189, 248, 0.18) !important;
 }
 
+.reactionsBlock {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.reactionsSummary {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reactionsLoadingState {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+}
+
+.reactionsLoadingState :global(.MuiCircularProgress-root) {
+  color: #38bdf8;
+}
+
+.reactionsLoadingText,
+.reactionsEmptyText {
+  color: #64748b;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+}
+
+.reactionsAlert {
+  border-radius: 14px !important;
+}
+
+.reactionActions {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.reactionButton,
+.reactionButtonActive {
+  min-width: 0 !important;
+  color: #38bdf8 !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 7px 8px !important;
+  background: rgba(14, 165, 233, 0.08) !important;
+  border: 1px solid rgba(56, 189, 248, 0.14) !important;
+}
+
+.reactionButtonActive {
+  color: #020617 !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+  border-color: transparent !important;
+}
+
+.reactionButton:disabled,
+.reactionButtonActive:disabled {
+  opacity: 0.58;
+}
+
 .postActions {
   margin-top: 14px;
   padding-top: 12px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
 }
 
@@ -537,8 +603,12 @@
   }
 
   .postActions {
-    justify-content: space-between;
+    justify-content: center;
     gap: 8px;
+  }
+
+  .reactionActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .actionButton {

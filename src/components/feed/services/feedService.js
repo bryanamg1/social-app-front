@@ -4,7 +4,12 @@ import {
     API_ENDPOINTS,
     API_QUERY_PARAMS,
 } from "../../../constants";
-import { getCommentsFromResponse, getPostsFromResponse } from "../utils/postAdapter";
+import {
+    getCommentsFromResponse,
+    getMyReactionFromResponse,
+    getPostReactionsFromResponse,
+    getPostsFromResponse,
+} from "../utils/postAdapter";
 
 export const getAllPosts = async ({ page, limit } = {}) => {
     const response = await apiClient.get(API_ENDPOINTS.POSTS.ALL, {
@@ -58,6 +63,29 @@ export const createComment = async ({ userId, postId, commentText }) => {
     const response = await apiClient.post(API_ENDPOINTS.COMMENTS.ADD(userId, postId), {
         [API_BODY_FIELDS.COMMENTS.TEXT]: commentText.trim(),
     });
+
+    return response.data;
+};
+
+export const getPostReactions = async (postId) => {
+    const response = await apiClient.get(API_ENDPOINTS.REACTIONS.BY_POST(postId));
+
+    return getPostReactionsFromResponse(response);
+};
+
+export const getMyPostReaction = async ({ userId, postId }) => {
+    const response = await apiClient.get(API_ENDPOINTS.REACTIONS.MY_POST(userId, postId));
+
+    return getMyReactionFromResponse(response);
+};
+
+export const togglePostReaction = async ({ userId, postId, reactionType }) => {
+    const response = await apiClient.post(
+        API_ENDPOINTS.REACTIONS.TOGGLE_POST(userId, postId),
+        {
+        [API_BODY_FIELDS.REACTIONS.STATUS]: reactionType,
+        }
+    );
 
     return response.data;
 };

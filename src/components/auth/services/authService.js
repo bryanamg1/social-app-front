@@ -24,16 +24,42 @@ const decodeJwtPayload = (token) => {
     }
 };
 
-const getUserFromToken = (token) => {
+const normalizeUser = (userData, fallbackEmail = "") => {
+    if (!userData) return null;
+
+    const userId =
+        userData.user_id ??
+        userData.id ??
+        userData.userId ??
+        userData.userid ??
+        userData.sub;
+
+    const email = userData.email ?? fallbackEmail;
+
+    const userName =
+        userData.user_name ??
+        userData.name ??
+        userData.username ??
+        email;
+
+    return {
+        ...userData,
+        id: userId,
+        user_id: userId,
+        email,
+        name: userName,
+        user_name: userName,
+    };
+};
+
+const getUserFromToken = (token, fallbackEmail = "") => {
     const payload = decodeJwtPayload(token);
 
     if (!payload) return null;
 
-    return {
-        id: payload.id ?? payload.userId ?? payload.userid ?? payload.sub,
-        email: payload.email,
-        name: payload.name ?? payload.username ?? payload.user_name,
-    };
+    const tokenUser = payload.user ?? payload.data ?? payload;
+
+    return normalizeUser(tokenUser, fallbackEmail);
 };
 
 const normalizeLoginResponse = (response, email) => {
@@ -43,11 +69,20 @@ const normalizeLoginResponse = (response, email) => {
     const token =
         typeof payload === "string"
         ? payload
-        : payload?.token ?? payload?.accessToken ?? payload?.jwt;
+        : payload?.token ??
+            payload?.accessToken ??
+            payload?.access_token ??
+            payload?.jwt;
 
     if (!token) {
         throw new Error(AUTH_MESSAGES.TOKEN_NOT_FOUND);
     }
+
+    const refreshToken =
+        payload?.refreshToken ??
+        payload?.refresh_token ??
+        payload?.refresh ??
+        null;
 
     const userFromApi =
         payload?.user ??
@@ -56,17 +91,23 @@ const normalizeLoginResponse = (response, email) => {
         payload?.authUser ??
         null;
 
-    const userFromToken = getUserFromToken(token);
+    const normalizedApiUser = normalizeUser(userFromApi, email);
+    const userFromToken = getUserFromToken(token, email);
 
-    const user = userFromApi
-        ? {
-            ...userFromToken,
-            ...userFromApi,
-        }
-        : userFromToken ?? { email };
+    const user =
+        normalizedApiUser ??
+        userFromToken ?? {
+        id: null,
+        user_id: null,
+        email,
+        name: email,
+        user_name: email,
+        };
 
     return {
         token,
+        accessToken: token,
+        refreshToken,
         user,
     };
 };

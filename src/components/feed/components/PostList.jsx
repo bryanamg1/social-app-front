@@ -2,6 +2,7 @@ import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material"
 
 import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
 import { usePostComments } from "../hooks/usePostComments";
+import { usePostReactions } from "../hooks/usePostReactions";
 import {
   getPostComments,
   getPostCreatedAt,
@@ -59,6 +60,10 @@ export const PostList = ({
         submitComment,
         toggleComments,
     } = usePostComments();
+    const { getReactionState, handleToggleReaction } = usePostReactions({
+        posts,
+        currentUserId,
+    });
 
     if (loadingPosts) {
         return (
@@ -102,6 +107,7 @@ export const PostList = ({
             : `${FEED_KEYS.POST_FALLBACK_PREFIX}-${index}-${createdAt || FEED_KEYS.NO_DATE}`;
             const commentsState = getCommentsState(postKey);
             const commentFormState = getCommentFormState(postKey);
+            const reactionState = getReactionState(postKey);
 
             return (
             <PostCard
@@ -114,7 +120,15 @@ export const PostList = ({
                 loadingComments={commentsState.loading}
                 commentsError={commentsState.error}
                 commentForm={commentFormState}
+                reactionState={reactionState}
                 onDeletePost={onDeletePost}
+                onToggleReaction={(reactionType) =>
+                handleToggleReaction({
+                    postKey,
+                    postId,
+                    reactionType,
+                })
+                }
                 onToggleComments={() =>
                 toggleComments({
                     postKey,

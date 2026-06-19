@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { STORAGE_KEYS } from "../constants";
 
-    const API_BASE_URL =
+const API_BASE_URL =
     import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
     const apiClient = axios.create({
@@ -14,7 +14,9 @@ import { STORAGE_KEYS } from "../constants";
 
     apiClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+        const token =
+        localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN) ||
+        localStorage.getItem("token");
 
         if (token) {
         config.headers.Authorization = `Bearer ${token}`;

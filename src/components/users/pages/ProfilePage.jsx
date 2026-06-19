@@ -20,7 +20,7 @@ export function ProfilePage() {
         </header>
 
         <section className={styles.profileInfo}>
-            <Stack spacing={1.5} alignItems="flex-start">
+            <Stack spacing={1.5} sx={{alignItems: "flex-start",}}>
             <Typography variant="h4" component="h1" fontWeight={900}>
                 {PROFILE_TEXTS.TITLE}
             </Typography>
@@ -28,9 +28,7 @@ export function ProfilePage() {
             <Typography
                 variant="body1"
                 color="text.secondary"
-                lineHeight={1.6}
-                maxWidth={560}
-            >
+                sx={{lineHeight: 1.6,maxWidth: 560,}}>
                 {PROFILE_TEXTS.DESCRIPTION}
             </Typography>
 

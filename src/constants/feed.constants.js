@@ -65,6 +65,11 @@ export const FEED_TEXTS = {
         HAHA: "HAHA",
         WOW: "WOW",
         SAD: "SAD",
+        TITLE: "Reacciones",
+        TOTAL_SUFFIX: "reacciones",
+        TOGGLE_ARIA_PREFIX: "Alternar reaccion",
+        LOADING: "Cargando reacciones...",
+        EMPTY_SUMMARY: "Sin reacciones",
     },
 
     ERRORS: {
@@ -72,6 +77,9 @@ export const FEED_TEXTS = {
         LOAD_MORE_POSTS: "No se pudieron cargar mas publicaciones.",
         LOAD_COMMENTS: "No se pudieron cargar los comentarios.",
         ADD_COMMENT: "No se pudo publicar el comentario.",
+        LOAD_REACTIONS: "No se pudieron cargar las reacciones.",
+        TOGGLE_REACTION: "No se pudo actualizar la reaccion.",
+        REACTION_AUTH_REQUIRED: "Inicia sesion para reaccionar.",
         CREATE_POST: "No se pudo crear la publicación.",
         DELETE_POST: "No se pudo eliminar la publicación.",
     },
@@ -80,9 +88,36 @@ export const FEED_TEXTS = {
 export const PREVIEW_REACTIONS = ["👍 LIKE", "❤️ LOVE", "😮 WOW"];
 
 export const FEED_REACTION_OPTIONS = [
-    FEED_TEXTS.REACTIONS.LIKE,
-    FEED_TEXTS.REACTIONS.LOVE,
-    FEED_TEXTS.REACTIONS.WOW,
+    {
+        type: FEED_TEXTS.REACTIONS.LIKE,
+        label: FEED_TEXTS.REACTIONS.LIKE,
+        iconKey: "like",
+    },
+    {
+        type: FEED_TEXTS.REACTIONS.DISLIKE,
+        label: FEED_TEXTS.REACTIONS.DISLIKE,
+        iconKey: "dislike",
+    },
+    {
+        type: FEED_TEXTS.REACTIONS.LOVE,
+        label: FEED_TEXTS.REACTIONS.LOVE,
+        iconKey: "love",
+    },
+    {
+        type: FEED_TEXTS.REACTIONS.HAHA,
+        label: FEED_TEXTS.REACTIONS.HAHA,
+        iconKey: "haha",
+    },
+    {
+        type: FEED_TEXTS.REACTIONS.WOW,
+        label: FEED_TEXTS.REACTIONS.WOW,
+        iconKey: "wow",
+    },
+    {
+        type: FEED_TEXTS.REACTIONS.SAD,
+        label: FEED_TEXTS.REACTIONS.SAD,
+        iconKey: "sad",
+    },
 ];
 
 export const FEED_KEYS = {

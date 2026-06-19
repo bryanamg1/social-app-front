@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  Chip,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -12,9 +11,8 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
-import { FEED_REACTION_OPTIONS, FEED_TEXTS } from "../../../constants";
+import { FEED_TEXTS } from "../../../constants";
 import {
   formatPostDate,
   getPostAuthorName,
@@ -25,6 +23,7 @@ import {
 } from "../utils/postAdapter";
 import { PostCommentForm } from "./PostCommentForm";
 import { PostComments } from "./PostComments";
+import { PostReactions } from "./PostReactions";
 
 import styles from "../styles/FeedPage.module.css";
 
@@ -46,10 +45,12 @@ export const PostCard = ({
     loadingComments,
     commentsError,
     commentForm,
+    reactionState,
     onDeletePost,
     onToggleComments,
     onCommentChange,
     onSubmitComment,
+    onToggleReaction,
     }) => {
     const postId = getPostId(post);
     const authorName = getPostAuthorName(post);
@@ -103,25 +104,12 @@ export const PostCard = ({
             </Box>
             )}
 
-            <Box className={styles.postMeta}>
-            {FEED_REACTION_OPTIONS.map((reaction) => (
-                <Chip
-                key={reaction}
-                label={reaction}
-                size="small"
-                className={styles.reactionChip}
-                />
-            ))}
-            </Box>
+            <PostReactions
+            reactionState={reactionState}
+            onToggleReaction={onToggleReaction}
+            />
 
             <Box className={styles.postActions}>
-            <Button
-                startIcon={<ThumbUpOffAltIcon />}
-                className={styles.actionButton}
-            >
-                {FEED_TEXTS.POSTS.REACT_BUTTON}
-            </Button>
-
             <Button
                 startIcon={<ChatBubbleOutlineIcon />}
                 endIcon={commentsOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}

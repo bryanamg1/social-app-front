@@ -10,7 +10,7 @@ import { useFeed } from "../hooks/useFeed";
 import styles from "../styles/FeedPage.module.css";
 
 const getCurrentUserId = (user) => {
-    return user?.id ?? user?.userId ?? user?.userid ?? user?._id;
+    return user?.id ?? user?.userId ?? user?.userid ?? user?.user_id ?? user?._id;
 };
 
 const FeedPage = () => {

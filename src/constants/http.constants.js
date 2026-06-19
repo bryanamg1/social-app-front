@@ -21,11 +21,23 @@ export const API_ENDPOINTS = {
         READ_BY_POST: (postId) => `/comments/readComment/${postId}`,
         ADD: (userId, postId) => `/comments/addComment/${userId}/${postId}`,
     },
+
+    REACTIONS: {
+        TOGGLE_POST: (userId, postId) =>
+            `/reactions/toggleReaction/${userId}/${postId}`,
+        BY_POST: (postId) => `/reactions/reactionsPost/${postId}`,
+        MY_POST: (userId, postId) =>
+            `/reactions/${userId}/${postId}/byUserInPost`,
+    },
 };
 
 export const API_BODY_FIELDS = {
     COMMENTS: {
         TEXT: "comment_text",
+    },
+
+    REACTIONS: {
+        STATUS: "status",
     },
 };
 

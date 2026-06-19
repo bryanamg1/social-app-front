@@ -106,6 +106,45 @@ export const getPostsFromResponse = (response) => {
     };
 };
 
+export const getReactionType = (reaction) => {
+    return reaction?.reaction_type ?? reaction?.reactionType ?? reaction?.type ?? "";
+};
+
+export const getReactionCount = (reaction) => {
+    const count = reaction?.count ?? reaction?.total ?? 0;
+
+    return Number(count) || 0;
+};
+
+export const getPostReactionsFromResponse = (response) => {
+    const payload = response?.data?.data ?? response?.data;
+    const reactions = extractArray(payload?.reactions ?? payload);
+    const counts = reactions.reduce((accumulator, reaction) => {
+        const reactionType = getReactionType(reaction);
+
+        if (!reactionType) return accumulator;
+
+        return {
+        ...accumulator,
+        [reactionType]: getReactionCount(reaction),
+        };
+    }, {});
+
+    const total = Object.values(counts).reduce(
+        (currentTotal, count) => currentTotal + count,
+        0
+    );
+
+    return {
+        counts,
+        total,
+    };
+};
+
+export const getMyReactionFromResponse = (response) => {
+    return response?.data?.data?.reaction ?? response?.data?.reaction ?? null;
+};
+
 export const getCommentId = (comment) => {
     return (
         comment?.id ??
