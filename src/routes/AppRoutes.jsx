@@ -1,17 +1,21 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import { ROUTES } from "../constants";
 
 import LoginPage from "../components/auth/pages/LoginPage";
 import RegisterPage from "../components/auth/pages/RegisterPage";
 import FeedPage from "../components/feed/pages/FeedPage";
+import ProfilePage from "../components/users/pages/ProfilePage";
+
 import { MainLayout } from "../components/layout/components/MainLayout";
-import { ProfilePage } from "../components/users/pages/ProfilePage";
-import { ROUTES, UI_TEXTS } from "../constants";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
 
 export function AppRoutes() {
     return (
         <Routes>
+        <Route path="/" element={<Navigate to={ROUTES.FEED} replace />} />
+
         <Route element={<PublicRoute />}>
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
@@ -19,15 +23,12 @@ export function AppRoutes() {
 
         <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
-            <Route path={ROUTES.HOME} element={<FeedPage />} />
+            <Route path={ROUTES.FEED} element={<FeedPage />} />
             <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
             </Route>
         </Route>
 
-        <Route
-            path={ROUTES.NOT_FOUND}
-            element={<h1>{UI_TEXTS.ERROR_404.TITLE}</h1>}
-        />
+        <Route path="*" element={<Navigate to={ROUTES.FEED} replace />} />
         </Routes>
     );
 }
