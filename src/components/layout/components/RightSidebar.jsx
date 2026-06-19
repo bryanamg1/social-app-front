@@ -34,7 +34,7 @@ export function RightSidebar() {
                 {RIGHT_SIDEBAR_TEXTS.SUGGESTIONS_TITLE}
             </Typography>
 
-            <Typography variant="body2" color="text.secondary" lineHeight={1.6}>
+            <Typography variant="body2" color="text.secondary" sx={{lineHeight: 1.6}}>
                 {RIGHT_SIDEBAR_TEXTS.SUGGESTIONS_DESCRIPTION}
             </Typography>
 
@@ -48,7 +48,7 @@ export function RightSidebar() {
 
         <Card component="section">
             <CardContent>
-            <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+            <Stack direction="row" spacing={1} sx={{alignItems: "center",mb: 1,}}>
                 <AutoAwesomeRoundedIcon color="primary" fontSize="small" />
 
                 <Typography variant="h6" className={styles.cardTitleNoMargin}>
@@ -56,7 +56,7 @@ export function RightSidebar() {
                 </Typography>
             </Stack>
 
-            <Typography variant="body2" color="text.secondary" lineHeight={1.6}>
+            <Typography variant="body2" color="text.secondary" sx={{lineHeight: 1.6}}>
                 {RIGHT_SIDEBAR_TEXTS.TRENDING_DESCRIPTION}
             </Typography>
             </CardContent>

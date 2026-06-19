@@ -1,0 +1,623 @@
+.feedPage {
+  width: 100%;
+  min-height: 100vh;
+  color: #e5eefb;
+  text-align: left;
+  background: rgba(2, 6, 23, 0.22);
+  border-left: 1px solid rgba(148, 163, 184, 0.14);
+  border-right: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.feedHeader {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 16px 20px 14px;
+  text-align: left;
+  background: rgba(2, 6, 23, 0.82);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+.feedTitle {
+  color: #f8fafc;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.feedSubtitle {
+  margin-top: 4px !important;
+  color: #94a3b8;
+  font-size: 0.92rem !important;
+}
+
+.composerCard,
+.postCard {
+  margin: 14px;
+  border-radius: 24px !important;
+  color: #e5eefb !important;
+  background: rgba(15, 23, 42, 0.86) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22) !important;
+  text-align: left;
+}
+
+.composerCard {
+  margin-bottom: 22px;
+}
+
+.composerCard :global(.MuiCardContent-root),
+.postCard :global(.MuiCardContent-root) {
+  padding: 18px !important;
+}
+
+.composerHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.avatar {
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, #94a3b8, #e2e8f0) !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+}
+
+.composerInputWrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+.composerInput :global(.MuiOutlinedInput-root) {
+  color: #e5eefb;
+  background: rgba(2, 6, 23, 0.42);
+  border-radius: 22px;
+}
+
+.composerInput :global(.MuiOutlinedInput-input),
+.composerInput :global(.MuiOutlinedInput-inputMultiline) {
+  font-size: 1rem;
+}
+
+.composerInput :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(148, 163, 184, 0.22);
+}
+
+.composerInput :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(56, 189, 248, 0.46);
+}
+
+.composerInput :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+  border-color: #38bdf8;
+}
+
+.composerInput :global(textarea::placeholder) {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+.previewWrapper {
+  position: relative;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: #020617;
+}
+
+.previewImage {
+  width: 100%;
+  max-height: 360px;
+  display: block;
+  object-fit: cover;
+}
+
+.removeImageButton {
+  position: absolute !important;
+  top: 12px;
+  right: 12px;
+  color: #f8fafc !important;
+  background: rgba(2, 6, 23, 0.76) !important;
+}
+
+.composerActions {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.primaryButton {
+  min-width: 118px !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 8px 20px !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+}
+
+.primaryButton:disabled {
+  color: #94a3b8 !important;
+  opacity: 0.55;
+  background: rgba(148, 163, 184, 0.18) !important;
+}
+
+.secondaryButton,
+.actionButton {
+  color: #38bdf8 !important;
+  font-weight: 800 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+}
+
+.helperText {
+  margin-top: 10px !important;
+  color: #64748b;
+  font-size: 0.82rem !important;
+}
+
+.postsList {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 32px;
+}
+
+.postCard {
+  overflow: hidden;
+}
+
+.postHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.authorName {
+  color: #f8fafc;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+}
+
+.postDate {
+  margin-top: 2px !important;
+  color: #64748b;
+  font-size: 0.84rem !important;
+}
+
+.deleteButton {
+  color: #f87171 !important;
+}
+
+.postContent {
+  margin-top: 14px !important;
+  color: #e2e8f0;
+  font-size: 0.98rem !important;
+  line-height: 1.6 !important;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.postImageWrapper {
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.postImage {
+  width: 100%;
+  max-height: 560px;
+  display: block;
+  object-fit: cover;
+}
+
+
+.postMeta {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reactionChip {
+  color: #bae6fd !important;
+  background: rgba(14, 165, 233, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+}
+
+.reactionsBlock {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.reactionsSummary {
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reactionsLoadingState {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+}
+
+.reactionsLoadingState :global(.MuiCircularProgress-root) {
+  color: #38bdf8;
+}
+
+.reactionsLoadingText,
+.reactionsEmptyText {
+  color: #64748b;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+}
+
+.reactionsAlert {
+  border-radius: 14px !important;
+}
+
+.reactionActions {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.reactionButton,
+.reactionButtonActive {
+  min-width: 0 !important;
+  color: #38bdf8 !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 7px 8px !important;
+  background: rgba(14, 165, 233, 0.08) !important;
+  border: 1px solid rgba(56, 189, 248, 0.14) !important;
+}
+
+.reactionButtonActive {
+  color: #020617 !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+  border-color: transparent !important;
+}
+
+.reactionButton:disabled,
+.reactionButtonActive:disabled {
+  opacity: 0.58;
+}
+
+.postActions {
+  margin-top: 14px;
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.commentsSummary {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.commentsCount {
+  color: #64748b;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+}
+
+.commentsPanel {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.commentsTitle {
+  color: #f8fafc;
+  font-size: 0.94rem !important;
+  font-weight: 900 !important;
+}
+
+.commentForm {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.commentInput :global(.MuiOutlinedInput-root) {
+  color: #e5eefb;
+  background: rgba(2, 6, 23, 0.36);
+  border-radius: 18px;
+}
+
+.commentInput :global(.MuiOutlinedInput-input),
+.commentInput :global(.MuiOutlinedInput-inputMultiline) {
+  font-size: 0.92rem;
+}
+
+.commentInput :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+.commentInput :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+  border-color: rgba(56, 189, 248, 0.42);
+}
+
+.commentInput :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+  border-color: #38bdf8;
+}
+
+.commentInput :global(textarea::placeholder) {
+  color: #64748b;
+  opacity: 1;
+}
+
+.commentFormAlert {
+  border-radius: 14px !important;
+}
+
+.commentFormActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.commentSubmitButton {
+  min-width: 112px !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 7px 18px !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+}
+
+.commentSubmitButton:disabled {
+  color: #94a3b8 !important;
+  opacity: 0.6;
+  background: rgba(148, 163, 184, 0.18) !important;
+}
+
+.commentSubmitButton :global(.MuiCircularProgress-root) {
+  color: #94a3b8;
+}
+
+.commentsList {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.commentItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.36);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.commentAvatar {
+  width: 32px !important;
+  height: 32px !important;
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+  color: #020617 !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+}
+
+.commentBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.commentHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.commentAuthor {
+  color: #e2e8f0;
+  font-size: 0.9rem !important;
+  font-weight: 900 !important;
+}
+
+.commentDate {
+  flex: 0 0 auto;
+  color: #64748b;
+  font-size: 0.76rem !important;
+}
+
+.commentContent {
+  margin-top: 4px !important;
+  color: #cbd5e1;
+  font-size: 0.9rem !important;
+  line-height: 1.55 !important;
+  white-space: pre-wrap;
+}
+
+.commentsEmptyState {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.3);
+  border: 1px dashed rgba(148, 163, 184, 0.18);
+}
+
+.commentsEmptyTitle {
+  color: #cbd5e1;
+  font-size: 0.92rem !important;
+  font-weight: 900 !important;
+}
+
+.commentsEmptyText {
+  margin-top: 4px !important;
+  color: #64748b;
+  font-size: 0.84rem !important;
+  line-height: 1.5 !important;
+}
+
+.commentsLoadingState {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  color: #cbd5e1;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.commentsLoadingState :global(.MuiCircularProgress-root) {
+  color: #38bdf8;
+}
+
+.commentsLoadingText {
+  color: #cbd5e1;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+}
+
+.commentsAlert {
+  margin-top: 12px !important;
+  border-radius: 14px !important;
+}
+
+.centerState,
+.emptyState {
+  margin: 16px;
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 24px;
+  color: #cbd5e1;
+  text-align: center;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.centerState :global(.MuiCircularProgress-root) {
+  color: #38bdf8;
+}
+
+.alert {
+  margin: 16px !important;
+  border-radius: 16px !important;
+}
+
+.paginationActions {
+  margin: 2px 14px 28px;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.paginationAlert {
+  width: 100%;
+  border-radius: 16px !important;
+}
+
+.loadMoreButton {
+  min-width: 160px !important;
+  color: #020617 !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 9px 22px !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+}
+
+.loadMoreButton:disabled {
+  color: #94a3b8 !important;
+  opacity: 0.6;
+  background: rgba(148, 163, 184, 0.18) !important;
+}
+
+.endOfResultsText {
+  color: #64748b;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .feedPage {
+    border-inline: none;
+  }
+
+  .feedHeader {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 16px 18px 14px;
+  text-align: left;
+  background: rgba(2, 6, 23, 0.82);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+  .composerCard,
+  .postCard,
+  .centerState,
+  .emptyState {
+    margin: 12px;
+    border-radius: 20px !important;
+  }
+
+  .composerCard :global(.MuiCardContent-root),
+  .postCard :global(.MuiCardContent-root) {
+    padding: 14px !important;
+  }
+
+  .postImage {
+    max-height: 380px;
+  }
+
+  .paginationActions {
+    margin-inline: 12px;
+  }
+
+  .postActions {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .reactionActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .actionButton {
+    min-width: 0 !important;
+    padding-inline: 10px !important;
+  }
+
+  .commentHeader {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

@@ -1,146 +1,64 @@
-import { createContext, useCallback, useMemo, useState } from "react";
-import { authService } from "../components/auth/services/authService";
-import { AUTH_MESSAGES } from "../constants";
-import { authStorage } from "../services/authStorage";
-import { isTokenExpired } from "../services/jwt";
+import { createContext, useEffect, useMemo, useState } from "react";
+
+import { STORAGE_KEYS } from "../constants";
 
 export const AuthContext = createContext(null);
 
-function getInitialAuthState() {
-    const storedToken = authStorage.getToken();
-
-    if (!storedToken || isTokenExpired(storedToken)) {
-        authStorage.clear();
-
-        return {
-        token: null,
-        user: null,
-        };
-    }
-
-    return {
-        token: storedToken,
-        user: authStorage.getUser(),
-    };
-}
-
-function extractTokenFromResponse(data) {
-    return data?.token || data?.Token || data?.accessToken || null;
-}
-
-function extractUserFromResponse(data) {
-    return data?.user || data?.usuario || data?.data?.user || null;
-}
-
 export function AuthProvider({ children }) {
-    const [session, setSession] = useState(getInitialAuthState);
-    const [authLoading, setAuthLoading] = useState(false);
-    const [authError, setAuthError] = useState(null);
+    const [token, setToken] = useState(null);
+    const [user, setUser] = useState(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
 
-    const saveSession = useCallback((token, user = null) => {
-        authStorage.setToken(token);
-        authStorage.setUser(user);
+    useEffect(() => {
+        const storedToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+        const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
 
-        setSession({
-        token,
-        user,
-        });
-    }, []);
-
-    const login = useCallback(
-        async (credentials) => {
-        setAuthLoading(true);
-        setAuthError(null);
-
-        try {
-            const data = await authService.login(credentials);
-
-            const token = extractTokenFromResponse(data);
-            const user = extractUserFromResponse(data);
-
-            if (!token) {
-            throw new Error(AUTH_MESSAGES.TOKEN_NOT_FOUND);
-            }
-
-            saveSession(token, user);
-
-            return data;
-        } catch (error) {
-            setAuthError(error.message || AUTH_MESSAGES.LOGIN_ERROR);
-            throw error;
-        } finally {
-            setAuthLoading(false);
+        if (storedToken) {
+        setToken(storedToken);
         }
-        },
-        [saveSession]
-    );
 
-    const register = useCallback(async (payload) => {
-        setAuthLoading(true);
-        setAuthError(null);
-
+        if (storedUser) {
         try {
-        const data = await authService.register(payload);
-        return data;
+            setUser(JSON.parse(storedUser));
         } catch (error) {
-        setAuthError(error.message || AUTH_MESSAGES.REGISTER_ERROR);
-        throw error;
-        } finally {
-        setAuthLoading(false);
+            localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
         }
+        }
+
+        setLoadingAuth(false);
     }, []);
 
-    const logout = useCallback(() => {
-        authStorage.clear();
+    const login = ({ token, user }) => {
+        setToken(token);
+        setUser(user || null);
 
-        setSession({
-        token: null,
-        user: null,
-        });
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
 
-        setAuthError(null);
-    }, []);
+        if (user) {
+        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
+        } else {
+        localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+        }
+    };
 
-    const updateAuthUser = useCallback((user) => {
-        authStorage.setUser(user);
+    const logout = () => {
+        setToken(null);
+        setUser(null);
 
-        setSession((currentSession) => ({
-        ...currentSession,
-        user,
-        }));
-    }, []);
-
-    const refreshSession = useCallback(() => {
-        const nextSession = getInitialAuthState();
-        setSession(nextSession);
-
-        return Boolean(nextSession.token);
-    }, []);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+    };
 
     const value = useMemo(
         () => ({
-        token: session.token,
-        user: session.user,
-        isAuthenticated: Boolean(session.token),
-        authLoading,
-        authError,
+        token,
+        user,
+        loadingAuth,
+        isAuthenticated: Boolean(token),
         login,
-        register,
         logout,
-        updateAuthUser,
-        refreshSession,
         }),
-        [
-        session.token,
-        session.user,
-        authLoading,
-        authError,
-        login,
-        register,
-        logout,
-        updateAuthUser,
-        refreshSession,
-        ]
+        [token, user, loadingAuth]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
