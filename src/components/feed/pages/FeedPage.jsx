@@ -1,3 +1,6 @@
+import {Avatar, Button, Card, CardContent, Chip, Stack, Typography, } from "@mui/material";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import { FEED_TEXTS, PREVIEW_REACTIONS } from "../../../constants";
 import styles from "./FeedPage.module.css";
 
@@ -11,35 +14,68 @@ export function FeedPage() {
             </div>
         </header>
 
-        <article className={styles.composer}>
-            <div className={styles.avatar}>U</div>
+        <Card component="article" className={styles.composer}>
+            <CardContent className={styles.composerContent}>
+            <Avatar
+                sx={{
+                bgcolor: "primary.main",
+                color: "primary.contrastText",
+                fontWeight: 900,
+                }}
+            >
+                U
+            </Avatar>
 
             <div className={styles.composerBody}>
-            <p>{FEED_TEXTS.COMPOSER_PLACEHOLDER}</p>
-            <button type="button">{FEED_TEXTS.CREATE_POST}</button>
+                <Typography color="text.secondary">
+                {FEED_TEXTS.COMPOSER_PLACEHOLDER}
+                </Typography>
+
+                <Stack direction="row" spacing={1} mt={2}>
+                <Button variant="contained" startIcon={<AddRoundedIcon />}>
+                    {FEED_TEXTS.CREATE_POST}
+                </Button>
+
+                <Button variant="outlined" startIcon={<ImageRoundedIcon />}>
+                    Imagen
+                </Button>
+                </Stack>
             </div>
-        </article>
+            </CardContent>
+        </Card>
 
-        <article className={styles.placeholderPost}>
+        <Card component="article" className={styles.placeholderPost}>
+            <CardContent>
             <div className={styles.postHeader}>
-            <div className={styles.avatar}>S</div>
+                <Avatar
+                sx={{
+                    bgcolor: "background.default",
+                    color: "primary.main",
+                    fontWeight: 900,
+                }}
+                >
+                S
+                </Avatar>
 
-            <div>
+                <div>
                 <strong>{FEED_TEXTS.PREVIEW_AUTHOR}</strong>
                 <small>{FEED_TEXTS.PREVIEW_SUBTITLE}</small>
-            </div>
+                </div>
             </div>
 
-            <p>{FEED_TEXTS.PREVIEW_DESCRIPTION}</p>
+            <Typography className={styles.description}>
+                {FEED_TEXTS.PREVIEW_DESCRIPTION}
+            </Typography>
 
             <div className={styles.fakeImage} />
 
-            <div className={styles.reactions}>
-            {PREVIEW_REACTIONS.map((reaction) => (
-                <span key={reaction}>{reaction}</span>
-            ))}
-            </div>
-        </article>
+            <Stack direction="row" spacing={1} flexWrap="wrap" mt={2} useFlexGap>
+                {PREVIEW_REACTIONS.map((reaction) => (
+                <Chip key={reaction} label={reaction} size="small" />
+                ))}
+            </Stack>
+            </CardContent>
+        </Card>
         </section>
     );
 }

@@ -1,13 +1,17 @@
+import { Avatar, Button, Tooltip } from "@mui/material";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { NavLink } from "react-router-dom";
 import { APP_BRAND, LAYOUT_TEXTS, SIDEBAR_NAV_ITEMS } from "../../../constants";
-import { useAuth } from "../../../hooks/useAuth";
 import styles from "../styles/LeftSidebar.module.css";
 
-export function LeftSidebar() {
-    const { logout, user } = useAuth();
+const SIDEBAR_ICONS = {
+    home: <HomeRoundedIcon fontSize="small" />,
+    profile: <PersonRoundedIcon fontSize="small" />,
+};
 
-    const userInitial = user?.email?.charAt(0)?.toUpperCase() || "U";
-
+export function LeftSidebar({ user, onLogout }) {
     return (
         <aside className={styles.sidebar}>
         <div>
@@ -22,34 +26,54 @@ export function LeftSidebar() {
 
             <nav className={styles.nav}>
             {SIDEBAR_NAV_ITEMS.map((item) => (
+                <Tooltip key={item.path} title={item.label} placement="right">
                 <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === "/"}
-                className={({ isActive }) =>
-                    isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
-                }
+                    to={item.path}
+                    end={item.path === "/"}
+                    className={({ isActive }) =>
+                    isActive
+                        ? `${styles.navItem} ${styles.active}`
+                        : styles.navItem
+                    }
                 >
-                <span className={styles.icon}>{item.icon}</span>
-                <span className={styles.label}>{item.label}</span>
+                    <span className={styles.icon}>{SIDEBAR_ICONS[item.iconKey]}</span>
+                    <span className={styles.label}>{item.label}</span>
                 </NavLink>
+                </Tooltip>
             ))}
             </nav>
         </div>
 
         <div className={styles.footer}>
             <div className={styles.userCard}>
-            <div className={styles.avatar}>{userInitial}</div>
+            <Avatar
+                sx={{
+                width: 42,
+                height: 42,
+                bgcolor: "background.default",
+                color: "primary.main",
+                fontWeight: 900,
+                }}
+            >
+                {user.initial}
+            </Avatar>
 
             <div className={styles.userInfo}>
-                <strong>{user?.name || LAYOUT_TEXTS.DEFAULT_USER}</strong>
-                <small>{user?.email || LAYOUT_TEXTS.ACTIVE_SESSION}</small>
+                <strong>{user.name}</strong>
+                <small>{user.email}</small>
             </div>
             </div>
 
-            <button type="button" className={styles.logoutButton} onClick={logout}>
+            <Button
+            type="button"
+            variant="outlined"
+            color="error"
+            startIcon={<LogoutRoundedIcon />}
+            className={styles.logoutButton}
+            onClick={onLogout}
+            >
             {LAYOUT_TEXTS.LOGOUT}
-            </button>
+            </Button>
         </div>
         </aside>
     );

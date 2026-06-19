@@ -82,7 +82,8 @@
 }
 
 .icon {
-    font-size: 1.15rem;
+    display: grid;
+    place-items: center;
 }
 
 .footer {
@@ -99,18 +100,6 @@
     border: 1px solid var(--color-border);
     border-radius: 18px;
     background: rgba(16, 29, 51, 0.75);
-}
-
-.avatar {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: var(--color-surface-soft);
-    color: var(--color-accent);
-    font-weight: 900;
 }
 
 .userInfo {
@@ -138,20 +127,6 @@
 
 .logoutButton {
     width: 100%;
-    min-height: 42px;
-    border: 1px solid rgba(255, 92, 122, 0.3);
-    border-radius: 14px;
-    background: rgba(255, 92, 122, 0.08);
-    color: var(--color-danger);
-    font-weight: 800;
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
-}
-
-.logoutButton:hover {
-    background: rgba(255, 92, 122, 0.14);
-    transform: translateY(-1px);
 }
 
 @media (max-width: 1100px) {
