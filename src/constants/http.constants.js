@@ -10,6 +10,9 @@ export const HTTP_ERROR_MESSAGES = {
 
 export const API_ERROR_CODES = {
     USER_NAME_EXIST: "USER_NAME_EXIST",
+    FOLLOW_USER: "FOLLOW_USER",
+    NOT_FOLLOWING: "NOT_FOLLOWING",
+    FOLLOW_STATUS_READ_FAILED: "FOLLOW_STATUS_READ_FAILED",
 };
 
 export const API_ENDPOINTS = {
@@ -23,6 +26,9 @@ export const API_ENDPOINTS = {
 
     FOLLOWS: {
         FEED: "/follows/feed",
+        STATUS: (userId) => `/follows/users/${userId}/status`,
+        FOLLOW_USER: (userId) => `/follows/users/${userId}/follow`,
+        UNFOLLOW_USER: (userId) => `/follows/users/${userId}/unfollow`,
     },
 
     POSTS: {

@@ -10,6 +10,7 @@ import {
 import { useAuth } from "../../../hooks/useAuth";
 import { removePost } from "../../feed/services/feedService";
 import { getPostId } from "../../feed/utils/postAdapter";
+import { useFollowAction } from "./useFollowAction";
 import { getPostsByUserId, getUserProfile } from "../services/userProfileService";
 import { getUserId } from "../utils/userProfileAdapter";
 
@@ -26,6 +27,10 @@ export const usePublicProfile = () => {
     const { user } = useAuth();
     const profileUserId = params[ROUTE_PARAMS.USER_ID];
     const currentUserId = getUserId(user);
+    const followAction = useFollowAction({
+        targetUserId: profileUserId,
+        currentUserId,
+    });
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
     const [loadingProfile, setLoadingProfile] = useState(false);
@@ -187,6 +192,7 @@ export const usePublicProfile = () => {
         postsError,
         paginationError,
         pagination,
+        followAction,
         loadMorePosts,
         handleDeletePost,
     };

@@ -9,6 +9,17 @@ export const PROFILE_TEXTS = {
     LOADING: "Cargando perfil...",
     UPDATE_SUCCESS: "Perfil actualizado correctamente.",
 
+    FOLLOW: {
+        FOLLOW_BUTTON: "Seguir",
+        FOLLOWING_BUTTON: "Siguiendo",
+        STATUS_LOADING: "Cargando estado...",
+        LOADING: "Procesando...",
+        FOLLOW_SUCCESS: "Ahora sigues a este usuario.",
+        UNFOLLOW_SUCCESS: "Dejaste de seguir a este usuario.",
+        ALREADY_FOLLOWING: "Ya sigues a este usuario.",
+        NOT_FOLLOWING: "Ya no sigues a este usuario.",
+    },
+
     FIELDS: {
         EMAIL: "Email",
         MEMBER_SINCE: "Miembro desde",
@@ -36,6 +47,8 @@ export const PROFILE_TEXTS = {
         NO_PROFILE_CHANGES: "No hay cambios para guardar.",
         UPDATE_PROFILE: "No se pudo actualizar el perfil.",
         USER_NAME_EXIST: "Este nombre de usuario ya esta en uso.",
+        FOLLOW_ACTION: "No se pudo actualizar el seguimiento.",
+        FOLLOW_STATUS: "No se pudo consultar el estado de seguimiento.",
     },
 };
 

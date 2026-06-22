@@ -12,6 +12,7 @@ import {
     getUserName,
 } from "../utils/userProfileAdapter";
 import { ProfileEditForm } from "./ProfileEditForm";
+import { ProfileFollowButton } from "./ProfileFollowButton";
 
 import styles from "../pages/ProfilePage.module.css";
 
@@ -25,6 +26,7 @@ export function ProfileHeader({
     updating,
     updateError,
     updateSuccess,
+    followAction,
     onStartEditing,
     onCancelEditing,
     onFieldChange,
@@ -105,6 +107,8 @@ export function ProfileHeader({
             <Typography className={styles.postsCount}>
                 {postsCount} {PROFILE_TEXTS.POSTS.COUNT_LABEL}
             </Typography>
+
+            <ProfileFollowButton followAction={followAction} />
 
             {canEdit && updateSuccess && (
                 <Alert severity="success">{PROFILE_TEXTS.UPDATE_SUCCESS}</Alert>

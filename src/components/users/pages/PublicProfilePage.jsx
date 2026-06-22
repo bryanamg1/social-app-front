@@ -21,6 +21,7 @@ export function PublicProfilePage() {
         postsError,
         paginationError,
         pagination,
+        followAction,
         loadMorePosts,
         handleDeletePost,
     } = usePublicProfile();
@@ -51,6 +52,7 @@ export function PublicProfilePage() {
             postsCount={postsCount}
             canEdit={false}
             description={PROFILE_TEXTS.PUBLIC_DESCRIPTION}
+            followAction={followAction}
         />
 
         <section className={styles.postsSection}>

@@ -1,7 +1,7 @@
 export const UI_TEXTS = {
     LOADER: {
         DEFAULT: "Cargando...",
-        VERIFYING_SESSION: "Verificando sesión...",
+        VERIFYING_SESSION: "Verificando sesion...",
     },
 
     PAGES: {
@@ -12,6 +12,10 @@ export const UI_TEXTS = {
     },
 
     ERROR_404: {
-        TITLE: "404 - Página no encontrada",
+        TITLE: "404 - Pagina no encontrada",
     },
+};
+
+export const UI_FEEDBACK = {
+    AUTO_HIDE_MS: 4000,
 };
