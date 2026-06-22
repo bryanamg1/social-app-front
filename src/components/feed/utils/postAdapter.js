@@ -33,9 +33,18 @@ export const getPostImage = (post) => {
 
 export const getPostAuthorName = (post) => {
     return (
+        post?.user_name ??
+        post?.userName ??
         post?.user?.name ??
+        post?.user?.user_name ??
+        post?.user?.userName ??
         post?.user?.username ??
         post?.user?.email ??
+        post?.author?.name ??
+        post?.author?.user_name ??
+        post?.author?.userName ??
+        post?.author?.username ??
+        post?.authorName ??
         post?.username ??
         post?.name ??
         post?.email ??
