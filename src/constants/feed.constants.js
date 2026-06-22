@@ -75,6 +75,8 @@ export const FEED_TEXTS = {
     ERRORS: {
         LOAD_POSTS: "No se pudieron cargar las publicaciones.",
         LOAD_MORE_POSTS: "No se pudieron cargar mas publicaciones.",
+        RATE_LIMIT_POSTS:
+            "Hay demasiadas solicitudes al feed. Espera unos segundos e intenta de nuevo.",
         LOAD_COMMENTS: "No se pudieron cargar los comentarios.",
         ADD_COMMENT: "No se pudo publicar el comentario.",
         LOAD_REACTIONS: "No se pudieron cargar las reacciones.",

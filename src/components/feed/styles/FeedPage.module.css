@@ -189,6 +189,17 @@
   line-height: 1.2 !important;
 }
 
+.authorNameLink {
+  color: #f8fafc;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-decoration: none;
+}
+
+.authorNameLink:hover {
+  color: #38bdf8;
+}
+
 .postDate {
   margin-top: 2px !important;
   color: #64748b;

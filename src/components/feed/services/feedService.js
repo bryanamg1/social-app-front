@@ -11,15 +11,33 @@ import {
     getPostsFromResponse,
 } from "../utils/postAdapter";
 
+const pendingPostsRequests = new Map();
+
+const getPostsRequestKey = ({ page, limit } = {}) => {
+    return `${API_ENDPOINTS.POSTS.ALL}:${page ?? ""}:${limit ?? ""}`;
+};
+
 export const getAllPosts = async ({ page, limit } = {}) => {
-    const response = await apiClient.get(API_ENDPOINTS.POSTS.ALL, {
+    const requestKey = getPostsRequestKey({ page, limit });
+
+    if (pendingPostsRequests.has(requestKey)) {
+        return pendingPostsRequests.get(requestKey);
+    }
+
+    const request = apiClient.get(API_ENDPOINTS.POSTS.ALL, {
         params: {
         [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
         [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
         },
-    });
+    })
+        .then((response) => getPostsFromResponse(response))
+        .finally(() => {
+        pendingPostsRequests.delete(requestKey);
+        });
 
-    return getPostsFromResponse(response);
+    pendingPostsRequests.set(requestKey, request);
+
+    return request;
 };
 
 export const getFollowingFeed = async () => {

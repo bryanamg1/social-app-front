@@ -1,6 +1,7 @@
 export const PROFILE_TEXTS = {
     TITLE: "Mi perfil",
     DESCRIPTION: "Gestiona tus datos y revisa tus publicaciones.",
+    PUBLIC_DESCRIPTION: "Perfil publico y publicaciones del usuario.",
     EDIT_PROFILE: "Editar perfil",
     CANCEL_EDIT: "Cancelar",
     SAVE_PROFILE: "Guardar cambios",

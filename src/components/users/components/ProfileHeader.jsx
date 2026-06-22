@@ -18,6 +18,8 @@ import styles from "../pages/ProfilePage.module.css";
 export function ProfileHeader({
     profile,
     postsCount,
+    canEdit = true,
+    description = PROFILE_TEXTS.DESCRIPTION,
     isEditing,
     form,
     updating,
@@ -60,7 +62,7 @@ export function ProfileHeader({
                 </Typography>
 
                 <Typography variant="body1" color="text.secondary">
-                {PROFILE_TEXTS.DESCRIPTION}
+                {description}
                 </Typography>
             </Stack>
 
@@ -104,11 +106,11 @@ export function ProfileHeader({
                 {postsCount} {PROFILE_TEXTS.POSTS.COUNT_LABEL}
             </Typography>
 
-            {updateSuccess && (
+            {canEdit && updateSuccess && (
                 <Alert severity="success">{PROFILE_TEXTS.UPDATE_SUCCESS}</Alert>
             )}
 
-            {isEditing ? (
+            {canEdit && isEditing ? (
                 <ProfileEditForm
                 form={form}
                 updating={updating}
@@ -117,7 +119,9 @@ export function ProfileHeader({
                 onChange={onFieldChange}
                 onSubmit={onSubmitProfile}
                 />
-            ) : (
+            ) : null}
+
+            {canEdit && !isEditing ? (
                 <Button
                 variant="outlined"
                 startIcon={<EditRoundedIcon />}
@@ -125,7 +129,7 @@ export function ProfileHeader({
                 >
                 {PROFILE_TEXTS.EDIT_PROFILE}
                 </Button>
-            )}
+            ) : null}
             </Stack>
         </section>
         </>

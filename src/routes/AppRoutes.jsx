@@ -5,6 +5,7 @@ import RegisterPage from "../components/auth/pages/RegisterPage";
 import FeedPage from "../components/feed/pages/FeedPage";
 import { MainLayout } from "../components/layout/components/MainLayout";
 import { ProfilePage } from "../components/users/pages/ProfilePage";
+import { PublicProfilePage } from "../components/users/pages/PublicProfilePage";
 import { ROUTES, UI_TEXTS } from "../constants";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
@@ -21,6 +22,7 @@ export function AppRoutes() {
             <Route element={<MainLayout />}>
             <Route path={ROUTES.HOME} element={<FeedPage />} />
             <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+            <Route path={ROUTES.PROFILE_DETAIL} element={<PublicProfilePage />} />
             </Route>
         </Route>
 

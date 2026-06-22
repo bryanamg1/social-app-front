@@ -7,12 +7,13 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { FEED_TEXTS } from "../../../constants";
+import { FEED_TEXTS, ROUTES } from "../../../constants";
 import {
   formatPostDate,
   getPostAuthorName,
@@ -20,6 +21,7 @@ import {
   getPostCreatedAt,
   getPostId,
   getPostImage,
+  getPostOwnerId,
 } from "../utils/postAdapter";
 import { PostCommentForm } from "./PostCommentForm";
 import { PostComments } from "./PostComments";
@@ -53,6 +55,7 @@ export const PostCard = ({
     onToggleReaction,
     }) => {
     const postId = getPostId(post);
+    const ownerId = getPostOwnerId(post);
     const authorName = getPostAuthorName(post);
     const content = getPostContent(post);
     const image = getPostImage(post);
@@ -70,7 +73,17 @@ export const PostCard = ({
                 <Avatar className={styles.avatar}>{avatarLetter}</Avatar>
 
                 <Box>
-                <Typography className={styles.authorName}>{authorName}</Typography>
+                {ownerId ? (
+                    <Typography
+                    component={Link}
+                    to={ROUTES.USER_PROFILE(ownerId)}
+                    className={styles.authorNameLink}
+                    >
+                    {authorName}
+                    </Typography>
+                ) : (
+                    <Typography className={styles.authorName}>{authorName}</Typography>
+                )}
 
                 <Typography className={styles.postDate}>
                     {formatPostDate(createdAt)}
