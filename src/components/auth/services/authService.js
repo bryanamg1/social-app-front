@@ -19,7 +19,7 @@ const decodeJwtPayload = (token) => {
         );
 
         return JSON.parse(jsonPayload);
-    } catch (error) {
+    } catch {
         return null;
     }
 };
