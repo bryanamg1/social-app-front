@@ -1,42 +1,92 @@
-import { Avatar, Button, Stack, Typography } from "@mui/material";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import { Alert, Box, CircularProgress, Typography } from "@mui/material";
+
+import { PostList } from "../../feed/components/PostList";
+import { ProfileHeader } from "../components/ProfileHeader";
+import { useOwnProfile } from "../hooks/useOwnProfile";
 import { PROFILE_TEXTS } from "../../../constants";
+
 import styles from "./ProfilePage.module.css";
 
 export function ProfilePage() {
-    return (
+    const {
+        currentUserId,
+        profile,
+        posts,
+        postsCount,
+        loadingProfile,
+        loadingPosts,
+        loadingMorePosts,
+        updatingProfile,
+        deletingPostId,
+        profileError,
+        postsError,
+        paginationError,
+        updateError,
+        updateSuccess,
+        isEditing,
+        profileForm,
+        pagination,
+        loadMorePosts,
+        startEditing,
+        cancelEditing,
+        handleProfileFieldChange,
+        submitProfile,
+        handleDeletePost,
+    } = useOwnProfile();
+
+    if (loadingProfile && !profile) {
+        return (
+        <Box className={styles.centerState}>
+            <CircularProgress />
+            <Typography>{PROFILE_TEXTS.LOADING}</Typography>
+        </Box>
+        );
+    }
+
+    if (profileError) {
+        return (
         <section className={styles.page}>
-        <header className={styles.cover}>
-            <Avatar
-            className={styles.avatar}
-            sx={{
-                bgcolor: "background.default",
-                color: "primary.main",
-                fontWeight: 900,
-            }}
-            >
-            U
-            </Avatar>
-        </header>
+            <Alert severity="error" className={styles.alert}>
+            {profileError}
+            </Alert>
+        </section>
+        );
+    }
 
-        <section className={styles.profileInfo}>
-            <Stack spacing={1.5} sx={{alignItems: "flex-start",}}>
-            <Typography variant="h4" component="h1" fontWeight={900}>
-                {PROFILE_TEXTS.TITLE}
+    return (
+        <main className={styles.page}>
+        <ProfileHeader
+            profile={profile}
+            postsCount={postsCount}
+            isEditing={isEditing}
+            form={profileForm}
+            updating={updatingProfile}
+            updateError={updateError}
+            updateSuccess={updateSuccess}
+            onStartEditing={startEditing}
+            onCancelEditing={cancelEditing}
+            onFieldChange={handleProfileFieldChange}
+            onSubmitProfile={submitProfile}
+        />
+
+        <section className={styles.postsSection}>
+            <Typography variant="h5" className={styles.postsTitle}>
+            {PROFILE_TEXTS.POSTS.TITLE}
             </Typography>
 
-            <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{lineHeight: 1.6,maxWidth: 560,}}>
-                {PROFILE_TEXTS.DESCRIPTION}
-            </Typography>
-
-            <Button variant="outlined" startIcon={<EditRoundedIcon />}>
-                {PROFILE_TEXTS.EDIT_PROFILE}
-            </Button>
-            </Stack>
+            <PostList
+            posts={posts}
+            currentUserId={currentUserId}
+            loadingPosts={loadingPosts}
+            loadingMorePosts={loadingMorePosts}
+            deletingPostId={deletingPostId}
+            error={postsError}
+            paginationError={paginationError}
+            hasMore={pagination.hasMore}
+            onDeletePost={handleDeletePost}
+            onLoadMorePosts={loadMorePosts}
+            />
         </section>
-        </section>
+        </main>
     );
 }

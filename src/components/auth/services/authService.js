@@ -1,5 +1,5 @@
 import apiClient from "../../../services/apiClient";
-import { AUTH_MESSAGES } from "../../../constants";
+import { API_ENDPOINTS, AUTH_MESSAGES } from "../../../constants";
 
 const decodeJwtPayload = (token) => {
     try {
@@ -113,7 +113,7 @@ const normalizeLoginResponse = (response, email) => {
 };
 
 export const loginUser = async ({ email, password }) => {
-    const response = await apiClient.post("/auth/login", {
+    const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, {
         email,
         password,
     });
@@ -122,7 +122,7 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const registerUser = async ({ user_name, userName, email, password }) => {
-    const response = await apiClient.post("/auth/register", {
+    const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
         user_name: user_name ?? userName,
         email,
         password,
