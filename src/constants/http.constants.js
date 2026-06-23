@@ -73,4 +73,8 @@ export const API_QUERY_PARAMS = {
         PAGE: "page",
         LIMIT: "limit",
     },
+
+    SEARCH: {
+        QUERY: "query",
+    },
 };
