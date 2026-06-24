@@ -3,8 +3,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "../components/auth/pages/LoginPage";
 import RegisterPage from "../components/auth/pages/RegisterPage";
 import FeedPage from "../components/feed/pages/FeedPage";
-import {ProfilePage} from "../components/users/pages/ProfilePage";
-
 import { MainLayout } from "../components/layout/components/MainLayout";
 import { MessagesPage } from "../components/messages/pages/MessagesPage";
 import { ProfilePage } from "../components/users/pages/ProfilePage";
@@ -44,7 +42,10 @@ export function AppRoutes() {
             </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to={ROUTES.FEED} replace />} />
+        <Route
+            path={ROUTES.NOT_FOUND}
+            element={<h1>{UI_TEXTS.ERROR_404.TITLE}</h1>}
+        />
         </Routes>
     );
 }
