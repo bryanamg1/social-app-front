@@ -13,6 +13,11 @@ export const SIDEBAR_NAV_ITEMS = [
         iconKey: "home",
     },
     {
+        label: "Mensajes",
+        path: ROUTES.MESSAGES,
+        iconKey: "messages",
+    },
+    {
         label: "Perfil",
         path: ROUTES.PROFILE,
         iconKey: "profile",
@@ -22,16 +27,27 @@ export const SIDEBAR_NAV_ITEMS = [
 export const RIGHT_SIDEBAR_TEXTS = {
     SEARCH_TITLE: "Buscar usuarios",
     SEARCH_PLACEHOLDER: "Buscar por email o nombre...",
+    SEARCH_RESULTS_TITLE: "Resultados",
+    SEARCH_IDLE: "Escribe un nombre, email o bio para buscar usuarios.",
+    SEARCH_LOADING: "Buscando usuarios...",
+    SEARCH_EMPTY: "No se encontraron usuarios.",
+    SEARCH_RESULTS_COUNT: (count) =>
+        `${count} ${count === 1 ? "resultado" : "resultados"}`,
     SUGGESTIONS_TITLE: "Sugerencias",
     SUGGESTIONS_DESCRIPTION:
-        "Más adelante mostraremos usuarios recomendados según tu red.",
+        "Mas adelante mostraremos usuarios recomendados segun tu red.",
     TRENDING_TITLE: "Actividad",
     TRENDING_DESCRIPTION:
-        "Aquí mostraremos actividad reciente, nuevos usuarios y publicaciones destacadas.",
+        "Aqui mostraremos actividad reciente, nuevos usuarios y publicaciones destacadas.",
+};
+
+export const RIGHT_SIDEBAR_SEARCH = {
+    DEBOUNCE_MS: 350,
+    ERROR_TEXT: "No se pudo buscar usuarios.",
 };
 
 export const LAYOUT_TEXTS = {
-    LOGOUT: "Cerrar sesión",
-    ACTIVE_SESSION: "Sesión activa",
+    LOGOUT: "Cerrar sesion",
+    ACTIVE_SESSION: "Sesion activa",
     DEFAULT_USER: "Usuario",
 };

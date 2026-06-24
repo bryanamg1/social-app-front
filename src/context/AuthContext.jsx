@@ -1,53 +1,40 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { STORAGE_KEYS } from "../constants";
-
-export const AuthContext = createContext(null);
+import { authStorage } from "../services/authStorage";
+import { AuthContext } from "./AuthContextValue";
 
 export function AuthProvider({ children }) {
-    const [token, setToken] = useState(null);
-    const [user, setUser] = useState(null);
-    const [loadingAuth, setLoadingAuth] = useState(true);
+    const [token, setToken] = useState(() => authStorage.getToken());
+    const [user, setUser] = useState(() => authStorage.getUser());
+    const [loadingAuth] = useState(false);
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-        const storedUser = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
-
-        if (storedToken) {
-        setToken(storedToken);
-        }
-
-        if (storedUser) {
-        try {
-            setUser(JSON.parse(storedUser));
-        } catch (error) {
-            localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
-        }
-        }
-
-        setLoadingAuth(false);
-    }, []);
-
-    const login = ({ token, user }) => {
+    const login = useCallback(({ token, user }) => {
         setToken(token);
         setUser(user || null);
 
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+        authStorage.setToken(token);
+        authStorage.setUser(user);
+    }, []);
 
-        if (user) {
-        localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
-        } else {
-        localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
-        }
-    };
+    const updateUser = useCallback((nextUser) => {
+        setUser((currentUser) => {
+        const updatedUser = {
+            ...(currentUser || {}),
+            ...(nextUser || {}),
+        };
 
-    const logout = () => {
+        authStorage.setUser(updatedUser);
+
+        return updatedUser;
+        });
+    }, []);
+
+    const logout = useCallback(() => {
         setToken(null);
         setUser(null);
 
-        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-        localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
-    };
+        authStorage.clear();
+    }, []);
 
     const value = useMemo(
         () => ({
@@ -56,9 +43,10 @@ export function AuthProvider({ children }) {
         loadingAuth,
         isAuthenticated: Boolean(token),
         login,
+        updateUser,
         logout,
         }),
-        [token, user, loadingAuth]
+        [token, user, loadingAuth, login, updateUser, logout]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

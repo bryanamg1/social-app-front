@@ -1,8 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 import {
   APP_BRAND,
@@ -11,11 +11,15 @@ import {
   SIDEBAR_NAV_ITEMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useUserSearch } from "../../users/hooks/useUserSearch";
+import { getUserId } from "../../users/utils/userProfileAdapter";
+import { UserSearchPanel } from "./UserSearchPanel";
 
 import styles from "../styles/MainLayout.module.css";
 
 const ICONS_BY_KEY = {
     home: <HomeOutlinedIcon />,
+    messages: <MailOutlineRoundedIcon />,
     profile: <PersonOutlineOutlinedIcon />,
 };
 
@@ -32,6 +36,8 @@ export function MainLayout() {
     const { user, logout } = useAuth();
 
     const userDisplayName = getUserDisplayName(user);
+    const currentUserId = getUserId(user);
+    const userSearch = useUserSearch({ currentUserId });
     const avatarLetter = userDisplayName.charAt(0).toUpperCase();
 
     return (
@@ -98,25 +104,7 @@ export function MainLayout() {
 
         <aside className={styles.rightSidebar}>
             <div className={styles.rightSidebarInner}>
-            <div className={styles.searchBox}>
-                <SearchOutlinedIcon className={styles.searchIcon} />
-
-                <input
-                type="text"
-                placeholder={RIGHT_SIDEBAR_TEXTS.SEARCH_PLACEHOLDER}
-                className={styles.searchInput}
-                />
-            </div>
-
-            <section className={styles.rightCard}>
-                <h3 className={styles.rightCardTitle}>
-                {RIGHT_SIDEBAR_TEXTS.SEARCH_TITLE}
-                </h3>
-
-                <p className={styles.rightCardText}>
-                {RIGHT_SIDEBAR_TEXTS.SUGGESTIONS_DESCRIPTION}
-                </p>
-            </section>
+            <UserSearchPanel search={userSearch} />
 
             <section className={styles.rightCard}>
                 <h3 className={styles.rightCardTitle}>

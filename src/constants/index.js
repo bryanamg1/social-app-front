@@ -5,3 +5,4 @@ export * from "./ui.constants";
 export * from "./layout.constants";
 export * from "./feed.constants";
 export * from "./users.constants";
+export * from "./messages.constants";

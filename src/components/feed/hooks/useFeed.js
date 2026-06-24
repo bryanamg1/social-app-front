@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { FEED_PAGINATION, FEED_TEXTS } from "../../../constants";
+import { FEED_PAGINATION, FEED_TEXTS, HTTP_STATUS } from "../../../constants";
 import {
   createPost,
   getAllPosts,
@@ -39,6 +39,14 @@ const getHasMore = ({ page, totalPages, receivedPostsCount, limit }) => {
     return receivedPostsCount >= limit;
 };
 
+const getFeedErrorMessage = (error, fallbackMessage) => {
+    if (error?.response?.status === HTTP_STATUS.TOO_MANY_REQUESTS) {
+        return FEED_TEXTS.ERRORS.RATE_LIMIT_POSTS;
+    }
+
+    return fallbackMessage;
+};
+
 export const useFeed = ({ mode = "all" } = {}) => {
     const [posts, setPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
@@ -54,6 +62,7 @@ export const useFeed = ({ mode = "all" } = {}) => {
         totalPages: null,
         hasMore: false,
     });
+    const postsCountRef = useRef(0);
 
     const loadPosts = useCallback(
         async ({ page = FEED_PAGINATION.INITIAL_PAGE, append = false } = {}) => {
@@ -88,8 +97,15 @@ export const useFeed = ({ mode = "all" } = {}) => {
             : null;
 
             setPosts((currentPosts) =>
-            append ? getUniquePosts(currentPosts, nextPosts) : nextPosts
-            );
+            {
+                const updatedPosts = append
+                ? getUniquePosts(currentPosts, nextPosts)
+                : nextPosts;
+
+                postsCountRef.current = updatedPosts.length;
+
+                return updatedPosts;
+            });
 
             setPagination({
             page: nextPage,
@@ -106,11 +122,28 @@ export const useFeed = ({ mode = "all" } = {}) => {
                     limit: nextLimit,
                     }),
             });
-        } catch {
+        } catch (error) {
             if (append) {
-            setPaginationError(FEED_TEXTS.ERRORS.LOAD_MORE_POSTS);
+            setPaginationError(
+                getFeedErrorMessage(error, FEED_TEXTS.ERRORS.LOAD_MORE_POSTS)
+            );
             } else {
-            setError(FEED_TEXTS.ERRORS.LOAD_POSTS);
+            const hasLoadedPosts = postsCountRef.current > 0;
+
+            setError((currentError) => {
+                const nextError = getFeedErrorMessage(
+                error,
+                FEED_TEXTS.ERRORS.LOAD_POSTS
+                );
+
+                return hasLoadedPosts ? currentError : nextError;
+            });
+
+            if (hasLoadedPosts) {
+                setPaginationError(
+                getFeedErrorMessage(error, FEED_TEXTS.ERRORS.LOAD_MORE_POSTS)
+                );
+            }
             }
         } finally {
             setLoadingPosts(false);
@@ -168,7 +201,6 @@ export const useFeed = ({ mode = "all" } = {}) => {
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadPosts();
     }, [loadPosts]);
 

@@ -3,6 +3,11 @@ export const STORAGE_KEYS = {
     AUTH_USER: "social_app_auth_user",
 };
 
+export const LEGACY_STORAGE_KEYS = {
+    AUTH_TOKEN: "token",
+    AUTH_USER: "user",
+};
+
 export const AUTH_MESSAGES = {
     TOKEN_NOT_FOUND: "El backend no devolvió un token válido.",
     LOGIN_ERROR: "No se pudo iniciar sesión.",
