@@ -27,6 +27,7 @@ export function ProfileHeader({
     updateError,
     updateSuccess,
     followAction,
+    secondaryAction,
     onStartEditing,
     onCancelEditing,
     onFieldChange,
@@ -108,7 +109,23 @@ export function ProfileHeader({
                 {postsCount} {PROFILE_TEXTS.POSTS.COUNT_LABEL}
             </Typography>
 
-            <ProfileFollowButton followAction={followAction} />
+            <Stack direction="row" spacing={1.25} useFlexGap flexWrap="wrap">
+                <ProfileFollowButton followAction={followAction} />
+
+                {secondaryAction?.isVisible ? (
+                    <Button
+                    variant="outlined"
+                    disabled={secondaryAction.loading}
+                    onClick={secondaryAction.onClick}
+                    >
+                    {secondaryAction.label}
+                    </Button>
+                ) : null}
+            </Stack>
+
+            {secondaryAction?.isVisible && secondaryAction.error ? (
+                <Alert severity="error">{secondaryAction.error}</Alert>
+            ) : null}
 
             {canEdit && updateSuccess && (
                 <Alert severity="success">{PROFILE_TEXTS.UPDATE_SUCCESS}</Alert>

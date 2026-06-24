@@ -38,6 +38,7 @@
 .resultsHeader {
     display: flex;
     align-items: baseline;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 10px;
@@ -154,4 +155,15 @@
     margin-top: 2px;
     color: #94a3b8;
     font-size: 0.78rem;
+}
+
+@media (max-width: 520px) {
+    .resultsCard {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .resultLink {
+        padding: 10px;
+    }
 }

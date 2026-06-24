@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
@@ -18,6 +19,7 @@ import styles from "../styles/MainLayout.module.css";
 
 const ICONS_BY_KEY = {
     home: <HomeOutlinedIcon />,
+    messages: <MailOutlineRoundedIcon />,
     profile: <PersonOutlineOutlinedIcon />,
 };
 

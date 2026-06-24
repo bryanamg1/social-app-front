@@ -1,6 +1,8 @@
 export const ROUTES = {
+    ROOT: "/",
     HOME: "/feed",
     FEED:"/feed",
+    MESSAGES: "/messages",
     LOGIN: "/login",
     REGISTER: "/register",
     PROFILE: "/profile",

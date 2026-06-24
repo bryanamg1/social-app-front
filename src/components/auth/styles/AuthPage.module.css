@@ -1,5 +1,6 @@
 .authPage {
   min-height: 100vh;
+  min-width: 0;
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr);
   background:
@@ -188,12 +189,34 @@
 }
 
 @media (max-width: 520px) {
+  .authHero {
+    padding: 28px 16px 0;
+  }
+
   .authPanel {
     padding: 16px;
   }
 
   .authCardContent {
     padding: 24px !important;
+  }
+
+  .authTitle {
+    font-size: 1.75rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .authCard {
+    border-radius: 24px !important;
+  }
+
+  .authCardContent {
+    padding: 20px !important;
+  }
+
+  .authForm {
+    gap: 16px;
   }
 }
 

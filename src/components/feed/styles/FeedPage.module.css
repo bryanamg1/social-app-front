@@ -1,6 +1,7 @@
 .feedPage {
   width: 100%;
   min-height: 100vh;
+  min-width: 0;
   color: #e5eefb;
   text-align: left;
   background: rgba(2, 6, 23, 0.22);
@@ -125,6 +126,7 @@
   margin-top: 14px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
 }
@@ -388,6 +390,8 @@
 .commentFormActions {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .commentSubmitButton {
@@ -582,15 +586,15 @@
   }
 
   .feedHeader {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  padding: 16px 18px 14px;
-  text-align: left;
-  background: rgba(2, 6, 23, 0.82);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-  backdrop-filter: blur(16px);
-}
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 16px 18px 14px;
+    text-align: left;
+    background: rgba(2, 6, 23, 0.82);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    backdrop-filter: blur(16px);
+  }
 
   .composerCard,
   .postCard,
@@ -618,6 +622,10 @@
     gap: 8px;
   }
 
+  .composerActions {
+    align-items: stretch;
+  }
+
   .reactionActions {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -630,5 +638,54 @@
   .commentHeader {
     flex-direction: column;
     gap: 2px;
+  }
+}
+
+@media (max-width: 580px) {
+  .feedHeader {
+    padding: 14px 16px 12px;
+  }
+
+  .composerCard,
+  .postCard,
+  .centerState,
+  .emptyState,
+  .alert,
+  .paginationActions {
+    margin-inline: 10px;
+  }
+
+  .composerHeader,
+  .postHeader {
+    flex-direction: column;
+  }
+
+  .composerActions {
+    flex-direction: column;
+  }
+
+  .secondaryButton,
+  .primaryButton,
+  .commentSubmitButton,
+  .loadMoreButton {
+    width: 100%;
+  }
+
+  .reactionActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .commentsSummary,
+  .commentFormActions {
+    justify-content: flex-start;
+  }
+
+  .commentsCount {
+    width: 100%;
+    text-align: right;
+  }
+
+  .postImage {
+    max-height: 320px;
   }
 }

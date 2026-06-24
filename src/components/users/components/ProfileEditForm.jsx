@@ -66,7 +66,7 @@ export function ProfileEditForm({
             }}
             />
 
-            <Stack direction="row" spacing={1.5}>
+            <Stack direction="row" spacing={1.5} className={styles.profileFormActions}>
             <Button variant="contained" disabled={updating} onClick={onSubmit}>
                 {updating
                 ? PROFILE_TEXTS.SAVING_PROFILE

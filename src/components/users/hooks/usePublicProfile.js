@@ -8,6 +8,7 @@ import {
     ROUTE_PARAMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useConversationLauncher } from "../../messages/hooks/useConversationLauncher";
 import { removePost } from "../../feed/services/feedService";
 import { getPostId } from "../../feed/utils/postAdapter";
 import { useFollowAction } from "./useFollowAction";
@@ -27,11 +28,15 @@ export const usePublicProfile = () => {
     const { user } = useAuth();
     const profileUserId = params[ROUTE_PARAMS.USER_ID];
     const currentUserId = getUserId(user);
+    const [profile, setProfile] = useState(null);
     const followAction = useFollowAction({
         targetUserId: profileUserId,
         currentUserId,
     });
-    const [profile, setProfile] = useState(null);
+    const messageAction = useConversationLauncher({
+        currentUserId,
+        targetUser: profile,
+    });
     const [posts, setPosts] = useState([]);
     const [loadingProfile, setLoadingProfile] = useState(false);
     const [loadingPosts, setLoadingPosts] = useState(false);
@@ -193,6 +198,7 @@ export const usePublicProfile = () => {
         paginationError,
         pagination,
         followAction,
+        messageAction,
         loadMorePosts,
         handleDeletePost,
     };

@@ -24,6 +24,12 @@ export const API_ENDPOINTS = {
         SEARCH_USERS: "/auth/usersSearch",
     },
 
+    CONVERSATIONS: {
+        CREATE_OR_GET: "/conversations/addConversations",
+        LIST: "/conversations/myConversations",
+        MESSAGES: (conversationId) => `/conversations/readMessage/${conversationId}/message`,
+    },
+
     FOLLOWS: {
         FEED: "/follows/feed",
         STATUS: (userId) => `/follows/users/${userId}/status`,
@@ -59,6 +65,14 @@ export const API_BODY_FIELDS = {
         LOCATION: "location",
     },
 
+    CONVERSATIONS: {
+        USER_ID: "user_id",
+        OTHER_USER_ID: "other_user_id",
+        SENDER_ID: "senderId",
+        CONVERSATION_ID: "conversationId",
+        CONTENT: "content",
+    },
+
     COMMENTS: {
         TEXT: "comment_text",
     },
@@ -76,5 +90,11 @@ export const API_QUERY_PARAMS = {
 
     SEARCH: {
         QUERY: "query",
+    },
+
+    CONVERSATIONS: {
+        USER_ID: "uid",
+        LIMIT: "limit",
+        OFFSET: "offset",
     },
 };

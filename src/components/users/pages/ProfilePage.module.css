@@ -1,5 +1,6 @@
 .page {
     min-height: 100vh;
+    min-width: 0;
 }
 
 .centerState {
@@ -71,6 +72,15 @@
     width: min(100%, 560px);
 }
 
+.profileFormActions {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.profileFormActions :global(.MuiButton-root) {
+    min-width: 140px;
+}
+
 .profileTextField :global(.MuiOutlinedInput-root) {
     border-radius: 18px;
     background: rgba(13, 22, 38, 0.72);
@@ -121,5 +131,40 @@
 
     .postsSection {
         padding: 8px 18px 28px;
+    }
+}
+
+@media (max-width: 520px) {
+    .alert {
+        margin: 16px;
+    }
+
+    .cover {
+        height: 156px;
+    }
+
+    .avatar {
+        left: 16px;
+        bottom: -46px;
+        width: 84px !important;
+        height: 84px !important;
+        border-width: 4px;
+        font-size: 1.8rem !important;
+    }
+
+    .profileInfo {
+        padding: 56px 16px 20px;
+    }
+
+    .profileFormActions {
+        flex-direction: column;
+    }
+
+    .profileFormActions :global(.MuiButton-root) {
+        width: 100%;
+    }
+
+    .postsSection {
+        padding: 8px 16px 24px;
     }
 }

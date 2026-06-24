@@ -13,6 +13,11 @@ export const SIDEBAR_NAV_ITEMS = [
         iconKey: "home",
     },
     {
+        label: "Mensajes",
+        path: ROUTES.MESSAGES,
+        iconKey: "messages",
+    },
+    {
         label: "Perfil",
         path: ROUTES.PROFILE,
         iconKey: "profile",
