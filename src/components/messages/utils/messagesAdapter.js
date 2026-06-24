@@ -7,8 +7,13 @@ export const normalizeConversation = (conversation) => {
         id: conversation.conversation_id ?? conversation.id ?? null,
         conversation_id: conversation.conversation_id ?? conversation.id ?? null,
         created_at: conversation.created_at ?? null,
+        modified_at: conversation.modified_at ?? null,
         last_message: conversation.last_message ?? "",
         last_message_at: conversation.last_message_at ?? conversation.created_at ?? null,
+        participant_user_id: conversation.participant_user_id ?? null,
+        participant_user_name: conversation.participant_user_name ?? null,
+        participant_email: conversation.participant_email ?? "",
+        participant_avatar_url: conversation.participant_avatar_url ?? "",
     };
 };
 
@@ -22,7 +27,7 @@ export const normalizeMessage = (message) => {
         sender_id: message.sender_id ?? message.senderId ?? null,
         content: message.content ?? "",
         created_at: message.created_at ?? null,
-        seen: Boolean(message.seen),
+        modified_at: message.modified_at ?? null,
     };
 };
 

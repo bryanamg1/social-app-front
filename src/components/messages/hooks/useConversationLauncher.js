@@ -30,7 +30,6 @@ export const useConversationLauncher = ({ currentUserId, targetUser }) => {
             setError(null);
 
             const conversationId = await createOrGetConversation({
-                userId: currentUserId,
                 otherUserId: targetUserId,
             });
 

@@ -22,8 +22,11 @@ const getThreadTitle = ({ selectedConversation, targetUser }) => {
     }
 
     if (selectedConversation) {
-        return MESSAGES_TEXTS.CONVERSATION_FALLBACK(
-            selectedConversation.conversation_id
+        return (
+            selectedConversation.participant_user_name ||
+            MESSAGES_TEXTS.CONVERSATION_FALLBACK(
+                selectedConversation.conversation_id
+            )
         );
     }
 

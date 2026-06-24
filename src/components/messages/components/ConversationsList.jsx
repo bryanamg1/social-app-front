@@ -16,7 +16,10 @@ const formatDate = (value) => {
 };
 
 const getConversationTitle = (conversation) => {
-    return MESSAGES_TEXTS.CONVERSATION_FALLBACK(conversation.conversation_id);
+    return (
+        conversation.participant_user_name ||
+        MESSAGES_TEXTS.CONVERSATION_FALLBACK(conversation.conversation_id)
+    );
 };
 
 export function ConversationsList({

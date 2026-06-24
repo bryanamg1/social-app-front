@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
         CREATE_OR_GET: "/conversations/addConversations",
         LIST: "/conversations/myConversations",
         MESSAGES: (conversationId) => `/conversations/readMessage/${conversationId}/message`,
+        SEND: "/conversations/sendMessage",
     },
 
     FOLLOWS: {

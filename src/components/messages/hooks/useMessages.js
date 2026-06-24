@@ -83,7 +83,7 @@ export const useMessages = ({ currentUserId }) => {
                 setLoadingConversations(true);
                 setConversationsError(null);
 
-                const nextConversations = await getMyConversations(currentUserId);
+                const nextConversations = await getMyConversations();
 
                 if (!isActive) return;
 
@@ -118,7 +118,6 @@ export const useMessages = ({ currentUserId }) => {
 
                 const nextMessages = await getConversationMessages({
                     conversationId: selectedConversationId,
-                    userId: currentUserId,
                     limit: MESSAGES_API_DEFAULTS.PAGE_SIZE,
                     offset: MESSAGES_API_DEFAULTS.INITIAL_OFFSET,
                 });
@@ -154,12 +153,17 @@ export const useMessages = ({ currentUserId }) => {
             setSocketConnected(true);
             joinConversationRoom({
                 conversationId: selectedConversationId,
-                userId: currentUserId,
             });
         };
 
         const handleDisconnect = () => {
             setSocketConnected(false);
+        };
+
+        const handleConnectError = () => {
+            setSocketConnected(false);
+            setMessagesError(MESSAGES_ERRORS.SOCKET);
+            setSendingMessage(false);
         };
 
         const handleJoined = () => {
@@ -193,6 +197,7 @@ export const useMessages = ({ currentUserId }) => {
 
         socket.on("connect", handleConnect);
         socket.on("disconnect", handleDisconnect);
+        socket.on("connect_error", handleConnectError);
         socket.on(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
         socket.on(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
         socket.on(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
@@ -206,6 +211,7 @@ export const useMessages = ({ currentUserId }) => {
         return () => {
             socket.off("connect", handleConnect);
             socket.off("disconnect", handleDisconnect);
+            socket.off("connect_error", handleConnectError);
             socket.off(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
             socket.off(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
             socket.off(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
@@ -235,7 +241,6 @@ export const useMessages = ({ currentUserId }) => {
         setMessagesError(null);
         sendSocketMessage({
             conversationId: selectedConversationId,
-            senderId: currentUserId,
             content: nextContent,
         });
         setDraft("");
