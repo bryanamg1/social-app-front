@@ -109,7 +109,7 @@ export function ProfileHeader({
                 {postsCount} {PROFILE_TEXTS.POSTS.COUNT_LABEL}
             </Typography>
 
-            <Stack direction="row" spacing={1.25} useFlexGap flexWrap="wrap">
+            <Stack direction="row" spacing={1.25} useFlexGap sx={{ flexWrap: "wrap" }}>
                 <ProfileFollowButton followAction={followAction} />
 
                 {secondaryAction?.isVisible ? (

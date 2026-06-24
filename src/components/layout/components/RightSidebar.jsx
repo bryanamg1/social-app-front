@@ -38,7 +38,7 @@ export function RightSidebar() {
                 {RIGHT_SIDEBAR_TEXTS.SUGGESTIONS_DESCRIPTION}
             </Typography>
 
-            <Stack direction="row" spacing={1} flexWrap="wrap" mt={2} useFlexGap>
+            <Stack direction="row" spacing={1} mt={2} useFlexGap sx={{ flexWrap: "wrap" }}>
                 <Chip size="small" label="React" />
                 <Chip size="small" label="Social" />
                 <Chip size="small" label="Feed" />

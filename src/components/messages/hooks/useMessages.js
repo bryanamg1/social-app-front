@@ -12,6 +12,7 @@ import {
     getMyConversations,
 } from "../services/messagesService";
 import {
+    disconnectMessagesSocket,
     getMessagesSocket,
     joinConversationRoom,
     sendSocketMessage,
@@ -215,6 +216,7 @@ export const useMessages = ({ currentUserId }) => {
             socket.off(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
             socket.off(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
             socket.off(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
+            disconnectMessagesSocket();
         };
     }, [currentUserId, selectedConversationId]);
 

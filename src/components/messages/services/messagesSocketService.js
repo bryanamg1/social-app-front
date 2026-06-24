@@ -17,6 +17,11 @@ export const getMessagesSocket = () => {
     if (!messagesSocket) {
         messagesSocket = io(`${SOCKET_BASE_URL}/messages`, {
             autoConnect: true,
+            reconnection: true,
+            reconnectionAttempts: 3,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 4000,
+            timeout: 8000,
             auth: {
                 token: authStorage.getToken() ?? "",
             },
@@ -28,6 +33,12 @@ export const getMessagesSocket = () => {
     }
 
     return messagesSocket;
+};
+
+export const disconnectMessagesSocket = () => {
+    if (messagesSocket) {
+        messagesSocket.disconnect();
+    }
 };
 
 export const joinConversationRoom = ({ conversationId }) => {
