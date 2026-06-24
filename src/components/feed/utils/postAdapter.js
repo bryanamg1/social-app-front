@@ -166,11 +166,18 @@ export const getCommentId = (comment) => {
 
 export const getCommentAuthorName = (comment) => {
     return (
+        comment?.user_name ??
+        comment?.userName ??
         comment?.user?.name ??
+        comment?.user?.user_name ??
+        comment?.user?.userName ??
         comment?.user?.username ??
         comment?.user?.email ??
         comment?.author?.name ??
+        comment?.author?.user_name ??
+        comment?.author?.userName ??
         comment?.author?.username ??
+        comment?.author_name ??
         comment?.authorName ??
         comment?.username ??
         comment?.name ??

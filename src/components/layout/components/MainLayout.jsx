@@ -69,6 +69,21 @@ export function MainLayout() {
                     <span className={styles.navLabel}>{item.label}</span>
                 </NavLink>
                 ))}
+
+                <button
+                type="button"
+                className={styles.mobileLogoutButton}
+                onClick={logout}
+                aria-label={LAYOUT_TEXTS.LOGOUT}
+                >
+                <span className={styles.navIcon}>
+                    <LogoutOutlinedIcon />
+                </span>
+
+                <span className={styles.navLabel}>
+                    {LAYOUT_TEXTS.MOBILE_LOGOUT}
+                </span>
+                </button>
             </nav>
 
             <button type="button" className={styles.createPostButton}>

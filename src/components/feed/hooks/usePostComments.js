@@ -1,7 +1,33 @@
 import { useCallback, useState } from "react";
 
 import { FEED_TEXTS } from "../../../constants";
+import { getCommentId } from "../utils/postAdapter";
 import { createComment, getCommentsByPostId } from "../services/feedService";
+
+const getCurrentUserDisplayName = (user) => {
+    return user?.name ?? user?.username ?? user?.email ?? "";
+};
+
+const hasCommentAuthorData = (comment) => {
+    return Boolean(
+        comment?.user_name ??
+        comment?.userName ??
+        comment?.user?.name ??
+        comment?.user?.user_name ??
+        comment?.user?.userName ??
+        comment?.user?.username ??
+        comment?.user?.email ??
+        comment?.author?.name ??
+        comment?.author?.user_name ??
+        comment?.author?.userName ??
+        comment?.author?.username ??
+        comment?.author_name ??
+        comment?.authorName ??
+        comment?.username ??
+        comment?.name ??
+        comment?.email
+    );
+};
 
 export const usePostComments = () => {
     const [expandedPostIds, setExpandedPostIds] = useState(() => new Set());
@@ -167,7 +193,7 @@ export const usePostComments = () => {
     );
 
     const submitComment = useCallback(
-        async ({ postKey, postId, userId }) => {
+        async ({ postKey, postId, userId, currentUser }) => {
         const normalizedPostKey = String(postKey);
         const commentText = (commentDraftsByPostId[normalizedPostKey] ?? "").trim();
 
@@ -202,12 +228,41 @@ export const usePostComments = () => {
             [normalizedPostKey]: null,
             }));
 
-            await createComment({ userId, postId, commentText });
-            await loadComments({
+            const createdComment = await createComment({ userId, postId, commentText });
+            const comments = await loadComments({
             postKey: normalizedPostKey,
             postId,
             forceRequest: true,
             });
+
+            const createdCommentId = createdComment?.commentId ?? createdComment?.data?.commentId;
+            const currentUserName = getCurrentUserDisplayName(currentUser);
+
+            if (createdCommentId && currentUserName) {
+            setCommentsByPostId((currentComments) => {
+                const nextComments = (currentComments[normalizedPostKey] ?? comments).map(
+                (comment) => {
+                    if (String(getCommentId(comment)) !== String(createdCommentId)) {
+                    return comment;
+                    }
+
+                    if (hasCommentAuthorData(comment)) {
+                    return comment;
+                    }
+
+                    return {
+                    ...comment,
+                    authorName: currentUserName,
+                    };
+                }
+                );
+
+                return {
+                ...currentComments,
+                [normalizedPostKey]: nextComments,
+                };
+            });
+            }
 
             setCommentDraftsByPostId((currentDrafts) => ({
             ...currentDrafts,
