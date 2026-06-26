@@ -18,6 +18,9 @@ export const NOTIFICATIONS_TYPES = {
 export const NOTIFICATIONS_ERRORS = {
     SOCKET: "No se pudo conectar el canal de notificaciones.",
     SUBSCRIBE: "No se pudo suscribir el canal de notificaciones.",
+    LOAD: "No se pudo cargar el historial de notificaciones.",
+    MARK_SEEN: "No se pudo marcar la notificacion como leida.",
+    MARK_ALL_SEEN: "No se pudieron marcar todas como leidas.",
 };
 
 export const NOTIFICATIONS_MESSAGES = {
@@ -30,6 +33,7 @@ export const NOTIFICATIONS_TEXTS = {
     PANEL_TITLE: "Notificaciones",
     PANEL_SUBTITLE: "Actividad reciente en tiempo real.",
     CLOSE_PANEL: "Cerrar panel de notificaciones",
+    LOADING_HISTORY: "Cargando historial de notificaciones...",
     EMPTY_TITLE: "Todavia no hay notificaciones",
     EMPTY_DESCRIPTION: "Las novedades de tu cuenta apareceran aqui.",
     CONNECTING: "Conectando canal realtime...",
@@ -37,6 +41,9 @@ export const NOTIFICATIONS_TEXTS = {
     ERROR_FALLBACK: "No se pudo cargar el panel de notificaciones.",
     STATUS_ONLINE: "Realtime activo",
     STATUS_OFFLINE: "Realtime inactivo",
+    MARK_ALL_READ: "Marcar todo",
+    MARK_READ: "Marcar leida",
+    READ_LABEL: "Leida",
     NOW: "Ahora",
     FROM_USER: (userId) => `Usuario #${userId}`,
     RELATED_ENTITY: (relateId) => `Referencia #${relateId}`,

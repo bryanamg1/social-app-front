@@ -129,7 +129,11 @@ export function MainLayout() {
         unreadCount={notificationsState.unreadCount}
         isConnected={notificationsState.isConnected}
         isSubscribed={notificationsState.isSubscribed}
+        loadingHistory={notificationsState.loadingHistory}
+        markingAllAsSeen={notificationsState.markingAllAsSeen}
         error={notificationsState.error}
+        onMarkSeen={notificationsState.markNotificationSeen}
+        onMarkAllSeen={notificationsState.markAllNotificationsSeen}
         onClose={notificationPanel.closePanel}
         styles={notificationStyles}
         />

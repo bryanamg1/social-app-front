@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
     NOTIFICATIONS_ERRORS,
@@ -10,6 +10,12 @@ import {
     getNotificationsSocket,
     subscribeNotificationsRoom,
 } from "../components/notifications/services/notificationsSocketService";
+import {
+    getMyNotifications,
+    markAllNotificationsSeen as markAllNotificationsSeenRequest,
+    markNotificationSeen as markNotificationSeenRequest,
+} from "../components/notifications/services/notificationsService";
+import { isNotificationSeen } from "../components/notifications/utils/notificationAdapter";
 import { NotificationContext } from "./NotificationContextValue";
 
 const EMPTY_STATE = {
@@ -41,9 +47,49 @@ export function NotificationProvider({ children }) {
     const [unreadCount, setUnreadCount] = useState(EMPTY_STATE.unreadCount);
     const [isConnected, setIsConnected] = useState(EMPTY_STATE.isConnected);
     const [isSubscribed, setIsSubscribed] = useState(EMPTY_STATE.isSubscribed);
+    const [loadingHistory, setLoadingHistory] = useState(false);
+    const [markingAllAsSeen, setMarkingAllAsSeen] = useState(false);
     const [error, setError] = useState(EMPTY_STATE.error);
 
     const currentUserId = getCurrentUserId(user);
+
+    useEffect(() => {
+        if (!isAuthenticated || Number.isNaN(currentUserId)) {
+            return undefined;
+        }
+
+        let isActive = true;
+
+        const loadNotifications = async () => {
+            try {
+                setLoadingHistory(true);
+                setError(null);
+
+                const nextNotifications = await getMyNotifications();
+
+                if (!isActive) return;
+
+                setNotifications(nextNotifications);
+                setUnreadCount(
+                    nextNotifications.filter((notification) => !isNotificationSeen(notification))
+                        .length
+                );
+            } catch {
+                if (!isActive) return;
+                setError(NOTIFICATIONS_ERRORS.LOAD);
+            } finally {
+                if (isActive) {
+                    setLoadingHistory(false);
+                }
+            }
+        };
+
+        loadNotifications();
+
+        return () => {
+            isActive = false;
+        };
+    }, [currentUserId, isAuthenticated]);
 
     useEffect(() => {
         if (!isAuthenticated || Number.isNaN(currentUserId)) {
@@ -90,6 +136,7 @@ export function NotificationProvider({ children }) {
 
                 return [notification, ...currentNotifications];
             });
+            setError(null);
         };
 
         const handleNotificationCount = (payload) => {
@@ -132,6 +179,59 @@ export function NotificationProvider({ children }) {
         };
     }, [currentUserId, isAuthenticated]);
 
+    const markNotificationSeen = useCallback(async (notificationId) => {
+        if (!notificationId) return;
+
+        const nextNotification = notifications.find(
+            (notification) => String(notification?.id) === String(notificationId)
+        );
+
+        if (nextNotification && isNotificationSeen(nextNotification)) {
+            return;
+        }
+
+        try {
+            setError(null);
+
+            await markNotificationSeenRequest({ notificationId });
+
+            setNotifications((currentNotifications) =>
+                currentNotifications.map((notification) =>
+                    String(notification?.id) === String(notificationId)
+                        ? {
+                              ...notification,
+                              seen: true,
+                          }
+                        : notification
+                )
+            );
+            setUnreadCount((currentUnreadCount) => Math.max(0, currentUnreadCount - 1));
+        } catch {
+            setError(NOTIFICATIONS_ERRORS.MARK_SEEN);
+        }
+    }, [notifications]);
+
+    const markAllNotificationsSeen = useCallback(async () => {
+        try {
+            setMarkingAllAsSeen(true);
+            setError(null);
+
+            await markAllNotificationsSeenRequest();
+
+            setNotifications((currentNotifications) =>
+                currentNotifications.map((notification) => ({
+                    ...notification,
+                    seen: true,
+                }))
+            );
+            setUnreadCount(0);
+        } catch {
+            setError(NOTIFICATIONS_ERRORS.MARK_ALL_SEEN);
+        } finally {
+            setMarkingAllAsSeen(false);
+        }
+    }, []);
+
     const value = useMemo(
         () => ({
             notifications:
@@ -150,10 +250,20 @@ export function NotificationProvider({ children }) {
                 isAuthenticated && !Number.isNaN(currentUserId)
                     ? isSubscribed
                     : EMPTY_STATE.isSubscribed,
+            loadingHistory:
+                isAuthenticated && !Number.isNaN(currentUserId)
+                    ? loadingHistory
+                    : false,
+            markingAllAsSeen:
+                isAuthenticated && !Number.isNaN(currentUserId)
+                    ? markingAllAsSeen
+                    : false,
             error:
                 isAuthenticated && !Number.isNaN(currentUserId)
                     ? error
                     : EMPTY_STATE.error,
+            markNotificationSeen,
+            markAllNotificationsSeen,
         }),
         [
             currentUserId,
@@ -161,6 +271,10 @@ export function NotificationProvider({ children }) {
             isAuthenticated,
             isConnected,
             isSubscribed,
+            loadingHistory,
+            markingAllAsSeen,
+            markAllNotificationsSeen,
+            markNotificationSeen,
             notifications,
             unreadCount,
         ]

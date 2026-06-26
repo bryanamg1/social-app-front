@@ -57,6 +57,12 @@ export const API_ENDPOINTS = {
         MY_POST: (userId, postId) =>
             `/reactions/${userId}/${postId}/byUserInPost`,
     },
+
+    NOTIFICATIONS: {
+        LIST: "/notifications",
+        MARK_SEEN: (notificationId) => `/notifications/${notificationId}/seen`,
+        MARK_ALL_SEEN: "/notifications/seen-all",
+    },
 };
 
 export const API_BODY_FIELDS = {

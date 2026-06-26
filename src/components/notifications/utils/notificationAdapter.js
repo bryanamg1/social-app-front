@@ -14,6 +14,10 @@ export const getNotificationCreatedAt = (notification) => {
     return notification?.created_at ?? notification?.createdAt ?? null;
 };
 
+export const isNotificationSeen = (notification) => {
+    return Boolean(notification?.seen ?? notification?.isSeen ?? false);
+};
+
 export const getNotificationKey = (notification, index = 0) => {
     return (
         getNotificationId(notification) ??

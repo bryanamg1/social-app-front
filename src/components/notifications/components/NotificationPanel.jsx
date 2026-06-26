@@ -10,7 +10,11 @@ export const NotificationPanel = ({
     unreadCount,
     isConnected,
     isSubscribed,
+    loadingHistory,
+    markingAllAsSeen,
     error,
+    onMarkSeen,
+    onMarkAllSeen,
     onClose,
     styles,
 }) => {
@@ -40,6 +44,15 @@ export const NotificationPanel = ({
             </div>
 
             <div className={styles.panelHeaderActions}>
+                <button
+                type="button"
+                className={styles.panelActionButton}
+                onClick={onMarkAllSeen}
+                disabled={!notifications.length || !unreadCount || markingAllAsSeen}
+                >
+                {NOTIFICATIONS_TEXTS.MARK_ALL_READ}
+                </button>
+
                 <span className={styles.panelCount}>
                 {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
@@ -70,6 +83,11 @@ export const NotificationPanel = ({
                 <p className={styles.panelStateTitle}>{NOTIFICATIONS_TEXTS.ERROR_FALLBACK}</p>
                 <p className={styles.panelStateText}>{error}</p>
             </div>
+            ) : loadingHistory ? (
+            <div className={styles.panelState}>
+                <p className={styles.panelStateTitle}>{NOTIFICATIONS_TEXTS.LOADING_HISTORY}</p>
+                <p className={styles.panelStateText}>{NOTIFICATIONS_TEXTS.PANEL_SUBTITLE}</p>
+            </div>
             ) : isLoading ? (
             <div className={styles.panelState}>
                 <p className={styles.panelStateTitle}>{NOTIFICATIONS_TEXTS.CONNECTING}</p>
@@ -94,6 +112,7 @@ export const NotificationPanel = ({
                     key={getNotificationKey(notification, index)}
                     notification={notification}
                     styles={styles}
+                    onMarkSeen={onMarkSeen}
                 />
                 ))}
             </div>
