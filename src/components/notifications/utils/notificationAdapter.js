@@ -1,13 +1,33 @@
-import { NOTIFICATIONS_TEXTS } from "../../../constants";
+import {
+    NOTIFICATIONS_TEXTS,
+    NOTIFICATIONS_TYPE_ALIASES,
+    NOTIFICATIONS_TYPES,
+} from "../../../constants";
+
+const VALID_NOTIFICATION_TYPES = new Set(Object.values(NOTIFICATIONS_TYPES));
+
+const normalizeNotificationType = (type) => {
+    const rawType = String(type ?? "").trim();
+
+    if (!rawType) {
+        return "";
+    }
+
+    if (VALID_NOTIFICATION_TYPES.has(rawType)) {
+        return rawType;
+    }
+
+    return NOTIFICATIONS_TYPE_ALIASES[rawType.toLowerCase()] ?? rawType;
+};
 
 export const getNotificationId = (notification) => {
     return notification?.id ?? notification?.notificationId ?? notification?._id;
 };
 
 export const getNotificationType = (notification) => {
-    return String(notification?.type ?? notification?.notification_type ?? "")
-        .trim()
-        .toLowerCase();
+    return normalizeNotificationType(
+        notification?.type ?? notification?.notification_type ?? ""
+    );
 };
 
 export const getNotificationCreatedAt = (notification) => {

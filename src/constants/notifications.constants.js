@@ -9,10 +9,21 @@ export const NOTIFICATIONS_SOCKET_EVENTS = {
 };
 
 export const NOTIFICATIONS_TYPES = {
-    FOLLOW: "follow",
-    COMMENT: "comment",
-    REACTION: "reaction",
-    MESSAGE: "message",
+    FOLLOW_USER: "FOLLOW_USER",
+    COMMENT_POST: "COMMENT_POST",
+    REACTION_POST: "REACTION_POST",
+    REACTION_COMMENT: "REACTION_COMMENT",
+    REPLY_COMMENT: "REPLY_COMMENT",
+    REPOST: "REPOST",
+    MENTION_USER: "MENTION_USER",
+    MESSAGE: "MESSAGE",
+};
+
+export const NOTIFICATIONS_TYPE_ALIASES = {
+    follow: NOTIFICATIONS_TYPES.FOLLOW_USER,
+    comment: NOTIFICATIONS_TYPES.COMMENT_POST,
+    reaction: NOTIFICATIONS_TYPES.REACTION_POST,
+    message: NOTIFICATIONS_TYPES.MESSAGE,
 };
 
 export const NOTIFICATIONS_ERRORS = {
@@ -48,19 +59,31 @@ export const NOTIFICATIONS_TEXTS = {
     FROM_USER: (userId) => `Usuario #${userId}`,
     RELATED_ENTITY: (relateId) => `Referencia #${relateId}`,
     TYPE_LABELS: {
-        follow: "Nuevo seguidor",
-        comment: "Nuevo comentario",
-        reaction: "Nueva reaccion",
-        message: "Nuevo mensaje",
+        FOLLOW_USER: "Nuevo seguidor",
+        COMMENT_POST: "Nuevo comentario",
+        REACTION_POST: "Nueva reaccion",
+        REACTION_COMMENT: "Nueva reaccion en comentario",
+        REPLY_COMMENT: "Nueva respuesta",
+        REPOST: "Nuevo repost",
+        MENTION_USER: "Nueva mencion",
+        MESSAGE: "Nuevo mensaje",
         default: "Nueva actividad",
     },
     TYPE_DESCRIPTIONS: {
-        follow: (fromUserLabel) => `${fromUserLabel} comenzo a seguirte.`,
-        comment: (fromUserLabel, relatedLabel) =>
+        FOLLOW_USER: (fromUserLabel) => `${fromUserLabel} comenzo a seguirte.`,
+        COMMENT_POST: (fromUserLabel, relatedLabel) =>
             `${fromUserLabel} comento en ${relatedLabel}.`,
-        reaction: (fromUserLabel, relatedLabel) =>
+        REACTION_POST: (fromUserLabel, relatedLabel) =>
             `${fromUserLabel} reacciono en ${relatedLabel}.`,
-        message: (fromUserLabel) => `${fromUserLabel} te envio un mensaje.`,
+        REACTION_COMMENT: (fromUserLabel, relatedLabel) =>
+            `${fromUserLabel} reacciono en ${relatedLabel}.`,
+        REPLY_COMMENT: (fromUserLabel, relatedLabel) =>
+            `${fromUserLabel} respondio en ${relatedLabel}.`,
+        REPOST: (fromUserLabel, relatedLabel) =>
+            `${fromUserLabel} republico ${relatedLabel}.`,
+        MENTION_USER: (fromUserLabel, relatedLabel) =>
+            `${fromUserLabel} te menciono en ${relatedLabel}.`,
+        MESSAGE: (fromUserLabel) => `${fromUserLabel} te envio un mensaje.`,
         default: (fromUserLabel, relatedLabel) =>
             `${fromUserLabel} genero actividad en ${relatedLabel}.`,
     },
