@@ -6,3 +6,4 @@ export * from "./layout.constants";
 export * from "./feed.constants";
 export * from "./users.constants";
 export * from "./messages.constants";
+export * from "./notifications.constants";

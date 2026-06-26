@@ -97,16 +97,21 @@
 }
 
 .navItem,
-.navItemActive {
+.navItemActive,
+.navActionButton,
+.navActionButtonActive {
   min-height: 46px;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 0 14px;
+  border: none;
   border-radius: 999px;
+  background: transparent;
   color: #cbd5e1;
   font-size: 0.98rem;
   font-weight: 800;
+  text-align: left;
   text-decoration: none;
   transition:
     background-color 0.2s ease,
@@ -114,13 +119,15 @@
     transform 0.2s ease;
 }
 
-.navItem:hover {
+.navItem:hover,
+.navActionButton:hover {
   color: #38bdf8;
   background: rgba(56, 189, 248, 0.08);
   transform: translateX(4px);
 }
 
-.navItemActive {
+.navItemActive,
+.navActionButtonActive {
   color: #020617;
   background: linear-gradient(135deg, #38bdf8, #22d3ee);
 }
@@ -135,6 +142,23 @@
 
 .navLabel {
   min-width: 0;
+}
+
+.navBadge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  min-width: 18px;
+  min-height: 18px;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  color: #f8fafc;
+  font-size: 0.62rem;
+  font-weight: 900;
+  background: #ef4444;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.96);
 }
 
 .mobileLogoutButton {
@@ -308,7 +332,9 @@
   }
 
   .navItem,
-  .navItemActive {
+  .navItemActive,
+  .navActionButton,
+  .navActionButtonActive {
     justify-content: center;
     padding: 0;
   }
@@ -386,6 +412,8 @@
 
   .navItem,
   .navItemActive,
+  .navActionButton,
+  .navActionButtonActive,
   .mobileLogoutButton {
     flex: 1 1 0;
     min-height: 60px;
@@ -403,7 +431,8 @@
     font-weight: 800;
   }
 
-  .navItem:hover {
+  .navItem:hover,
+  .navActionButton:hover {
     transform: none;
   }
 
@@ -436,6 +465,8 @@
 
   .navItem,
   .navItemActive,
+  .navActionButton,
+  .navActionButtonActive,
   .mobileLogoutButton {
     min-height: 56px;
     padding-inline: 4px;
