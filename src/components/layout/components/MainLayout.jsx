@@ -11,11 +11,16 @@ import {
   SIDEBAR_NAV_ITEMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useNotifications } from "../../../hooks/useNotifications";
 import { useUserSearch } from "../../users/hooks/useUserSearch";
 import { getUserId } from "../../users/utils/userProfileAdapter";
+import { NotificationPanel } from "../../notifications/components/NotificationPanel";
+import { NotificationToggleButton } from "../../notifications/components/NotificationToggleButton";
+import { useNotificationPanel } from "../../notifications/hooks/useNotificationPanel";
 import { UserSearchPanel } from "./UserSearchPanel";
 
 import styles from "../styles/MainLayout.module.css";
+import notificationStyles from "../../notifications/styles/Notifications.module.css";
 
 const ICONS_BY_KEY = {
     home: <HomeOutlinedIcon />,
@@ -34,6 +39,8 @@ const getUserDisplayName = (user) => {
 
 export function MainLayout() {
     const { user, logout } = useAuth();
+    const notificationPanel = useNotificationPanel();
+    const notificationsState = useNotifications();
 
     const userDisplayName = getUserDisplayName(user);
     const currentUserId = getUserId(user);
@@ -69,6 +76,20 @@ export function MainLayout() {
                     <span className={styles.navLabel}>{item.label}</span>
                 </NavLink>
                 ))}
+
+                <NotificationToggleButton
+                isOpen={notificationPanel.isOpen}
+                unreadCount={notificationsState.unreadCount}
+                onToggle={notificationPanel.togglePanel}
+                buttonClassName={
+                    notificationPanel.isOpen
+                    ? styles.navActionButtonActive
+                    : styles.navActionButton
+                }
+                iconClassName={styles.navIcon}
+                labelClassName={styles.navLabel}
+                badgeClassName={styles.navBadge}
+                />
             </nav>
 
             <button type="button" className={styles.createPostButton}>
@@ -101,6 +122,17 @@ export function MainLayout() {
         <main className={styles.mainContent}>
             <Outlet />
         </main>
+
+        <NotificationPanel
+        isOpen={notificationPanel.isOpen}
+        notifications={notificationsState.notifications}
+        unreadCount={notificationsState.unreadCount}
+        isConnected={notificationsState.isConnected}
+        isSubscribed={notificationsState.isSubscribed}
+        error={notificationsState.error}
+        onClose={notificationPanel.closePanel}
+        styles={notificationStyles}
+        />
 
         <aside className={styles.rightSidebar}>
             <div className={styles.rightSidebarInner}>
