@@ -48,6 +48,7 @@ export const RIGHT_SIDEBAR_SEARCH = {
 
 export const LAYOUT_TEXTS = {
     LOGOUT: "Cerrar sesion",
+    MOBILE_LOGOUT: "Salir",
     ACTIVE_SESSION: "Sesion activa",
     DEFAULT_USER: "Usuario",
 };

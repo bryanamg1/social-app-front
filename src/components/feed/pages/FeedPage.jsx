@@ -83,6 +83,7 @@ const FeedPage = () => {
 
         <PostList
             posts={posts}
+            currentUser={user}
             currentUserId={currentUserId}
             loadingPosts={loadingPosts}
             loadingMorePosts={loadingMorePosts}

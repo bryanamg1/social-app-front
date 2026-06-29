@@ -42,6 +42,7 @@ const getTextValue = (value) => {
 
 export const PostList = ({
     posts = [],
+    currentUser,
     currentUserId,
     loadingPosts,
     loadingMorePosts,
@@ -141,6 +142,7 @@ export const PostList = ({
                 submitComment({
                     postKey,
                     postId,
+                    currentUser,
                     userId: currentUserId,
                 })
                 }
