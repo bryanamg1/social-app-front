@@ -70,6 +70,7 @@ export const FEED_TEXTS = {
         TOGGLE_ARIA_PREFIX: "Alternar reaccion",
         LOADING: "Cargando reacciones...",
         EMPTY_SUMMARY: "Sin reacciones",
+        ACTIVE_SUMMARY_PREFIX: "Tu reaccion actual",
     },
 
     ERRORS: {

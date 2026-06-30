@@ -8,18 +8,36 @@ export function MessageComposer({
     disabled,
     draft,
     sending,
+    statusText,
+    statusTone = "info",
     onDraftChange,
     onSendMessage,
 }) {
     return (
         <div className={styles.composer}>
+            <p
+                className={
+                    statusTone === "warning"
+                        ? styles.composerStatusWarning
+                        : statusTone === "success"
+                        ? styles.composerStatusSuccess
+                        : styles.composerStatusInfo
+                }
+            >
+                {statusText}
+            </p>
+
             <TextField
                 fullWidth
                 multiline
                 maxRows={4}
                 value={draft}
                 disabled={disabled || sending}
-                placeholder={MESSAGES_TEXTS.INPUT_PLACEHOLDER}
+                placeholder={
+                    disabled
+                        ? MESSAGES_TEXTS.COMPOSER_DISABLED_PLACEHOLDER
+                        : MESSAGES_TEXTS.INPUT_PLACEHOLDER
+                }
                 onChange={onDraftChange}
                 className={styles.composerField}
             />

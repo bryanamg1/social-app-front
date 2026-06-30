@@ -55,6 +55,10 @@ export function MessageThread({
         );
     }
 
+    const connectionStatusText = socketConnected
+        ? MESSAGES_TEXTS.THREAD_STATUS_READY
+        : MESSAGES_TEXTS.THREAD_STATUS_OFFLINE;
+
     return (
         <section className={styles.threadPanel}>
             <div className={styles.threadHeader}>
@@ -63,9 +67,7 @@ export function MessageThread({
                         {getThreadTitle({ selectedConversation, targetUser })}
                     </Typography>
                     <Typography className={styles.threadSubtext}>
-                        {socketConnected
-                            ? MESSAGES_TEXTS.SOCKET_ONLINE
-                            : MESSAGES_TEXTS.SOCKET_OFFLINE}
+                        {connectionStatusText}
                     </Typography>
                 </div>
             </div>

@@ -65,22 +65,71 @@ export const getNotificationTitle = (notification) => {
     );
 };
 
+const getStringValue = (...values) => {
+    const match = values.find((value) => typeof value === "string" && value.trim());
+    return match?.trim() ?? "";
+};
+
+const getNotificationSnippet = (notification) => {
+    const snippet = getStringValue(
+        notification?.post_content,
+        notification?.postContent,
+        notification?.comment_content,
+        notification?.commentContent,
+        notification?.message_preview,
+        notification?.messagePreview,
+        notification?.content
+    );
+
+    if (!snippet) return "";
+
+    return snippet.length > 48 ? `${snippet.slice(0, 45)}...` : snippet;
+};
+
 const getFromUserLabel = (notification) => {
-    return NOTIFICATIONS_TEXTS.FROM_USER(
-        notification?.from_userId ?? notification?.fromUserId ?? "?"
+    return (
+        getStringValue(
+            notification?.from_user_name,
+            notification?.fromUserName,
+            notification?.from_user_username,
+            notification?.fromUserUsername,
+            notification?.sender_name,
+            notification?.senderName,
+            notification?.user_name,
+            notification?.userName,
+            notification?.fromUser?.user_name,
+            notification?.fromUser?.userName,
+            notification?.fromUser?.name
+        ) || NOTIFICATIONS_TEXTS.UNKNOWN_USER
     );
 };
 
-const getRelatedLabel = (notification) => {
-    return NOTIFICATIONS_TEXTS.RELATED_ENTITY(
-        notification?.relate_id ?? notification?.relateId ?? "?"
-    );
+const getRelatedLabel = (notification, type) => {
+    const snippet = getNotificationSnippet(notification);
+
+    if (snippet) {
+        return `"${snippet}"`;
+    }
+
+    switch (type) {
+        case NOTIFICATIONS_TYPES.COMMENT_POST:
+        case NOTIFICATIONS_TYPES.REACTION_POST:
+            return NOTIFICATIONS_TEXTS.RELATED_POST;
+        case NOTIFICATIONS_TYPES.REACTION_COMMENT:
+        case NOTIFICATIONS_TYPES.REPLY_COMMENT:
+            return NOTIFICATIONS_TEXTS.RELATED_COMMENT;
+        case NOTIFICATIONS_TYPES.REPOST:
+        case NOTIFICATIONS_TYPES.MENTION_USER:
+            return NOTIFICATIONS_TEXTS.RELATED_CONTENT;
+        default:
+            return NOTIFICATIONS_TEXTS.RELATED_CONTENT;
+    }
 };
 
 export const getNotificationDescription = (notification) => {
     const type = getNotificationType(notification);
     const fromUserLabel = getFromUserLabel(notification);
-    const relatedLabel = getRelatedLabel(notification);
+    const relatedLabel = getRelatedLabel(notification, type);
     const formatter =
         NOTIFICATIONS_TEXTS.TYPE_DESCRIPTIONS[type] ??
         NOTIFICATIONS_TEXTS.TYPE_DESCRIPTIONS.default;

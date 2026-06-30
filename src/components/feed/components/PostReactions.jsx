@@ -57,6 +57,14 @@ export const PostReactions = ({ reactionState, onToggleReaction }) => {
             </Alert>
         )}
 
+        {!reactionState.error &&
+        !reactionState.loading &&
+        reactionState.activeReaction ? (
+            <Typography className={styles.helperText}>
+            {`${FEED_TEXTS.REACTIONS.ACTIVE_SUMMARY_PREFIX}: ${reactionState.activeReaction}`}
+            </Typography>
+        ) : null}
+
         <Box className={styles.reactionActions}>
             {FEED_REACTION_OPTIONS.map((reaction) => {
             const isActive = reactionState.activeReaction === reaction.type;

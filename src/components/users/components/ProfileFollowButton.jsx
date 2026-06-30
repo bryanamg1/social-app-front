@@ -1,4 +1,4 @@
-import { Alert, Button, Stack } from "@mui/material";
+import { Alert, Button, Stack, Typography } from "@mui/material";
 import PersonAddAlt1RoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 import PersonRemoveRoundedIcon from "@mui/icons-material/PersonRemoveRounded";
 
@@ -19,6 +19,11 @@ export function ProfileFollowButton({ followAction }) {
     ) : (
         <PersonAddAlt1RoundedIcon />
     );
+    const helperText = followAction.loading
+        ? PROFILE_TEXTS.FOLLOW.LOADING_HINT
+        : followAction.isFollowing
+        ? PROFILE_TEXTS.FOLLOW.FOLLOWING_HINT
+        : PROFILE_TEXTS.FOLLOW.FOLLOW_HINT;
 
     return (
         <Stack spacing={1.25} sx={{ alignItems: "flex-start" }}>
@@ -38,6 +43,10 @@ export function ProfileFollowButton({ followAction }) {
             {followAction.message ? (
                 <Alert severity="success">{followAction.message}</Alert>
             ) : null}
+
+            <Typography variant="caption" color="text.secondary">
+                {helperText}
+            </Typography>
         </Stack>
     );
 }
