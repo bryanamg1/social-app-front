@@ -4,6 +4,11 @@ export const HTTP_STATUS = {
     TOO_MANY_REQUESTS: 429,
 };
 
+export const HTTP_HEADERS = {
+    REQUEST_ID: "x-request-id",
+    RETRY_AFTER: "retry-after",
+};
+
 export const HTTP_ERROR_MESSAGES = {
     DEFAULT: "Ocurrió un error inesperado.",
 };

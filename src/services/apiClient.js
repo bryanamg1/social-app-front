@@ -2,6 +2,7 @@ import axios from "axios";
 
 import { API_ENDPOINTS, HTTP_STATUS, ROUTES } from "../constants";
 import { authStorage } from "./authStorage";
+import { recordHttpError, recordHttpSuccess } from "./observability";
 
 const API_BASE_URL =
     import.meta.env.VITE_API_URL || "http://localhost:3000/api";
@@ -25,6 +26,10 @@ const isPublicAuthRequest = (url = "") => {
 apiClient.interceptors.request.use(
     (config) => {
         const token = authStorage.getToken();
+        config.metadata = {
+            ...(config.metadata ?? {}),
+            startedAt: Date.now(),
+        };
 
         if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -36,10 +41,15 @@ apiClient.interceptors.request.use(
 );
 
 apiClient.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        recordHttpSuccess("api", response);
+        return response;
+    },
     (error) => {
         const status = error?.response?.status;
         const requestUrl = error?.config?.url || "";
+
+        recordHttpError("api", error);
 
         if (
         status === HTTP_STATUS.UNAUTHORIZED &&
