@@ -17,6 +17,7 @@ import {
     joinConversationRoom,
     sendSocketMessage,
 } from "../services/messagesSocketService";
+import { recordSocketEvent } from "../../../services/observability";
 import {
     normalizeConversationTarget,
     normalizeMessage,
@@ -159,16 +160,37 @@ export const useMessages = ({ currentUserId }) => {
 
         const handleDisconnect = () => {
             setSocketConnected(false);
+            recordSocketEvent(
+                "messages",
+                "socket:disconnect",
+                {
+                    conversationId: selectedConversationId,
+                },
+                "info"
+            );
         };
 
-        const handleConnectError = () => {
+        const handleConnectError = (socketError) => {
             setSocketConnected(false);
             setMessagesError(MESSAGES_ERRORS.SOCKET);
             setSendingMessage(false);
+            recordSocketEvent("messages", "socket:connect_error", {
+                conversationId: selectedConversationId,
+                message: socketError?.message ?? null,
+                description: socketError?.description ?? null,
+            });
         };
 
         const handleJoined = () => {
             setMessagesError(null);
+            recordSocketEvent(
+                "messages",
+                "socket:joined",
+                {
+                    conversationId: selectedConversationId,
+                },
+                "info"
+            );
         };
 
         const handleNewMessage = (nextMessage) => {
@@ -191,9 +213,13 @@ export const useMessages = ({ currentUserId }) => {
             setSendingMessage(false);
         };
 
-        const handleSocketError = () => {
+        const handleSocketError = (socketPayload) => {
             setMessagesError(MESSAGES_ERRORS.SOCKET);
             setSendingMessage(false);
+            recordSocketEvent("messages", "socket:error", {
+                conversationId: selectedConversationId,
+                payload: socketPayload ?? null,
+            });
         };
 
         socket.on("connect", handleConnect);

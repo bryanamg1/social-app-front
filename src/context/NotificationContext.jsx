@@ -16,6 +16,7 @@ import {
     markNotificationSeen as markNotificationSeenRequest,
 } from "../components/notifications/services/notificationsService";
 import { isNotificationSeen } from "../components/notifications/utils/notificationAdapter";
+import { recordSocketEvent } from "../services/observability";
 import { NotificationContext } from "./NotificationContextValue";
 
 const EMPTY_STATE = {
@@ -110,17 +111,38 @@ export function NotificationProvider({ children }) {
         const handleDisconnect = () => {
             setIsConnected(false);
             setIsSubscribed(false);
+            recordSocketEvent(
+                "notifications",
+                "socket:disconnect",
+                {
+                    userId: currentUserId,
+                },
+                "info"
+            );
         };
 
-        const handleConnectError = () => {
+        const handleConnectError = (socketError) => {
             setIsConnected(false);
             setIsSubscribed(false);
             setError(NOTIFICATIONS_ERRORS.SOCKET);
+            recordSocketEvent("notifications", "socket:connect_error", {
+                userId: currentUserId,
+                message: socketError?.message ?? null,
+                description: socketError?.description ?? null,
+            });
         };
 
         const handleSubscribed = () => {
             setIsSubscribed(true);
             setError(null);
+            recordSocketEvent(
+                "notifications",
+                "socket:subscribed",
+                {
+                    userId: currentUserId,
+                },
+                "info"
+            );
         };
 
         const handleNewNotification = (notification) => {
@@ -143,9 +165,13 @@ export function NotificationProvider({ children }) {
             setUnreadCount(getNotificationCount(payload));
         };
 
-        const handleNotificationError = () => {
+        const handleNotificationError = (socketPayload) => {
             setIsSubscribed(false);
             setError(NOTIFICATIONS_ERRORS.SUBSCRIBE);
+            recordSocketEvent("notifications", "socket:error", {
+                userId: currentUserId,
+                payload: socketPayload ?? null,
+            });
         };
 
         socket.on("connect", handleConnect);
