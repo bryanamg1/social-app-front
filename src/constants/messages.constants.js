@@ -14,11 +14,23 @@ export const MESSAGES_TEXTS = {
     STARTING_BUTTON: "Abriendo...",
     CREATED_AT_LABEL: "Creada",
     NO_MESSAGES: "Todavia no hay mensajes en esta conversacion.",
-    CONVERSATION_FALLBACK: (conversationId) => `Conversacion #${conversationId}`,
+    CONVERSATION_FALLBACK: () => "Conversacion",
     LAST_MESSAGE_EMPTY: "Sin mensajes todavia.",
     RESULTS_FROM_PROFILE: "Conversacion iniciada desde perfil publico.",
     SOCKET_ONLINE: "Realtime conectado.",
     SOCKET_OFFLINE: "Realtime desconectado.",
+    THREAD_STATUS_READY: "Conversacion sincronizada y lista para responder.",
+    THREAD_STATUS_OFFLINE:
+        "Realtime desconectado. Puedes seguir leyendo el historial mientras vuelve la conexion.",
+    COMPOSER_DISABLED_PLACEHOLDER:
+        "Selecciona una conversacion para escribir tu mensaje.",
+    COMPOSER_STATUS_IDLE:
+        "Selecciona una conversacion para empezar a escribir.",
+    COMPOSER_STATUS_READY:
+        "Tu mensaje se enviara al instante dentro de la conversacion activa.",
+    COMPOSER_STATUS_OFFLINE:
+        "La conexion realtime esta inactiva. Espera a que se recupere antes de enviar.",
+    COMPOSER_STATUS_SENDING: "Enviando mensaje...",
 };
 
 export const MESSAGES_ERRORS = {

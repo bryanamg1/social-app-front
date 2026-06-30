@@ -104,9 +104,17 @@
 .panelStatusRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 12px 16px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.panelStatusMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .statusDotConnected,
@@ -131,6 +139,13 @@
   color: #cbd5e1;
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.panelStatusSummary {
+  color: #64748b;
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .panelState {

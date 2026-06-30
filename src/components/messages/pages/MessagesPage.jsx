@@ -14,6 +14,18 @@ export function MessagesPage() {
     const { user } = useAuth();
     const currentUserId = getUserId(user);
     const messages = useMessages({ currentUserId });
+    const composerStatusText = !messages.selectedConversationId
+        ? MESSAGES_TEXTS.COMPOSER_STATUS_IDLE
+        : !messages.socketConnected
+        ? MESSAGES_TEXTS.COMPOSER_STATUS_OFFLINE
+        : messages.sendingMessage
+        ? MESSAGES_TEXTS.COMPOSER_STATUS_SENDING
+        : MESSAGES_TEXTS.COMPOSER_STATUS_READY;
+    const composerStatusTone = !messages.selectedConversationId
+        ? "info"
+        : !messages.socketConnected
+        ? "warning"
+        : "success";
 
     return (
         <main className={styles.page}>
@@ -54,6 +66,8 @@ export function MessagesPage() {
                         disabled={!messages.selectedConversationId}
                         draft={messages.draft}
                         sending={messages.sendingMessage}
+                        statusText={composerStatusText}
+                        statusTone={composerStatusTone}
                         onDraftChange={messages.onDraftChange}
                         onSendMessage={messages.onSendMessage}
                     />

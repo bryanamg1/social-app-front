@@ -53,11 +53,18 @@ export const NOTIFICATIONS_TEXTS = {
     STATUS_ONLINE: "Realtime activo",
     STATUS_OFFLINE: "Realtime inactivo",
     MARK_ALL_READ: "Marcar todo",
+    MARKING_ALL_READ: "Marcando...",
     MARK_READ: "Marcar leida",
     READ_LABEL: "Leida",
     NOW: "Ahora",
-    FROM_USER: (userId) => `Usuario #${userId}`,
-    RELATED_ENTITY: (relateId) => `Referencia #${relateId}`,
+    UNKNOWN_USER: "Alguien",
+    STATUS_SUMMARY: (unreadCount) =>
+        unreadCount
+            ? `${unreadCount} pendientes`
+            : "Sin pendientes",
+    RELATED_POST: "tu publicacion",
+    RELATED_COMMENT: "tu comentario",
+    RELATED_CONTENT: "tu contenido",
     TYPE_LABELS: {
         FOLLOW_USER: "Nuevo seguidor",
         COMMENT_POST: "Nuevo comentario",
@@ -74,9 +81,9 @@ export const NOTIFICATIONS_TEXTS = {
         COMMENT_POST: (fromUserLabel, relatedLabel) =>
             `${fromUserLabel} comento en ${relatedLabel}.`,
         REACTION_POST: (fromUserLabel, relatedLabel) =>
-            `${fromUserLabel} reacciono en ${relatedLabel}.`,
+            `${fromUserLabel} reacciono a ${relatedLabel}.`,
         REACTION_COMMENT: (fromUserLabel, relatedLabel) =>
-            `${fromUserLabel} reacciono en ${relatedLabel}.`,
+            `${fromUserLabel} reacciono a ${relatedLabel}.`,
         REPLY_COMMENT: (fromUserLabel, relatedLabel) =>
             `${fromUserLabel} respondio en ${relatedLabel}.`,
         REPOST: (fromUserLabel, relatedLabel) =>

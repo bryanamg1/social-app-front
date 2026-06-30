@@ -18,6 +18,11 @@ export const PROFILE_TEXTS = {
         UNFOLLOW_SUCCESS: "Dejaste de seguir a este usuario.",
         ALREADY_FOLLOWING: "Ya sigues a este usuario.",
         NOT_FOLLOWING: "Ya no sigues a este usuario.",
+        FOLLOWING_HINT:
+            "Veras sus publicaciones y actividad en tu experiencia social.",
+        FOLLOW_HINT:
+            "Puedes seguir este perfil para recibir mejor contexto de su actividad.",
+        LOADING_HINT: "Actualizando estado de seguimiento...",
     },
 
     FIELDS: {

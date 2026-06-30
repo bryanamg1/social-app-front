@@ -24,6 +24,9 @@ export const NotificationPanel = ({
     const statusText = isConnected
         ? NOTIFICATIONS_TEXTS.STATUS_ONLINE
         : NOTIFICATIONS_TEXTS.STATUS_OFFLINE;
+    const actionText = markingAllAsSeen
+        ? NOTIFICATIONS_TEXTS.MARKING_ALL_READ
+        : NOTIFICATIONS_TEXTS.MARK_ALL_READ;
 
     return (
         <>
@@ -50,7 +53,7 @@ export const NotificationPanel = ({
                 onClick={onMarkAllSeen}
                 disabled={!notifications.length || !unreadCount || markingAllAsSeen}
                 >
-                {NOTIFICATIONS_TEXTS.MARK_ALL_READ}
+                {actionText}
                 </button>
 
                 <span className={styles.panelCount}>
@@ -69,13 +72,21 @@ export const NotificationPanel = ({
             </div>
 
             <div className={styles.panelStatusRow}>
-            <span
+            <div className={styles.panelStatusMeta}>
+                <span
                 className={
-                isConnected ? styles.statusDotConnected : styles.statusDotDisconnected
+                    isConnected
+                    ? styles.statusDotConnected
+                    : styles.statusDotDisconnected
                 }
-            />
+                />
 
-            <span className={styles.panelStatusText}>{statusText}</span>
+                <span className={styles.panelStatusText}>{statusText}</span>
+            </div>
+
+            <span className={styles.panelStatusSummary}>
+                {NOTIFICATIONS_TEXTS.STATUS_SUMMARY(unreadCount)}
+            </span>
             </div>
 
             {error ? (
