@@ -30,6 +30,9 @@ export const FEED_TEXTS = {
         LOADING_MORE: "Cargando mas publicaciones...",
         EMPTY_TITLE: "Todavía no hay publicaciones",
         EMPTY_DESCRIPTION: "Sé el primero en compartir algo con la comunidad.",
+        FOLLOWING_EMPTY_TITLE: "Tu feed aun no tiene actividad",
+        FOLLOWING_EMPTY_DESCRIPTION:
+            "Sigue perfiles para ver sus publicaciones aqui junto con las tuyas.",
         DELETE_ARIA: "Eliminar publicación",
         REACT_BUTTON: "Reaccionar",
         COMMENTS_BUTTON: "Comentarios",
@@ -134,4 +137,9 @@ export const FEED_KEYS = {
 export const FEED_PAGINATION = {
     INITIAL_PAGE: 1,
     PAGE_SIZE: 10,
+};
+
+export const FEED_MODES = {
+    ALL: "all",
+    FOLLOWING: "following",
 };

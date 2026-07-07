@@ -58,6 +58,27 @@
   padding: 6px 6px 24px;
 }
 
+.brandButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 24px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.brandButton:hover {
+  opacity: 0.95;
+}
+
+.brandButton:disabled {
+  cursor: progress;
+  opacity: 0.82;
+}
+
 .brandLogo {
   width: 38px;
   height: 38px;
@@ -163,19 +184,6 @@
 
 .mobileLogoutButton {
   display: none;
-}
-
-.createPostButton {
-  width: 100%;
-  min-height: 44px;
-  margin-top: 20px;
-  border: none;
-  border-radius: 999px;
-  color: #020617;
-  font-weight: 900;
-  font-size: 0.95rem;
-  background: linear-gradient(135deg, #38bdf8, #22d3ee);
-  box-shadow: 0 12px 28px rgba(34, 211, 238, 0.22);
 }
 
 .sessionCard {
@@ -321,7 +329,12 @@
   }
 
   .brand {
+    display: none;
+  }
+
+  .brandButton {
     justify-content: center;
+    align-self: center;
     padding-inline: 0;
   }
 
@@ -337,11 +350,6 @@
   .navActionButtonActive {
     justify-content: center;
     padding: 0;
-  }
-
-  .createPostButton {
-    width: 48px;
-    align-self: center;
   }
 
   .sessionCard {
@@ -398,7 +406,7 @@
   }
 
   .brand,
-  .createPostButton,
+  .brandButton,
   .sessionCard {
     display: none;
   }

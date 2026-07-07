@@ -5,6 +5,11 @@ export const UI_TEXTS = {
         ROUTE_CHANGE: "Preparando la vista...",
     },
 
+    ERRORS: {
+        FEED_REFRESH_PROVIDER:
+            "useFeedRefresh debe usarse dentro de FeedRefreshProvider.",
+    },
+
     PAGES: {
         LOGIN_TITLE: "Login",
         REGISTER_TITLE: "Registro",

@@ -17,6 +17,10 @@ const getPostsRequestKey = ({ page, limit } = {}) => {
     return `${API_ENDPOINTS.POSTS.ALL}:${page ?? ""}:${limit ?? ""}`;
 };
 
+const getFollowingFeedRequestKey = ({ page, limit } = {}) => {
+    return `${API_ENDPOINTS.FOLLOWS.FEED}:${page ?? ""}:${limit ?? ""}`;
+};
+
 export const getAllPosts = async ({ page, limit } = {}) => {
     const requestKey = getPostsRequestKey({ page, limit });
 
@@ -40,9 +44,28 @@ export const getAllPosts = async ({ page, limit } = {}) => {
     return request;
 };
 
-export const getFollowingFeed = async () => {
-    const response = await apiClient.get(API_ENDPOINTS.FOLLOWS.FEED);
-    return getPostsFromResponse(response);
+export const getFollowingFeed = async ({ page, limit } = {}) => {
+    const requestKey = getFollowingFeedRequestKey({ page, limit });
+
+    if (pendingPostsRequests.has(requestKey)) {
+        return pendingPostsRequests.get(requestKey);
+    }
+
+    const request = apiClient
+        .get(API_ENDPOINTS.FOLLOWS.FEED, {
+            params: {
+                [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
+                [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
+            },
+        })
+        .then((response) => getPostsFromResponse(response))
+        .finally(() => {
+            pendingPostsRequests.delete(requestKey);
+        });
+
+    pendingPostsRequests.set(requestKey, request);
+
+    return request;
 };
 
 export const createPost = async ({ userId, content, image }) => {
