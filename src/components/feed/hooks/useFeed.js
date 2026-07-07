@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { FEED_PAGINATION, FEED_TEXTS, HTTP_STATUS } from "../../../constants";
 import {
-  createPost,
-  getAllPosts,
-  getFollowingFeed,
-  removePost,
+    FEED_MODES,
+    FEED_PAGINATION,
+    FEED_TEXTS,
+    HTTP_STATUS,
+} from "../../../constants";
+import {
+    createPost,
+    getAllPosts,
+    getFollowingFeed,
+    removePost,
 } from "../services/feedService";
 import { getPostId } from "../utils/postAdapter";
 
@@ -77,8 +82,11 @@ export const useFeed = ({ mode = "all" } = {}) => {
             }
 
             const postsData =
-            mode === "following"
-                ? await getFollowingFeed()
+            mode === FEED_MODES.FOLLOWING
+                ? await getFollowingFeed({
+                    page,
+                    limit: FEED_PAGINATION.PAGE_SIZE,
+                })
                 : await getAllPosts({
                     page,
                     limit: FEED_PAGINATION.PAGE_SIZE,
@@ -113,14 +121,12 @@ export const useFeed = ({ mode = "all" } = {}) => {
             total: nextTotal,
             totalPages: nextTotalPages,
             hasMore:
-                mode === "following"
-                ? false
-                : getHasMore({
+                getHasMore({
                     page: nextPage,
                     totalPages: nextTotalPages,
                     receivedPostsCount: nextPosts.length,
                     limit: nextLimit,
-                    }),
+                }),
             });
         } catch (error) {
             if (append) {
@@ -204,6 +210,11 @@ export const useFeed = ({ mode = "all" } = {}) => {
         loadPosts();
     }, [loadPosts]);
 
+    const refreshFeed = useCallback(async () => {
+        if (loadingPosts || loadingMorePosts || creatingPost) return;
+        await loadPosts();
+    }, [creatingPost, loadPosts, loadingMorePosts, loadingPosts]);
+
     return {
         posts,
         loadingPosts,
@@ -215,6 +226,7 @@ export const useFeed = ({ mode = "all" } = {}) => {
         pagination,
         loadPosts,
         loadMorePosts,
+        refreshFeed,
         handleCreatePost,
         handleDeletePost,
     };

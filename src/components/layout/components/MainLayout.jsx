@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -6,14 +6,18 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 import {
   APP_BRAND,
+  ROUTES,
   LAYOUT_TEXTS,
   RIGHT_SIDEBAR_TEXTS,
   SIDEBAR_NAV_ITEMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
 import { useNotifications } from "../../../hooks/useNotifications";
 import { useUserSearch } from "../../users/hooks/useUserSearch";
+import { useUserSuggestions } from "../../users/hooks/useUserSuggestions";
 import { getUserId } from "../../users/utils/userProfileAdapter";
+import { UserSuggestionsPanel } from "../../users/components/UserSuggestionsPanel";
 import { NotificationPanel } from "../../notifications/components/NotificationPanel";
 import { NotificationToggleButton } from "../../notifications/components/NotificationToggleButton";
 import { useNotificationPanel } from "../../notifications/hooks/useNotificationPanel";
@@ -39,32 +43,73 @@ const getUserDisplayName = (user) => {
 
 export function MainLayout() {
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const feedRefresh = useFeedRefresh();
     const notificationPanel = useNotificationPanel();
     const notificationsState = useNotifications();
 
     const userDisplayName = getUserDisplayName(user);
     const currentUserId = getUserId(user);
     const userSearch = useUserSearch({ currentUserId });
+    const suggestionsState = useUserSuggestions({ currentUserId });
     const avatarLetter = userDisplayName.charAt(0).toUpperCase();
+    const isFeedRoute = location.pathname === ROUTES.FEED;
+
+    const handleFeedRefresh = async () => {
+        if (isFeedRoute) {
+            await feedRefresh.requestRefresh();
+            return;
+        }
+
+        navigate(ROUTES.FEED);
+    };
+
+    const handleNavItemClick = (item) => async (event) => {
+        if (item.path !== ROUTES.FEED || !isFeedRoute) return;
+
+        event.preventDefault();
+        await feedRefresh.requestRefresh();
+    };
 
     return (
         <div className={styles.appShell}>
         <aside className={styles.leftSidebar}>
             <div className={styles.leftSidebarInner}>
-            <div className={styles.brand}>
+            <button
+                type="button"
+                className={styles.brandButton}
+                aria-label={
+                    feedRefresh.isRefreshing
+                        ? LAYOUT_TEXTS.REFRESHING_FEED
+                        : LAYOUT_TEXTS.REFRESH_FEED
+                }
+                title={
+                    feedRefresh.isRefreshing
+                        ? LAYOUT_TEXTS.REFRESHING_FEED
+                        : LAYOUT_TEXTS.REFRESH_FEED
+                }
+                disabled={feedRefresh.isRefreshing}
+                onClick={handleFeedRefresh}
+            >
                 <span className={styles.brandLogo}>{APP_BRAND.LOGO}</span>
 
                 <div className={styles.brandText}>
                 <p className={styles.brandName}>{APP_BRAND.NAME}</p>
-                <p className={styles.brandTagline}>{APP_BRAND.TAGLINE}</p>
+                <p className={styles.brandTagline}>
+                    {feedRefresh.isRefreshing
+                        ? LAYOUT_TEXTS.REFRESHING_FEED
+                        : APP_BRAND.TAGLINE}
+                </p>
                 </div>
-            </div>
+            </button>
 
             <nav className={styles.navMenu}>
                 {SIDEBAR_NAV_ITEMS.map((item) => (
                 <NavLink
                     key={item.path}
                     to={item.path}
+                    onClick={handleNavItemClick(item)}
                     className={({ isActive }) =>
                     isActive ? styles.navItemActive : styles.navItem
                     }
@@ -107,10 +152,6 @@ export function MainLayout() {
                 </button>
             </nav>
 
-            <button type="button" className={styles.createPostButton}>
-                {APP_BRAND.LOGO}
-            </button>
-
             <div className={styles.sessionCard}>
                 <div className={styles.avatar}>{avatarLetter}</div>
 
@@ -135,7 +176,7 @@ export function MainLayout() {
         </aside>
 
         <main className={styles.mainContent}>
-            <Outlet />
+            <Outlet context={{ suggestionsState }} />
         </main>
 
         <NotificationPanel
@@ -157,15 +198,7 @@ export function MainLayout() {
             <div className={styles.rightSidebarInner}>
             <UserSearchPanel search={userSearch} />
 
-            <section className={styles.rightCard}>
-                <h3 className={styles.rightCardTitle}>
-                {RIGHT_SIDEBAR_TEXTS.SUGGESTIONS_TITLE}
-                </h3>
-
-                <p className={styles.rightCardText}>
-                {RIGHT_SIDEBAR_TEXTS.TRENDING_DESCRIPTION}
-                </p>
-            </section>
+            <UserSuggestionsPanel suggestionsState={suggestionsState} />
 
             <section className={styles.rightCard}>
                 <h3 className={styles.rightCardTitle}>

@@ -9,6 +9,10 @@ export const HTTP_HEADERS = {
     RETRY_AFTER: "retry-after",
 };
 
+export const HTTP_TIMEOUTS = {
+    USER_SUGGESTIONS_MS: 8000,
+};
+
 export const HTTP_ERROR_MESSAGES = {
     DEFAULT: "Ocurrió un error inesperado.",
 };
@@ -38,6 +42,7 @@ export const API_ENDPOINTS = {
 
     FOLLOWS: {
         FEED: "/follows/feed",
+        SUGGESTIONS: "/follows/suggestions",
         STATUS: (userId) => `/follows/users/${userId}/status`,
         FOLLOW_USER: (userId) => `/follows/users/${userId}/follow`,
         UNFOLLOW_USER: (userId) => `/follows/users/${userId}/unfollow`,
@@ -102,6 +107,7 @@ export const API_QUERY_PARAMS = {
 
     SEARCH: {
         QUERY: "query",
+        LIMIT: "limit",
     },
 
     CONVERSATIONS: {

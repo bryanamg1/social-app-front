@@ -62,3 +62,26 @@ export const PROFILE_FORM_FIELDS = {
     BIO: "bio",
     LOCATION: "location",
 };
+
+export const USER_SUGGESTIONS_TEXTS = {
+    TITLE: "Sugerencias",
+    DESCRIPTION:
+        "Personas que quizas conozcas para mejorar tu feed social.",
+    REFRESH_ARIA: "Actualizar sugerencias",
+    REFRESH_TOOLTIP: "Actualizar sugerencias",
+    RETRY_BUTTON: "Reintentar",
+    LOADING: "Cargando sugerencias...",
+    EMPTY: "No hay sugerencias disponibles por ahora.",
+    ERROR: "No se pudieron cargar las sugerencias.",
+    UNAVAILABLE:
+        "Las sugerencias no estan disponibles en este entorno todavia.",
+    TIMEOUT:
+        "La carga de sugerencias tardo demasiado. Intenta nuevamente.",
+    AUTH_REQUIRED: "Inicia sesion nuevamente para cargar sugerencias.",
+    FOLLOW_ACTION_ERROR: "No se pudo seguir al usuario sugerido.",
+    FOLLOW_BUTTON: "Seguir",
+    FOLLOWING_BUTTON: "Siguiendo...",
+    FOLLOWERS_COUNT: (count) =>
+        `${count} ${count === 1 ? "seguidor" : "seguidores"}`,
+    BIO_FALLBACK: "Perfil disponible para ampliar tu red.",
+};
