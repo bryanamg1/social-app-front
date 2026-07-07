@@ -1,6 +1,6 @@
 .panel {
-    padding: 16px;
-    border-radius: 22px;
+    padding: 16px 16px 10px;
+    border-radius: 18px;
     background: rgba(15, 23, 42, 0.82);
     border: 1px solid rgba(148, 163, 184, 0.16);
     box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
@@ -11,7 +11,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .panelCopy {
@@ -31,14 +31,14 @@
 
 .panelTitle {
     color: #f8fafc;
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-weight: 900;
 }
 
 .panelDescription {
-    margin-top: 6px;
+    margin-top: 4px;
     color: #94a3b8;
-    font-size: 0.82rem;
+    font-size: 0.79rem;
     line-height: 1.45;
 }
 
@@ -51,26 +51,49 @@
 .suggestionsList {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
 }
 
 .suggestionItem {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.suggestionItem:first-child {
+    border-top: none;
+}
+
+.suggestionUserLine,
+.suggestionActionRow,
+.avatarLink,
+.profileLink,
+.meta {
+    min-width: 0;
+}
+
+.suggestionUserLine {
+    display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px;
-    border-radius: 18px;
-    background: rgba(2, 6, 23, 0.36);
-    border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.avatarLink {
+    display: block;
+    flex: 0 0 auto;
+}
+
+.suggestionActionRow {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 56px;
 }
 
 .profileLink {
-    min-width: 0;
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr);
-    align-items: center;
-    gap: 12px;
+    display: block;
+    flex: 1 1 auto;
     color: inherit;
     text-decoration: none;
 }
@@ -105,10 +128,6 @@
     background: linear-gradient(135deg, #38bdf8, #67e8f9);
 }
 
-.meta {
-    min-width: 0;
-}
-
 .userName,
 .userBio,
 .userStats {
@@ -116,18 +135,23 @@
     text-overflow: ellipsis;
 }
 
+.meta {
+    display: grid;
+    align-content: start;
+    gap: 3px;
+}
+
 .userName {
     color: #f8fafc;
-    font-size: 0.9rem;
+    font-size: 0.86rem;
     font-weight: 800;
     white-space: nowrap;
 }
 
 .userBio {
-    margin-top: 3px;
     color: #94a3b8;
-    font-size: 0.78rem;
-    line-height: 1.45;
+    font-size: 0.75rem;
+    line-height: 1.35;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -135,32 +159,38 @@
 }
 
 .userStats {
-    margin-top: 5px;
     color: #38bdf8;
-    font-size: 0.74rem;
+    font-size: 0.71rem;
     font-weight: 800;
+    white-space: nowrap;
+    opacity: 0.88;
 }
 
 .followButton {
-    min-width: 88px !important;
+    min-width: 92px !important;
+    min-height: 30px !important;
+    flex-shrink: 0;
     color: #38bdf8 !important;
-    font-size: 0.78rem !important;
+    font-size: 0.76rem !important;
     font-weight: 900 !important;
     text-transform: none !important;
     border-radius: 999px !important;
     white-space: nowrap;
+    padding-inline: 14px !important;
 }
 
 .statusBlock {
-    min-height: 88px;
+    min-height: 76px;
     display: grid;
     place-items: center;
     gap: 10px;
+    padding: 8px 0 12px;
 }
 
 .errorBlock {
     display: grid;
     gap: 10px;
+    padding: 4px 0 10px;
 }
 
 .statusBlock :global(.MuiCircularProgress-root) {
@@ -171,7 +201,7 @@
 .emptyText,
 .emptyTextCompact {
     color: #94a3b8;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     line-height: 1.5;
 }
 
@@ -185,7 +215,7 @@
 }
 
 .emptyTextCompact {
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 @media (max-width: 580px) {
@@ -194,8 +224,12 @@
         border-radius: 18px;
     }
 
-    .suggestionItem {
-        grid-template-columns: 1fr;
+    .suggestionUserLine {
+        align-items: flex-start;
+    }
+
+    .suggestionActionRow {
+        padding-left: 56px;
     }
 
     .followButton {

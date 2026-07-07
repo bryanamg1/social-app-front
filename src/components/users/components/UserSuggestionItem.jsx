@@ -17,39 +17,49 @@ export function UserSuggestionItem({ suggestion, onFollow }) {
 
     return (
         <article className={styles.suggestionItem}>
-            <Link to={suggestion.profilePath} className={styles.profileLink}>
-                <div className={styles.avatarWrapper}>
-                    {avatarUrl ? (
-                        <img
-                            src={avatarUrl}
-                            alt={userName}
-                            className={styles.avatarImage}
-                        />
-                    ) : (
-                        <div className={styles.avatarFallback}>{avatarLetter}</div>
-                    )}
-                </div>
+            <div className={styles.suggestionUserLine}>
+                <Link to={suggestion.profilePath} className={styles.avatarLink}>
+                    <div className={styles.avatarWrapper}>
+                        {avatarUrl ? (
+                            <img
+                                src={avatarUrl}
+                                alt={userName}
+                                className={styles.avatarImage}
+                            />
+                        ) : (
+                            <div className={styles.avatarFallback}>
+                                {avatarLetter}
+                            </div>
+                        )}
+                    </div>
+                </Link>
 
-                <div className={styles.meta}>
-                    <p className={styles.userName}>{userName}</p>
-                    <p className={styles.userBio}>{suggestion.bio}</p>
-                    <p className={styles.userStats}>
-                        {USER_SUGGESTIONS_TEXTS.FOLLOWERS_COUNT(followersCount)}
-                    </p>
-                </div>
-            </Link>
+                <Link to={suggestion.profilePath} className={styles.profileLink}>
+                    <div className={styles.meta}>
+                        <p className={styles.userName}>{userName}</p>
+                        <p className={styles.userBio}>{suggestion.bio}</p>
+                        <p className={styles.userStats}>
+                            {USER_SUGGESTIONS_TEXTS.FOLLOWERS_COUNT(
+                                followersCount
+                            )}
+                        </p>
+                    </div>
+                </Link>
+            </div>
 
-            <Button
-                variant="outlined"
-                size="small"
-                className={styles.followButton}
-                disabled={suggestion.isFollowingAction}
-                onClick={() => onFollow(suggestion.id)}
-            >
-                {suggestion.isFollowingAction
-                    ? USER_SUGGESTIONS_TEXTS.FOLLOWING_BUTTON
-                    : USER_SUGGESTIONS_TEXTS.FOLLOW_BUTTON}
-            </Button>
+            <div className={styles.suggestionActionRow}>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    className={styles.followButton}
+                    disabled={suggestion.isFollowingAction}
+                    onClick={() => onFollow(suggestion.id)}
+                >
+                    {suggestion.isFollowingAction
+                        ? USER_SUGGESTIONS_TEXTS.FOLLOWING_BUTTON
+                        : USER_SUGGESTIONS_TEXTS.FOLLOW_BUTTON}
+                </Button>
+            </div>
         </article>
     );
 }
