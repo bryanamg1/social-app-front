@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { FeedRefreshProvider } from "./context/FeedRefreshContext.jsx";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
 import { AppRoutes } from "./routes/AppRoutes";
 import { muiTheme } from "./theme/muiTheme";
@@ -13,9 +14,11 @@ function App() {
       <CssBaseline />
       <BrowserRouter>
         <AuthProvider>
-          <NotificationProvider>
-            <AppRoutes />
-          </NotificationProvider>
+          <FeedRefreshProvider>
+            <NotificationProvider>
+              <AppRoutes />
+            </NotificationProvider>
+          </FeedRefreshProvider>
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

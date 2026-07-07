@@ -35,7 +35,7 @@ export const RIGHT_SIDEBAR_TEXTS = {
         `${count} ${count === 1 ? "resultado" : "resultados"}`,
     SUGGESTIONS_TITLE: "Sugerencias",
     SUGGESTIONS_DESCRIPTION:
-        "Mas adelante mostraremos usuarios recomendados segun tu red.",
+        "Perfiles sugeridos para ampliar tu red y descubrir mas actividad.",
     TRENDING_TITLE: "Actividad",
     TRENDING_DESCRIPTION:
         "Aqui mostraremos actividad reciente, nuevos usuarios y publicaciones destacadas.",
@@ -51,4 +51,6 @@ export const LAYOUT_TEXTS = {
     MOBILE_LOGOUT: "Salir",
     ACTIVE_SESSION: "Sesion activa",
     DEFAULT_USER: "Usuario",
+    REFRESH_FEED: "Actualizar feed",
+    REFRESHING_FEED: "Actualizando feed...",
 };

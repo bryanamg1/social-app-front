@@ -1,7 +1,10 @@
 import { Box, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 
-import { FEED_TEXTS } from "../../../constants";
+import { FEED_MODES, FEED_TEXTS } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
 import { PostComposer } from "../components/PostComposer";
 import { PostList } from "../components/PostList";
 import { useCreatePostForm } from "../hooks/useCreatePostForm";
@@ -15,6 +18,8 @@ const getCurrentUserId = (user) => {
 
 const FeedPage = () => {
     const { user } = useAuth();
+    const { suggestionsState } = useOutletContext();
+    const feedRefresh = useFeedRefresh();
 
     const {
         posts,
@@ -25,11 +30,12 @@ const FeedPage = () => {
         error,
         paginationError,
         pagination,
+        refreshFeed,
         loadMorePosts,
         handleCreatePost,
         handleDeletePost,
     } = useFeed({
-        mode: "all",
+        mode: FEED_MODES.FOLLOWING,
     });
 
     const {
@@ -44,6 +50,10 @@ const FeedPage = () => {
     } = useCreatePostForm();
 
     const currentUserId = getCurrentUserId(user);
+
+    useEffect(() => {
+        return feedRefresh.registerRefreshHandler(refreshFeed);
+    }, [feedRefresh, refreshFeed]);
 
     const submitPost = async () => {
         if (!currentUserId || !canSubmit) return;
@@ -91,6 +101,9 @@ const FeedPage = () => {
             error={error}
             paginationError={paginationError}
             hasMore={pagination.hasMore}
+            emptyTitle={FEED_TEXTS.POSTS.FOLLOWING_EMPTY_TITLE}
+            emptyDescription={FEED_TEXTS.POSTS.FOLLOWING_EMPTY_DESCRIPTION}
+            suggestionsState={suggestionsState}
             onDeletePost={handleDeletePost}
             onLoadMorePosts={loadMorePosts}
         />

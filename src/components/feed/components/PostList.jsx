@@ -1,6 +1,7 @@
 import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
 
 import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
+import { UserSuggestionsList } from "../../users/components/UserSuggestionsList";
 import { usePostComments } from "../hooks/usePostComments";
 import { usePostReactions } from "../hooks/usePostReactions";
 import {
@@ -50,6 +51,9 @@ export const PostList = ({
     error,
     paginationError,
     hasMore,
+    emptyTitle,
+    emptyDescription,
+    suggestionsState,
     onDeletePost,
     onLoadMorePosts,
     }) => {
@@ -86,9 +90,22 @@ export const PostList = ({
     if (!posts.length) {
         return (
         <Box className={styles.emptyState}>
-            <Typography variant="h6">{FEED_TEXTS.POSTS.EMPTY_TITLE}</Typography>
+            <Typography variant="h6">
+                {emptyTitle || FEED_TEXTS.POSTS.EMPTY_TITLE}
+            </Typography>
 
-            <Typography>{FEED_TEXTS.POSTS.EMPTY_DESCRIPTION}</Typography>
+            <Typography>
+                {emptyDescription || FEED_TEXTS.POSTS.EMPTY_DESCRIPTION}
+            </Typography>
+
+            {suggestionsState ? (
+                <div className={styles.emptySuggestions}>
+                    <UserSuggestionsList
+                        suggestionsState={suggestionsState}
+                        compact
+                    />
+                </div>
+            ) : null}
         </Box>
         );
     }
