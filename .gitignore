@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 codex.local.instructions.txt
+.codex-local/
+codex-local/
 
 # Editor directories and files
 .vscode/*
