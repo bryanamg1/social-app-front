@@ -5,6 +5,8 @@ export const ROUTES = {
     MESSAGES: "/messages",
     LOGIN: "/login",
     REGISTER: "/register",
+    FORGOT_PASSWORD: "/forgot-password",
+    RESET_PASSWORD: "/reset-password",
     PROFILE: "/profile",
     PROFILE_DETAIL: "/profile/:userId",
     USER_PROFILE: (userId) => `/profile/${userId}`,

@@ -96,6 +96,23 @@
   gap: 18px;
 }
 
+.authMetaRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.authAuxLink {
+  color: #38bdf8 !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+}
+
+.authAuxLink:hover {
+  text-decoration: underline !important;
+}
+
 .authInput :global(.MuiInputLabel-root) {
   color: #94a3b8;
 }
@@ -148,6 +165,16 @@
 
 .authButton:disabled {
   opacity: 0.55;
+}
+
+.authSecondaryButton {
+  min-height: 46px;
+  margin-top: 18px !important;
+  border-radius: 999px !important;
+  color: #e5eefb !important;
+  border-color: rgba(148, 163, 184, 0.28) !important;
+  text-transform: none !important;
+  font-weight: 800 !important;
 }
 
 .authFooterText {

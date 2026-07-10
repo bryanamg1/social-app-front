@@ -26,9 +26,11 @@ export const API_ERROR_CODES = {
 
 export const API_ENDPOINTS = {
     AUTH: {
+        FORGOT_PASSWORD: "/auth/forgot-password",
         LOGIN: "/auth/login",
         PROFILE: (userId) => `/auth/users/${userId}`,
         REGISTER: "/auth/register",
+        RESET_PASSWORD: "/auth/reset-password",
         UPDATE_PROFILE: (userId) => `/auth/update/${userId}`,
         SEARCH_USERS: "/auth/usersSearch",
     },

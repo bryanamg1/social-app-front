@@ -9,6 +9,12 @@ import { PublicRoute } from "./PublicRoute";
 
 const LoginPage = lazy(() => import("../components/auth/pages/LoginPage"));
 const RegisterPage = lazy(() => import("../components/auth/pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() =>
+    import("../components/auth/pages/ForgotPasswordPage")
+);
+const ResetPasswordPage = lazy(() =>
+    import("../components/auth/pages/ResetPasswordPage")
+);
 const FeedPage = lazy(() => import("../components/feed/pages/FeedPage"));
 const MainLayout = lazy(() =>
     import("../components/layout/components/MainLayout").then((module) => ({
@@ -53,6 +59,14 @@ export function AppRoutes() {
             <Route element={<PublicRoute />}>
                 <Route path={ROUTES.LOGIN} element={<LoginPage />} />
                 <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+                <Route
+                    path={ROUTES.FORGOT_PASSWORD}
+                    element={<ForgotPasswordPage />}
+                />
+                <Route
+                    path={ROUTES.RESET_PASSWORD}
+                    element={<ResetPasswordPage />}
+                />
             </Route>
 
             <Route element={<ProtectedRoute />}>

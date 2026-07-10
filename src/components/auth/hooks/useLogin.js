@@ -4,47 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
 import { loginUser } from "../services/authService";
-
-const getReadableErrorValue = (value) => {
-    if (!value) return null;
-
-    if (typeof value === "string") return value;
-
-    if (Array.isArray(value)) {
-        return value
-        .map((item) => getReadableErrorValue(item))
-        .filter(Boolean)
-        .join(" ");
-    }
-
-    if (typeof value === "object") {
-        if (typeof value.message === "string") return value.message;
-        if (typeof value.error === "string") return value.error;
-        if (value.details) return getReadableErrorValue(value.details);
-
-        try {
-        return JSON.stringify(value);
-        } catch {
-        return AUTH_TEXTS.ERRORS.LOGIN_FAILED;
-        }
-    }
-
-    return String(value);
-};
-
-const getLoginErrorMessage = (error) => {
-    const data = error?.response?.data;
-
-    return (
-        getReadableErrorValue(data?.error?.message) ||
-        getReadableErrorValue(data?.message) ||
-        getReadableErrorValue(data?.error) ||
-        getReadableErrorValue(data?.details) ||
-        getReadableErrorValue(data) ||
-        getReadableErrorValue(error?.message) ||
-        AUTH_TEXTS.ERRORS.LOGIN_FAILED
-    );
-};
+import { getAuthApiErrorMessage } from "../utils/authFeedback";
 
 export const useLogin = () => {
     const navigate = useNavigate();
@@ -124,7 +84,7 @@ export const useLogin = () => {
             replace: true,
         });
         } catch (error) {
-        setError(getLoginErrorMessage(error));
+        setError(getAuthApiErrorMessage(error, AUTH_TEXTS.ERRORS.LOGIN_FAILED));
         } finally {
         setLoadingLogin(false);
         }

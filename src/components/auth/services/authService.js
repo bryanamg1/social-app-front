@@ -130,3 +130,25 @@ export const registerUser = async ({ user_name, userName, email, password }) => 
 
     return response.data;
 };
+
+export const requestPasswordReset = async ({ email }) => {
+    const response = await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {
+        email,
+    });
+
+    return response.data;
+};
+
+export const resetPassword = async ({
+    token,
+    password,
+    confirmPassword,
+}) => {
+    const response = await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, {
+        token,
+        password,
+        confirmPassword,
+    });
+
+    return response.data;
+};
