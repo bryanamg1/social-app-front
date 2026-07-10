@@ -10,6 +10,7 @@ export const HTTP_HEADERS = {
 };
 
 export const HTTP_TIMEOUTS = {
+    AUTH_PASSWORD_RECOVERY_MS: 15000,
     USER_SUGGESTIONS_MS: 8000,
 };
 

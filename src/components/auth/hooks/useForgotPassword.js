@@ -4,6 +4,25 @@ import { AUTH_TEXTS } from "../../../constants";
 import { requestPasswordReset } from "../services/authService";
 import { getAuthApiErrorMessage } from "../utils/authFeedback";
 
+const getForgotPasswordErrorMessage = (requestError) => {
+    const errorCode = requestError?.code;
+    const status = requestError?.response?.status;
+    const rawMessage = `${requestError?.message || ""}`.toLowerCase();
+
+    if (errorCode === "ECONNABORTED" || rawMessage.includes("timeout")) {
+        return AUTH_TEXTS.ERRORS.FORGOT_PASSWORD_TIMEOUT;
+    }
+
+    if (status === 500 || status === 503) {
+        return AUTH_TEXTS.ERRORS.FORGOT_PASSWORD_UNAVAILABLE;
+    }
+
+    return getAuthApiErrorMessage(
+        requestError,
+        AUTH_TEXTS.ERRORS.FORGOT_PASSWORD_FAILED
+    );
+};
+
 export const useForgotPassword = () => {
     const [formValues, setFormValues] = useState({
         email: "",
@@ -60,12 +79,7 @@ export const useForgotPassword = () => {
                 response?.message || AUTH_TEXTS.FORGOT_PASSWORD.SUCCESS_MESSAGE
             );
         } catch (requestError) {
-            setError(
-                getAuthApiErrorMessage(
-                    requestError,
-                    AUTH_TEXTS.ERRORS.FORGOT_PASSWORD_FAILED
-                )
-            );
+            setError(getForgotPasswordErrorMessage(requestError));
         } finally {
             setLoadingRequest(false);
         }

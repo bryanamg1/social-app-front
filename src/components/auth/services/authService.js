@@ -1,5 +1,5 @@
 import apiClient from "../../../services/apiClient";
-import { API_ENDPOINTS, AUTH_MESSAGES } from "../../../constants";
+import { API_ENDPOINTS, AUTH_MESSAGES, HTTP_TIMEOUTS } from "../../../constants";
 
 const decodeJwtPayload = (token) => {
     try {
@@ -132,9 +132,15 @@ export const registerUser = async ({ user_name, userName, email, password }) => 
 };
 
 export const requestPasswordReset = async ({ email }) => {
-    const response = await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {
-        email,
-    });
+    const response = await apiClient.post(
+        API_ENDPOINTS.AUTH.FORGOT_PASSWORD,
+        {
+            email,
+        },
+        {
+            timeout: HTTP_TIMEOUTS.AUTH_PASSWORD_RECOVERY_MS,
+        }
+    );
 
     return response.data;
 };
