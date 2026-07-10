@@ -17,33 +17,7 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import styles from "../styles/AuthPage.module.css";
-
-const getTextValue = (value) => {
-    if (!value) return "";
-
-    if (typeof value === "string") return value;
-
-    if (Array.isArray(value)) {
-        return value
-        .map((item) => getTextValue(item))
-        .filter(Boolean)
-        .join(" ");
-    }
-
-    if (typeof value === "object") {
-        if (typeof value.message === "string") return value.message;
-        if (typeof value.error === "string") return value.error;
-        if (value.details) return getTextValue(value.details);
-
-        try {
-        return JSON.stringify(value);
-        } catch {
-        return AUTH_TEXTS.ERRORS.LOGIN_FAILED;
-        }
-    }
-
-    return String(value);
-};
+import { getAuthTextValue } from "../utils/authFeedback";
 
 export const LoginForm = ({
     formValues,
@@ -55,8 +29,8 @@ export const LoginForm = ({
     onSubmit,
     onTogglePasswordVisibility,
     }) => {
-    const errorMessage = getTextValue(error);
-    const successText = getTextValue(successMessage);
+    const errorMessage = getAuthTextValue(error, AUTH_TEXTS.ERRORS.LOGIN_FAILED);
+    const successText = getAuthTextValue(successMessage);
 
     return (
         <Card className={styles.authCard}>
@@ -131,6 +105,16 @@ export const LoginForm = ({
                 },
                 }}
             />
+
+            <Box className={styles.authMetaRow}>
+                <Link
+                    component={RouterLink}
+                    to={ROUTES.FORGOT_PASSWORD}
+                    className={styles.authAuxLink}
+                >
+                    {AUTH_TEXTS.LOGIN.FORGOT_PASSWORD_LINK}
+                </Link>
+            </Box>
 
             <Button
                 fullWidth
