@@ -3,47 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import { registerUser } from "../services/authService";
-
-const getReadableErrorValue = (value) => {
-    if (!value) return null;
-
-    if (typeof value === "string") return value;
-
-    if (Array.isArray(value)) {
-        return value
-        .map((item) => getReadableErrorValue(item))
-        .filter(Boolean)
-        .join(" ");
-    }
-
-    if (typeof value === "object") {
-        if (typeof value.message === "string") return value.message;
-        if (typeof value.error === "string") return value.error;
-        if (value.details) return getReadableErrorValue(value.details);
-
-        try {
-        return JSON.stringify(value);
-        } catch {
-        return AUTH_TEXTS.ERRORS.REGISTER_FAILED;
-        }
-    }
-
-    return String(value);
-};
-
-const getRegisterErrorMessage = (error) => {
-    const data = error?.response?.data;
-
-    return (
-        getReadableErrorValue(data?.error?.message) ||
-        getReadableErrorValue(data?.message) ||
-        getReadableErrorValue(data?.error) ||
-        getReadableErrorValue(data?.details) ||
-        getReadableErrorValue(data) ||
-        getReadableErrorValue(error?.message) ||
-        AUTH_TEXTS.ERRORS.REGISTER_FAILED
-    );
-};
+import { getAuthApiErrorMessage } from "../utils/authFeedback";
 
 export const useRegister = () => {
     const navigate = useNavigate();
@@ -132,7 +92,9 @@ export const useRegister = () => {
             },
         });
         } catch (error) {
-        setError(getRegisterErrorMessage(error));
+        setError(
+            getAuthApiErrorMessage(error, AUTH_TEXTS.ERRORS.REGISTER_FAILED)
+        );
         } finally {
         setLoadingRegister(false);
         }

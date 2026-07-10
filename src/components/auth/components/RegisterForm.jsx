@@ -17,33 +17,7 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import styles from "../styles/AuthPage.module.css";
-
-const getTextValue = (value) => {
-    if (!value) return "";
-
-    if (typeof value === "string") return value;
-
-    if (Array.isArray(value)) {
-        return value
-        .map((item) => getTextValue(item))
-        .filter(Boolean)
-        .join(" ");
-    }
-
-    if (typeof value === "object") {
-        if (typeof value.message === "string") return value.message;
-        if (typeof value.error === "string") return value.error;
-        if (value.details) return getTextValue(value.details);
-
-        try {
-        return JSON.stringify(value);
-        } catch {
-        return AUTH_TEXTS.ERRORS.REGISTER_FAILED;
-        }
-    }
-
-    return String(value);
-};
+import { getAuthTextValue } from "../utils/authFeedback";
 
 export const RegisterForm = ({
     formValues,
@@ -59,7 +33,10 @@ export const RegisterForm = ({
     onSubmit,
     onTogglePasswordVisibility,
     }) => {
-    const errorMessage = getTextValue(error);
+    const errorMessage = getAuthTextValue(
+        error,
+        AUTH_TEXTS.ERRORS.REGISTER_FAILED
+    );
 
     const changeHandler = handleChange || onChange || (() => {});
     const submitHandler =
