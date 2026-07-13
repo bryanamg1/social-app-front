@@ -11,12 +11,25 @@ export const LEGACY_STORAGE_KEYS = {
 export const AUTH_MESSAGES = {
     TOKEN_NOT_FOUND: "El backend no devolvio un token valido.",
     LOGIN_ERROR: "No se pudo iniciar sesion.",
+    GOOGLE_LOGIN_ERROR: "No se pudo iniciar sesion con Google.",
     REGISTER_ERROR: "No se pudo registrar el usuario.",
     USE_AUTH_OUTSIDE_PROVIDER: "useAuth debe usarse dentro de un AuthProvider.",
 };
 
 export const JWT_CONFIG = {
     MILLISECONDS_PER_SECOND: 1000,
+};
+
+export const GOOGLE_AUTH_CONFIG = {
+    SCRIPT_URL: "https://accounts.google.com/gsi/client",
+    BUTTON_TEXT: {
+        LOGIN: "continue_with",
+        REGISTER: "signup_with",
+    },
+    BUTTON_THEME: "outline",
+    BUTTON_SIZE: "large",
+    BUTTON_SHAPE: "pill",
+    BUTTON_LOGO_ALIGNMENT: "left",
 };
 
 export const AUTH_TEXTS = {
@@ -58,6 +71,7 @@ export const AUTH_TEXTS = {
         HERO_TITLE: "Conecta, publica y reacciona en tiempo real.",
         HERO_DESCRIPTION:
             "Una red social moderna con feed, imagenes, comentarios, seguimientos y reacciones.",
+        GOOGLE_BUTTON: "Continuar con Google",
     },
 
     REGISTER: {
@@ -83,6 +97,15 @@ export const AUTH_TEXTS = {
         HERO_DESCRIPTION:
             "Unete a una red social moderna con publicaciones, imagenes, comentarios, seguimientos y reacciones.",
         SUCCESS_MESSAGE: "Usuario registrado correctamente. Ahora puedes iniciar sesion.",
+        GOOGLE_BUTTON: "Registrarse con Google",
+    },
+
+    GOOGLE: {
+        SEPARATOR: "o",
+        LOADING_BUTTON: "Cargando Google...",
+        UNAVAILABLE: "Google Sign-In no esta disponible en este momento.",
+        CONFIG_MISSING:
+            "Configura VITE_GOOGLE_CLIENT_ID para habilitar Google Sign-In en desarrollo.",
     },
 
     FORGOT_PASSWORD: {
@@ -127,6 +150,8 @@ export const AUTH_TEXTS = {
         PASSWORD_MIN_LENGTH: "La contrasena debe tener al menos 6 caracteres.",
         PASSWORDS_DO_NOT_MATCH: "Las contrasenas no coinciden.",
         LOGIN_FAILED: "No se pudo iniciar sesion. Verifica tus credenciales.",
+        GOOGLE_LOGIN_FAILED:
+            "No pudimos iniciar sesion con Google. Intentalo nuevamente.",
         FORGOT_PASSWORD_FAILED:
             "No se pudo procesar la solicitud de recuperacion. Intenta nuevamente.",
         FORGOT_PASSWORD_TIMEOUT:
@@ -134,6 +159,8 @@ export const AUTH_TEXTS = {
         FORGOT_PASSWORD_UNAVAILABLE:
             "El servicio de recuperacion no esta disponible en este momento.",
         REGISTER_FAILED: "No se pudo crear la cuenta. Intenta nuevamente.",
+        GOOGLE_REGISTER_FAILED:
+            "No pudimos completar el registro con Google. Intentalo nuevamente.",
         RESET_PASSWORD_FAILED:
             "No se pudo actualizar la contrasena. Intenta nuevamente.",
         RESET_TOKEN_REQUIRED:

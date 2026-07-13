@@ -11,10 +11,12 @@ const LoginPage = () => {
         formValues,
         showPassword,
         loadingLogin,
+        loadingGoogleAuth,
         error,
         successMessage,
         handleChange,
         handleSubmit,
+        handleGoogleCredential,
         togglePasswordVisibility,
     } = useLogin();
 
@@ -41,10 +43,12 @@ const LoginPage = () => {
             formValues={formValues}
             showPassword={showPassword}
             loadingLogin={loadingLogin}
+            loadingGoogleAuth={loadingGoogleAuth}
             error={error}
             successMessage={successMessage}
             onChange={handleChange}
             onSubmit={handleSubmit}
+            onGoogleCredential={handleGoogleCredential}
             onTogglePasswordVisibility={togglePasswordVisibility}
             />
         </section>

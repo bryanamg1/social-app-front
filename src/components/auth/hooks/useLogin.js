@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
-import { loginUser } from "../services/authService";
+import { googleLogin, loginUser } from "../services/authService";
 import { getAuthApiErrorMessage } from "../utils/authFeedback";
 
 export const useLogin = () => {
@@ -18,6 +18,7 @@ export const useLogin = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [loadingLogin, setLoadingLogin] = useState(false);
+    const [loadingGoogleAuth, setLoadingGoogleAuth] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(
         location.state?.successMessage ?? null
@@ -90,14 +91,43 @@ export const useLogin = () => {
         }
     };
 
+    const handleGoogleCredential = async (credential) => {
+        try {
+        setLoadingGoogleAuth(true);
+        setError(null);
+        setSuccessMessage(null);
+
+        const authData = await googleLogin(credential);
+
+        login(authData);
+
+        const redirectTo = location.state?.from?.pathname || ROUTES.HOME;
+
+        navigate(redirectTo, {
+            replace: true,
+        });
+        } catch (requestError) {
+        setError(
+            getAuthApiErrorMessage(
+                requestError,
+                AUTH_TEXTS.ERRORS.GOOGLE_LOGIN_FAILED
+            )
+        );
+        } finally {
+        setLoadingGoogleAuth(false);
+        }
+    };
+
     return {
         formValues,
         showPassword,
         loadingLogin,
+        loadingGoogleAuth,
         error,
         successMessage,
         handleChange,
         handleSubmit,
+        handleGoogleCredential,
         togglePasswordVisibility,
     };
 };
