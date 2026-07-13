@@ -1,5 +1,5 @@
 import apiClient from "../../../services/apiClient";
-import { API_ENDPOINTS, AUTH_MESSAGES } from "../../../constants";
+import { API_ENDPOINTS, AUTH_MESSAGES, HTTP_TIMEOUTS } from "../../../constants";
 
 const decodeJwtPayload = (token) => {
     try {

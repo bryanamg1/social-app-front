@@ -49,7 +49,9 @@ export const GoogleAuthSection = ({
     const placeholderText = getPlaceholderText(mode);
     const showDevConfigWarning = !googleClientId && import.meta.env.DEV;
 
-    credentialHandlerRef.current = onCredential;
+    useEffect(() => {
+        credentialHandlerRef.current = onCredential;
+    }, [onCredential]);
 
     useEffect(() => {
         if (!googleClientId) {
