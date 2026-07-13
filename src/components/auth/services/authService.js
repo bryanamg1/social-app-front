@@ -121,6 +121,20 @@ export const loginUser = async ({ email, password }) => {
     return normalizeLoginResponse(response, email);
 };
 
+export const googleLogin = async (credential) => {
+    const response = await apiClient.post(
+        API_ENDPOINTS.AUTH.GOOGLE,
+        {
+            credential,
+        },
+        {
+            timeout: HTTP_TIMEOUTS.AUTH_GOOGLE_MS,
+        }
+    );
+
+    return normalizeLoginResponse(response);
+};
+
 export const registerUser = async ({ user_name, userName, email, password }) => {
     const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, {
         user_name: user_name ?? userName,

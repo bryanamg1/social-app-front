@@ -11,9 +11,11 @@ const RegisterPage = () => {
         formValues,
         showPassword,
         loadingRegister,
+        loadingGoogleAuth,
         error,
         handleChange,
         handleSubmit,
+        handleGoogleCredential,
         togglePasswordVisibility,
     } = useRegister();
 
@@ -40,9 +42,11 @@ const RegisterPage = () => {
             formValues={formValues}
             showPassword={showPassword}
             loadingRegister={loadingRegister}
+            loadingGoogleAuth={loadingGoogleAuth}
             error={error}
             onChange={handleChange}
             onSubmit={handleSubmit}
+            onGoogleCredential={handleGoogleCredential}
             onTogglePasswordVisibility={togglePasswordVisibility}
             />
         </section>
