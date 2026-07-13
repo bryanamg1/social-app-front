@@ -18,11 +18,13 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import styles from "../styles/AuthPage.module.css";
 import { getAuthTextValue } from "../utils/authFeedback";
+import { GoogleAuthSection } from "./GoogleAuthSection";
 
 export const RegisterForm = ({
     formValues,
     showPassword,
     loadingRegister,
+    loadingGoogleAuth,
     error,
 
     handleChange,
@@ -31,6 +33,7 @@ export const RegisterForm = ({
 
     onChange,
     onSubmit,
+    onGoogleCredential,
     onTogglePasswordVisibility,
     }) => {
     const errorMessage = getAuthTextValue(
@@ -48,6 +51,7 @@ export const RegisterForm = ({
 
     const togglePasswordHandler =
         togglePasswordVisibility || onTogglePasswordVisibility || (() => {});
+    const isBusy = loadingRegister || loadingGoogleAuth;
 
     return (
         <Card className={styles.authCard}>
@@ -76,7 +80,7 @@ export const RegisterForm = ({
                 placeholder={AUTH_TEXTS.REGISTER.USER_NAME_PLACEHOLDER}
                 value={formValues?.user_name || ""}
                 onChange={changeHandler}
-                disabled={loadingRegister}
+                disabled={isBusy}
                 className={styles.authInput}
                 autoComplete="username"
             />
@@ -88,7 +92,7 @@ export const RegisterForm = ({
                 placeholder={AUTH_TEXTS.REGISTER.EMAIL_PLACEHOLDER}
                 value={formValues?.email || ""}
                 onChange={changeHandler}
-                disabled={loadingRegister}
+                disabled={isBusy}
                 className={styles.authInput}
                 autoComplete="email"
             />
@@ -100,7 +104,7 @@ export const RegisterForm = ({
                 type={showPassword ? "text" : "password"}
                 value={formValues?.password || ""}
                 onChange={changeHandler}
-                disabled={loadingRegister}
+                disabled={isBusy}
                 className={styles.authInput}
                 autoComplete="new-password"
                 slotProps={{
@@ -113,7 +117,7 @@ export const RegisterForm = ({
                         edge="end"
                         aria-label={AUTH_TEXTS.REGISTER.SHOW_PASSWORD_ARIA}
                         className={styles.passwordButton}
-                        disabled={loadingRegister}
+                        disabled={isBusy}
                         >
                         {showPassword ? (
                             <VisibilityOffOutlinedIcon />
@@ -134,7 +138,7 @@ export const RegisterForm = ({
                 type={showPassword ? "text" : "password"}
                 value={formValues?.confirmPassword || ""}
                 onChange={changeHandler}
-                disabled={loadingRegister}
+                disabled={isBusy}
                 className={styles.authInput}
                 autoComplete="new-password"
             />
@@ -143,7 +147,7 @@ export const RegisterForm = ({
                 fullWidth
                 type="submit"
                 variant="contained"
-                disabled={loadingRegister}
+                disabled={isBusy}
                 startIcon={<PersonAddAltOutlinedIcon />}
                 className={styles.authButton}
             >
@@ -151,6 +155,13 @@ export const RegisterForm = ({
                 ? AUTH_TEXTS.REGISTER.SUBMITTING_BUTTON
                 : AUTH_TEXTS.REGISTER.SUBMIT_BUTTON}
             </Button>
+
+            <GoogleAuthSection
+                mode="register"
+                disabled={loadingRegister}
+                loading={loadingGoogleAuth}
+                onCredential={onGoogleCredential}
+            />
             </Box>
 
             <Typography className={styles.authFooterText}>

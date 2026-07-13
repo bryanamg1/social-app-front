@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
-import { registerUser } from "../services/authService";
+import { useAuth } from "../../../hooks/useAuth";
+import { googleLogin, registerUser } from "../services/authService";
 import { getAuthApiErrorMessage } from "../utils/authFeedback";
 
 export const useRegister = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [formValues, setFormValues] = useState({
         user_name: "",
@@ -17,6 +19,7 @@ export const useRegister = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [loadingRegister, setLoadingRegister] = useState(false);
+    const [loadingGoogleAuth, setLoadingGoogleAuth] = useState(false);
     const [error, setError] = useState(null);
 
     const handleChange = (event) => {
@@ -100,13 +103,39 @@ export const useRegister = () => {
         }
     };
 
+    const handleGoogleCredential = async (credential) => {
+        try {
+        setLoadingGoogleAuth(true);
+        setError(null);
+
+        const authData = await googleLogin(credential);
+
+        login(authData);
+
+        navigate(ROUTES.HOME, {
+            replace: true,
+        });
+        } catch (requestError) {
+        setError(
+            getAuthApiErrorMessage(
+                requestError,
+                AUTH_TEXTS.ERRORS.GOOGLE_REGISTER_FAILED
+            )
+        );
+        } finally {
+        setLoadingGoogleAuth(false);
+        }
+    };
+
     return {
         formValues,
         showPassword,
         loadingRegister,
+        loadingGoogleAuth,
         error,
         handleChange,
         handleSubmit,
+        handleGoogleCredential,
         togglePasswordVisibility,
     };
 };

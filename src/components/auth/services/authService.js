@@ -1,5 +1,5 @@
 import apiClient from "../../../services/apiClient";
-import { API_ENDPOINTS, AUTH_MESSAGES } from "../../../constants";
+import { API_ENDPOINTS, AUTH_MESSAGES, HTTP_TIMEOUTS } from "../../../constants";
 
 const decodeJwtPayload = (token) => {
     try {
@@ -119,6 +119,20 @@ export const loginUser = async ({ email, password }) => {
     });
 
     return normalizeLoginResponse(response, email);
+};
+
+export const googleLogin = async (credential) => {
+    const response = await apiClient.post(
+        API_ENDPOINTS.AUTH.GOOGLE,
+        {
+            credential,
+        },
+        {
+            timeout: HTTP_TIMEOUTS.AUTH_GOOGLE_MS,
+        }
+    );
+
+    return normalizeLoginResponse(response);
 };
 
 export const registerUser = async ({ user_name, userName, email, password }) => {

@@ -18,19 +18,23 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import { AUTH_TEXTS, ROUTES } from "../../../constants";
 import styles from "../styles/AuthPage.module.css";
 import { getAuthTextValue } from "../utils/authFeedback";
+import { GoogleAuthSection } from "./GoogleAuthSection";
 
 export const LoginForm = ({
     formValues,
     showPassword,
     loadingLogin,
+    loadingGoogleAuth,
     error,
     successMessage,
     onChange,
     onSubmit,
+    onGoogleCredential,
     onTogglePasswordVisibility,
     }) => {
     const errorMessage = getAuthTextValue(error, AUTH_TEXTS.ERRORS.LOGIN_FAILED);
     const successText = getAuthTextValue(successMessage);
+    const isBusy = loadingLogin || loadingGoogleAuth;
 
     return (
         <Card className={styles.authCard}>
@@ -66,7 +70,7 @@ export const LoginForm = ({
                 placeholder={AUTH_TEXTS.LOGIN.EMAIL_PLACEHOLDER}
                 value={formValues?.email || ""}
                 onChange={onChange}
-                disabled={loadingLogin}
+                disabled={isBusy}
                 className={styles.authInput}
                 autoComplete="email"
             />
@@ -79,7 +83,7 @@ export const LoginForm = ({
                 type={showPassword ? "text" : "password"}
                 value={formValues?.password || ""}
                 onChange={onChange}
-                disabled={loadingLogin}
+                disabled={isBusy}
                 className={styles.authInput}
                 autoComplete="current-password"
                 slotProps={{
@@ -92,7 +96,7 @@ export const LoginForm = ({
                         edge="end"
                         aria-label={AUTH_TEXTS.LOGIN.SHOW_PASSWORD_ARIA}
                         className={styles.passwordButton}
-                        disabled={loadingLogin}
+                        disabled={isBusy}
                         >
                         {showPassword ? (
                             <VisibilityOffOutlinedIcon />
@@ -120,7 +124,7 @@ export const LoginForm = ({
                 fullWidth
                 type="submit"
                 variant="contained"
-                disabled={loadingLogin}
+                disabled={isBusy}
                 startIcon={<LoginOutlinedIcon />}
                 className={styles.authButton}
             >
@@ -128,6 +132,13 @@ export const LoginForm = ({
                 ? AUTH_TEXTS.LOGIN.SUBMITTING_BUTTON
                 : AUTH_TEXTS.LOGIN.SUBMIT_BUTTON}
             </Button>
+
+            <GoogleAuthSection
+                mode="login"
+                disabled={loadingLogin}
+                loading={loadingGoogleAuth}
+                onCredential={onGoogleCredential}
+            />
             </Box>
 
             <Typography className={styles.authFooterText}>

@@ -10,6 +10,8 @@ export const HTTP_HEADERS = {
 };
 
 export const HTTP_TIMEOUTS = {
+    AUTH_GOOGLE_MS: 15000,
+    AUTH_PASSWORD_RECOVERY_MS: 15000,
     USER_SUGGESTIONS_MS: 8000,
 };
 
@@ -27,6 +29,7 @@ export const API_ERROR_CODES = {
 export const API_ENDPOINTS = {
     AUTH: {
         FORGOT_PASSWORD: "/auth/forgot-password",
+        GOOGLE: "/auth/google",
         LOGIN: "/auth/login",
         PROFILE: (userId) => `/auth/users/${userId}`,
         REGISTER: "/auth/register",
