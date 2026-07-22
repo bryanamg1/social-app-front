@@ -95,11 +95,6 @@ export function MainLayout() {
             <button
                 type="button"
                 className={styles.brandButton}
-                aria-label={
-                    feedRefresh.isRefreshing
-                        ? LAYOUT_TEXTS.REFRESHING_FEED
-                        : LAYOUT_TEXTS.REFRESH_FEED
-                }
                 title={
                     feedRefresh.isRefreshing
                         ? LAYOUT_TEXTS.REFRESHING_FEED
@@ -118,6 +113,12 @@ export function MainLayout() {
                         : APP_BRAND.TAGLINE}
                 </p>
                 </div>
+
+                <span className={styles.visuallyHidden}>
+                    {feedRefresh.isRefreshing
+                        ? LAYOUT_TEXTS.REFRESHING_FEED
+                        : LAYOUT_TEXTS.REFRESH_FEED}
+                </span>
             </button>
 
             <nav

@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useRef } from "react";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -31,6 +32,7 @@ export const PostComposer = ({
   onRemoveImage,
   onSubmit,
 }) => {
+    const imageInputRef = useRef(null);
     const avatarLetter =
         user?.email?.charAt(0)?.toUpperCase() ||
         LAYOUT_TEXTS.DEFAULT_USER.charAt(0).toUpperCase();
@@ -92,18 +94,21 @@ export const PostComposer = ({
             )}
 
             <Box className={styles.composerActions}>
-            <Button
-                component="label"
-                startIcon={<ImageOutlinedIcon />}
-                className={styles.secondaryButton}
-            >
-                {FEED_TEXTS.COMPOSER.IMAGE_BUTTON}
-                <input
+            <input
+                ref={imageInputRef}
                 hidden
                 type="file"
                 accept="image/*"
                 onChange={onImageChange}
-                />
+            />
+
+            <Button
+                type="button"
+                startIcon={<ImageOutlinedIcon />}
+                className={styles.secondaryButton}
+                onClick={() => imageInputRef.current?.click()}
+            >
+                {FEED_TEXTS.COMPOSER.IMAGE_BUTTON}
             </Button>
 
             <Button

@@ -206,3 +206,34 @@ Este frontend consume la API del repositorio backend del proyecto Social App, in
 **Bryan Marquez**  
 Full Stack Developer
 
+---
+
+## Medicion real con Lighthouse y Web Vitals
+
+Flujo minimo recomendado para medir sobre build productiva:
+
+```bash
+npm run build
+npm run preview:measure
+```
+
+Luego:
+
+1. Abrir `http://localhost:4173`.
+2. Ejecutar Lighthouse desde Chrome DevTools sobre rutas reales como `/login`, `/feed` y `/messages`.
+3. Si la medicion usa backend local, conservar `localhost` como origen para evitar falsos negativos de CORS al auditar rutas autenticadas.
+3. Revisar Web Vitals capturados en consola o en:
+
+```js
+window.__SOCIAL_APP_WEB_VITALS__
+window.__SOCIAL_APP_OBSERVABILITY__
+```
+
+Metricas instrumentadas:
+
+- `TTFB`
+- `FCP`
+- `LCP`
+- `CLS`
+- `INP`
+
