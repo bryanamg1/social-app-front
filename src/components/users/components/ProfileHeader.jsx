@@ -11,6 +11,7 @@ import {
     getUserLocation,
     getUserName,
 } from "../utils/userProfileAdapter";
+import { ProfileActivitySummary } from "./ProfileActivitySummary";
 import { ProfileEditForm } from "./ProfileEditForm";
 import { ProfileFollowButton } from "./ProfileFollowButton";
 
@@ -108,6 +109,8 @@ export function ProfileHeader({
             <Typography className={styles.postsCount}>
                 {postsCount} {PROFILE_TEXTS.POSTS.COUNT_LABEL}
             </Typography>
+
+            <ProfileActivitySummary profile={profile} />
 
             <Stack direction="row" spacing={1.25} useFlexGap sx={{ flexWrap: "wrap" }}>
                 <ProfileFollowButton followAction={followAction} />

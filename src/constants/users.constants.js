@@ -43,6 +43,61 @@ export const PROFILE_TEXTS = {
     POSTS: {
         TITLE: "Publicaciones",
         COUNT_LABEL: "publicaciones",
+        FILTER_LABEL: "Filtrar publicaciones",
+        EMPTY_BY_TYPE: "No hay publicaciones de esta intencion todavia.",
+    },
+
+    ACTIVITY: {
+        TITLE: "Actividad",
+        DESCRIPTION:
+            "Resumen rapido de como publica este perfil y donde pone mas foco.",
+        EMPTY: "Todavia no hay actividad publicada para resumir.",
+        DOMINANT_PREFIX: "Enfoque principal",
+        POSTS_TOTAL: (count) =>
+            `${count} ${count === 1 ? "post publicado" : "posts publicados"}`,
+    },
+
+    PROJECTS: {
+        TITLE: "Proyectos",
+        DESCRIPTION:
+            "Muestra proyectos concretos, links y tecnologias para dar contexto real a tu perfil.",
+        COUNT_LABEL: (count) =>
+            `${count} ${count === 1 ? "proyecto visible" : "proyectos visibles"}`,
+        EMPTY_TITLE: "Todavia no hay proyectos cargados",
+        EMPTY_DESCRIPTION:
+            "Agrega proyectos para que otros usuarios y recruiters entiendan mejor lo que estas construyendo.",
+        PUBLIC_EMPTY_DESCRIPTION:
+            "Este usuario todavia no publico proyectos visibles en su perfil.",
+        ADD_BUTTON: "Agregar proyecto",
+        EDIT_BUTTON: "Editar",
+        DELETE_BUTTON: "Eliminar",
+        CREATE_FORM_TITLE: "Nuevo proyecto",
+        EDIT_FORM_TITLE: "Editar proyecto",
+        CREATE_BUTTON: "Guardar proyecto",
+        CREATING_BUTTON: "Guardando...",
+        SAVE_BUTTON: "Actualizar proyecto",
+        SAVING_BUTTON: "Actualizando...",
+        CANCEL_BUTTON: "Cancelar",
+        TITLE_LABEL: "Titulo",
+        SUMMARY_LABEL: "Resumen",
+        TECHNOLOGIES_LABEL: "Tecnologias",
+        REPO_LABEL: "Repositorio",
+        DEMO_LABEL: "Demo",
+        STATUS_LABEL: "Estado",
+        FILTER_LABEL: "Filtrar por estado",
+        FILTER_ALL: "Todos",
+        TECHNOLOGIES_HELPER:
+            "Separa tecnologias con coma para mostrarlas como badges.",
+        REPO_LINK: "Repositorio",
+        DEMO_LINK: "Demo",
+        SUMMARY_FALLBACK: "Sin resumen cargado todavia.",
+        CREATE_SUCCESS: "Proyecto agregado correctamente.",
+        UPDATE_SUCCESS: "Proyecto actualizado correctamente.",
+        DELETE_SUCCESS: "Proyecto eliminado correctamente.",
+        STATUS_PLANNED: "Planificado",
+        STATUS_IN_PROGRESS: "En progreso",
+        STATUS_LAUNCHED: "Lanzado",
+        STATUS_PAUSED: "Pausado",
     },
 
     ERRORS: {
@@ -54,6 +109,13 @@ export const PROFILE_TEXTS = {
         USER_NAME_EXIST: "Este nombre de usuario ya esta en uso.",
         FOLLOW_ACTION: "No se pudo actualizar el seguimiento.",
         FOLLOW_STATUS: "No se pudo consultar el estado de seguimiento.",
+        LOAD_PROJECTS: "No se pudieron cargar los proyectos del perfil.",
+        SAVE_PROJECT: "No se pudo guardar el proyecto.",
+        DELETE_PROJECT: "No se pudo eliminar el proyecto.",
+        PROJECT_TITLE_REQUIRED: "El titulo del proyecto es obligatorio.",
+        PROJECT_STATUS_INVALID: "El estado del proyecto no es valido.",
+        PROJECT_REPO_URL_INVALID: "La URL del repositorio no es valida.",
+        PROJECT_DEMO_URL_INVALID: "La URL del demo no es valida.",
     },
 };
 
@@ -61,6 +123,61 @@ export const PROFILE_FORM_FIELDS = {
     USER_NAME: "userName",
     BIO: "bio",
     LOCATION: "location",
+};
+
+export const PROFILE_PROJECT_STATUS_VALUES = {
+    PLANNED: "planned",
+    IN_PROGRESS: "in_progress",
+    LAUNCHED: "launched",
+    PAUSED: "paused",
+};
+
+export const PROFILE_PROJECT_STATUS_OPTIONS = [
+    {
+        value: PROFILE_PROJECT_STATUS_VALUES.PLANNED,
+        label: PROFILE_TEXTS.PROJECTS.STATUS_PLANNED,
+    },
+    {
+        value: PROFILE_PROJECT_STATUS_VALUES.IN_PROGRESS,
+        label: PROFILE_TEXTS.PROJECTS.STATUS_IN_PROGRESS,
+    },
+    {
+        value: PROFILE_PROJECT_STATUS_VALUES.LAUNCHED,
+        label: PROFILE_TEXTS.PROJECTS.STATUS_LAUNCHED,
+    },
+    {
+        value: PROFILE_PROJECT_STATUS_VALUES.PAUSED,
+        label: PROFILE_TEXTS.PROJECTS.STATUS_PAUSED,
+    },
+];
+
+export const PROFILE_PROJECT_FILTER_VALUES = {
+    ALL: "all",
+    ...PROFILE_PROJECT_STATUS_VALUES,
+};
+
+export const PROFILE_PROJECT_FILTER_OPTIONS = [
+    {
+        value: PROFILE_PROJECT_FILTER_VALUES.ALL,
+        label: PROFILE_TEXTS.PROJECTS.FILTER_ALL,
+    },
+    ...PROFILE_PROJECT_STATUS_OPTIONS,
+];
+
+export const PROFILE_PROJECT_SUMMARY_ORDER = [
+    PROFILE_PROJECT_STATUS_VALUES.IN_PROGRESS,
+    PROFILE_PROJECT_STATUS_VALUES.LAUNCHED,
+    PROFILE_PROJECT_STATUS_VALUES.PLANNED,
+    PROFILE_PROJECT_STATUS_VALUES.PAUSED,
+];
+
+export const getProfileProjectStatusLabel = (status) => {
+    const normalizedStatus = `${status ?? ""}`.trim().toLowerCase();
+    const option = PROFILE_PROJECT_STATUS_OPTIONS.find(
+        (item) => item.value === normalizedStatus
+    );
+
+    return option?.label ?? PROFILE_TEXTS.PROJECTS.STATUS_IN_PROGRESS;
 };
 
 export const USER_SUGGESTIONS_TEXTS = {
@@ -83,5 +200,12 @@ export const USER_SUGGESTIONS_TEXTS = {
     FOLLOWING_BUTTON: "Siguiendo...",
     FOLLOWERS_COUNT: (count) =>
         `${count} ${count === 1 ? "seguidor" : "seguidores"}`,
+    PROJECTS_COUNT: (count) =>
+        `${count} ${count === 1 ? "proyecto" : "proyectos"}`,
+    PROJECT_SIGNAL_PREFIX: "Proyecto activo",
+    PROJECT_FALLBACK: "Perfil con actividad de proyectos para seguir de cerca.",
+    INTENT_SIGNAL_PREFIX: "Publica sobre",
+    INTENT_SIGNAL_COUNT: (count) =>
+        `${count} ${count === 1 ? "post" : "posts"}`,
     BIO_FALLBACK: "Perfil disponible para ampliar tu red.",
 };

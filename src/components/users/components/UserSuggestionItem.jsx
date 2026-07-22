@@ -6,6 +6,8 @@ import {
     getUserAvatar,
     getUserName,
 } from "../utils/userProfileAdapter";
+import { UserSuggestionIntentSignal } from "./UserSuggestionIntentSignal";
+import { UserSuggestionProjectSignal } from "./UserSuggestionProjectSignal";
 
 import styles from "../styles/UserSuggestionsPanel.module.css";
 
@@ -43,6 +45,12 @@ export function UserSuggestionItem({ suggestion, onFollow }) {
                                 followersCount
                             )}
                         </p>
+                        <UserSuggestionIntentSignal
+                            intentSignal={suggestion.intentSignal}
+                        />
+                        <UserSuggestionProjectSignal
+                            projectSignal={suggestion.projectSignal}
+                        />
                     </div>
                 </Link>
             </div>

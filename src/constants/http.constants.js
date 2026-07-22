@@ -32,6 +32,9 @@ export const API_ENDPOINTS = {
         GOOGLE: "/auth/google",
         LOGIN: "/auth/login",
         PROFILE: (userId) => `/auth/users/${userId}`,
+        PROFILE_PROJECTS: (userId) => `/auth/users/${userId}/projects`,
+        PROFILE_PROJECT_DETAIL: (userId, projectId) =>
+            `/auth/users/${userId}/projects/${projectId}`,
         REGISTER: "/auth/register",
         RESET_PASSWORD: "/auth/reset-password",
         UPDATE_PROFILE: (userId) => `/auth/update/${userId}`,
@@ -85,6 +88,15 @@ export const API_BODY_FIELDS = {
         USER_NAME: "user_name",
         BIO: "bio",
         LOCATION: "location",
+    },
+
+    PROJECTS: {
+        TITLE: "title",
+        SUMMARY: "summary",
+        TECHNOLOGIES: "technologies",
+        REPO_URL: "repo_url",
+        DEMO_URL: "demo_url",
+        STATUS: "status",
     },
 
     CONVERSATIONS: {

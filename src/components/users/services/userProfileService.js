@@ -1,6 +1,7 @@
 import apiClient from "../../../services/apiClient";
 import { API_BODY_FIELDS, API_ENDPOINTS, API_QUERY_PARAMS } from "../../../constants";
 import {
+    getProjectFromResponse,
     getProfileFormChanges,
     getProfileFromResponse,
     getUpdatedProfileFromResponse,
@@ -47,13 +48,59 @@ export const updateUserProfile = async ({
     return getUpdatedProfileFromResponse(response, currentProfile);
 };
 
-export const getPostsByUserId = async ({ userId, page, limit }) => {
-    const response = await apiClient.get(API_ENDPOINTS.POSTS.BY_USER(userId), {
-        params: {
+export const getPostsByUserId = async ({ userId, page, limit, postType = null }) => {
+    const params = {
         [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
         [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
-        },
+    };
+
+    if (postType) {
+        params[API_QUERY_PARAMS.POSTS.TYPE] = postType;
+    }
+
+    const response = await apiClient.get(API_ENDPOINTS.POSTS.BY_USER(userId), {
+        params,
     });
 
     return getUserPostsFromResponse(response);
+};
+
+export const createUserProject = async ({ userId, project }) => {
+    const response = await apiClient.post(
+        API_ENDPOINTS.AUTH.PROFILE_PROJECTS(userId),
+        {
+            [API_BODY_FIELDS.PROJECTS.TITLE]: project.title,
+            [API_BODY_FIELDS.PROJECTS.SUMMARY]: project.summary,
+            [API_BODY_FIELDS.PROJECTS.TECHNOLOGIES]: project.technologies,
+            [API_BODY_FIELDS.PROJECTS.REPO_URL]: project.repoUrl,
+            [API_BODY_FIELDS.PROJECTS.DEMO_URL]: project.demoUrl,
+            [API_BODY_FIELDS.PROJECTS.STATUS]: project.status,
+        }
+    );
+
+    return getProjectFromResponse(response);
+};
+
+export const updateUserProject = async ({ userId, projectId, project }) => {
+    const response = await apiClient.patch(
+        API_ENDPOINTS.AUTH.PROFILE_PROJECT_DETAIL(userId, projectId),
+        {
+            [API_BODY_FIELDS.PROJECTS.TITLE]: project.title,
+            [API_BODY_FIELDS.PROJECTS.SUMMARY]: project.summary,
+            [API_BODY_FIELDS.PROJECTS.TECHNOLOGIES]: project.technologies,
+            [API_BODY_FIELDS.PROJECTS.REPO_URL]: project.repoUrl,
+            [API_BODY_FIELDS.PROJECTS.DEMO_URL]: project.demoUrl,
+            [API_BODY_FIELDS.PROJECTS.STATUS]: project.status,
+        }
+    );
+
+    return getProjectFromResponse(response);
+};
+
+export const deleteUserProject = async ({ userId, projectId }) => {
+    const response = await apiClient.delete(
+        API_ENDPOINTS.AUTH.PROFILE_PROJECT_DETAIL(userId, projectId)
+    );
+
+    return response.data;
 };
