@@ -1,10 +1,11 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import { FEED_MODES, FEED_TEXTS } from "../../../constants";
+import { FEED_MODES, FEED_POST_TYPES, FEED_TEXTS } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
 import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
+import { FeedIntentFilter } from "../components/FeedIntentFilter";
 import { PostComposer } from "../components/PostComposer";
 import { PostList } from "../components/PostList";
 import { useCreatePostForm } from "../hooks/useCreatePostForm";
@@ -20,6 +21,9 @@ const FeedPage = () => {
     const { user } = useAuth();
     const { suggestionsState } = useOutletContext();
     const feedRefresh = useFeedRefresh();
+    const [selectedPostType, setSelectedPostType] = useState(FEED_POST_TYPES.ALL);
+    const activePostType =
+        selectedPostType === FEED_POST_TYPES.ALL ? null : selectedPostType;
 
     const {
         posts,
@@ -36,15 +40,18 @@ const FeedPage = () => {
         handleDeletePost,
     } = useFeed({
         mode: FEED_MODES.FOLLOWING,
+        postType: activePostType,
     });
 
     const {
         content,
         image,
         imagePreview,
+        postType,
         canSubmit,
         handleContentChange,
         handleImageChange,
+        handlePostTypeChange,
         removeImage,
         resetForm,
     } = useCreatePostForm();
@@ -62,6 +69,7 @@ const FeedPage = () => {
         userId: currentUserId,
         content,
         image,
+        postType,
         });
 
         resetForm();
@@ -82,13 +90,20 @@ const FeedPage = () => {
         <PostComposer
             user={user}
             content={content}
+            postType={postType}
             imagePreview={imagePreview}
             creatingPost={creatingPost}
             canSubmit={canSubmit}
             onContentChange={handleContentChange}
+            onPostTypeChange={handlePostTypeChange}
             onImageChange={handleImageChange}
             onRemoveImage={removeImage}
             onSubmit={submitPost}
+        />
+
+        <FeedIntentFilter
+            selectedPostType={selectedPostType}
+            onSelectPostType={setSelectedPostType}
         />
 
         <PostList

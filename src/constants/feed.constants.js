@@ -13,12 +13,19 @@ export const FEED_TEXTS = {
         SUBTITLE: "Comparte publicaciones, imágenes y reacciones.",
     },
 
+    FILTERS: {
+        TITLE: "Intencion del feed",
+        ALL: "Todo",
+    },
+
     COMPOSER: {
         PLACEHOLDER: "¿Qué estás pensando?",
+        TYPE_LABEL: "Tipo de publicacion",
         IMAGE_BUTTON: "Imagen",
         SUBMIT_BUTTON: "Publicar",
         SUBMITTING_BUTTON: "Publicando...",
-        HELPER_TEXT: "Puedes publicar texto, imagen o ambos.",
+        HELPER_TEXT:
+            "Puedes publicar texto, imagen o ambos. Elige una intencion para dar contexto al post.",
         PREVIEW_ALT: "Vista previa",
         REMOVE_IMAGE_ARIA: "Eliminar imagen",
     },
@@ -39,6 +46,7 @@ export const FEED_TEXTS = {
         LOAD_MORE_BUTTON: "Cargar mas",
         END_OF_RESULTS: "No hay mas publicaciones para mostrar.",
         DATE_FALLBACK: "Ahora",
+        TYPE_BADGE_PREFIX: "Tipo",
     },
 
     COMMENTS: {
@@ -88,7 +96,77 @@ export const FEED_TEXTS = {
         REACTION_AUTH_REQUIRED: "Inicia sesion para reaccionar.",
         CREATE_POST: "No se pudo crear la publicación.",
         DELETE_POST: "No se pudo eliminar la publicación.",
+        INVALID_POST_TYPE: "El tipo de publicacion no es valido.",
     },
+};
+
+export const FEED_POST_TYPES = {
+    ALL: "all",
+    PERSONAL_UPDATE: "personal_update",
+    PROJECT: "project",
+    QUESTION: "question",
+    LEARNING: "learning",
+    HELP: "help",
+    COLLABORATION: "collaboration",
+    LAUNCH: "launch",
+};
+
+export const FEED_POST_TYPE_OPTIONS = [
+    {
+        value: FEED_POST_TYPES.PERSONAL_UPDATE,
+        label: "Actualizacion personal",
+        description: "Comparte una novedad personal o profesional.",
+    },
+    {
+        value: FEED_POST_TYPES.PROJECT,
+        label: "Proyecto",
+        description: "Muestra avance, demo o estado de un proyecto.",
+    },
+    {
+        value: FEED_POST_TYPES.QUESTION,
+        label: "Pregunta",
+        description: "Pide contexto, respuestas o criterio a la comunidad.",
+    },
+    {
+        value: FEED_POST_TYPES.LEARNING,
+        label: "Aprendizaje",
+        description: "Documenta algo nuevo que aprendiste construyendo.",
+    },
+    {
+        value: FEED_POST_TYPES.HELP,
+        label: "Ayuda",
+        description: "Solicita soporte puntual para destrabar un problema.",
+    },
+    {
+        value: FEED_POST_TYPES.COLLABORATION,
+        label: "Colaboracion",
+        description: "Busca personas para construir algo contigo.",
+    },
+    {
+        value: FEED_POST_TYPES.LAUNCH,
+        label: "Lanzamiento",
+        description: "Presenta una release, deploy o entrega relevante.",
+    },
+];
+
+export const FEED_POST_TYPE_FILTER_OPTIONS = [
+    {
+        value: FEED_POST_TYPES.ALL,
+        label: FEED_TEXTS.FILTERS.ALL,
+    },
+    ...FEED_POST_TYPE_OPTIONS.map((option) => ({
+        value: option.value,
+        label: option.label,
+    })),
+];
+
+export const getFeedPostTypeLabel = (postType) => {
+    const normalizedType = `${postType ?? ""}`.trim().toLowerCase();
+    const option = FEED_POST_TYPE_OPTIONS.find(
+        (item) => item.value === normalizedType
+    );
+
+    return option?.label ?? FEED_POST_TYPE_OPTIONS[0].label;
 };
 
 export const PREVIEW_REACTIONS = ["👍 LIKE", "❤️ LOVE", "😮 WOW"];

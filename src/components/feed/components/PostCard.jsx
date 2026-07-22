@@ -22,10 +22,12 @@ import {
   getPostId,
   getPostImage,
   getPostOwnerId,
+  getPostType,
 } from "../utils/postAdapter";
 import { PostCommentForm } from "./PostCommentForm";
 import { PostComments } from "./PostComments";
 import { PostReactions } from "./PostReactions";
+import { PostTypeBadge } from "./PostTypeBadge";
 
 import styles from "../styles/FeedPage.module.css";
 
@@ -60,6 +62,7 @@ export const PostCard = ({
     const content = getPostContent(post);
     const image = getPostImage(post);
     const createdAt = getPostCreatedAt(post);
+    const postType = getPostType(post);
 
     const isDeleting = String(deletingPostId) === String(postId);
     const avatarLetter = authorName.charAt(0).toUpperCase();
@@ -105,6 +108,12 @@ export const PostCard = ({
 
             {content && (
             <Typography className={styles.postContent}>{content}</Typography>
+            )}
+
+            {postType && (
+            <Box className={styles.postMeta}>
+                <PostTypeBadge postType={postType} />
+            </Box>
             )}
 
             {image && (

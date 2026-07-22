@@ -52,7 +52,7 @@ const getFeedErrorMessage = (error, fallbackMessage) => {
     return fallbackMessage;
 };
 
-export const useFeed = ({ mode = "all" } = {}) => {
+export const useFeed = ({ mode = "all", postType = null } = {}) => {
     const [posts, setPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
@@ -86,10 +86,12 @@ export const useFeed = ({ mode = "all" } = {}) => {
                 ? await getFollowingFeed({
                     page,
                     limit: FEED_PAGINATION.PAGE_SIZE,
+                    postType,
                 })
                 : await getAllPosts({
                     page,
                     limit: FEED_PAGINATION.PAGE_SIZE,
+                    postType,
                 });
 
             const nextPosts = postsData.posts;
@@ -156,7 +158,7 @@ export const useFeed = ({ mode = "all" } = {}) => {
             setLoadingMorePosts(false);
         }
         },
-        [mode]
+        [mode, postType]
     );
 
     const loadMorePosts = async () => {
@@ -168,7 +170,7 @@ export const useFeed = ({ mode = "all" } = {}) => {
         });
     };
 
-    const handleCreatePost = async ({ userId, content, image }) => {
+    const handleCreatePost = async ({ userId, content, image, postType: nextPostType }) => {
         try {
         setCreatingPost(true);
         setError(null);
@@ -178,6 +180,7 @@ export const useFeed = ({ mode = "all" } = {}) => {
             userId,
             content,
             image,
+            postType: nextPostType,
         });
 
         await loadPosts();

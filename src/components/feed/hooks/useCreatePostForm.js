@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { FEED_POST_TYPES } from "../../../constants";
 
 export const useCreatePostForm = () => {
     const [content, setContent] = useState("");
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
+    const [postType, setPostType] = useState(FEED_POST_TYPES.PERSONAL_UPDATE);
 
     const hasContent = content.trim().length > 0;
     const canSubmit = hasContent || Boolean(image);
@@ -21,6 +23,10 @@ export const useCreatePostForm = () => {
         setImagePreview(URL.createObjectURL(selectedImage));
     };
 
+    const handlePostTypeChange = (event) => {
+        setPostType(event.target.value);
+    };
+
     const removeImage = () => {
         setImage(null);
         setImagePreview("");
@@ -30,6 +36,7 @@ export const useCreatePostForm = () => {
         setContent("");
         setImage(null);
         setImagePreview("");
+        setPostType(FEED_POST_TYPES.PERSONAL_UPDATE);
     };
 
     useEffect(() => {
@@ -44,9 +51,11 @@ export const useCreatePostForm = () => {
         content,
         image,
         imagePreview,
+        postType,
         canSubmit,
         handleContentChange,
         handleImageChange,
+        handlePostTypeChange,
         removeImage,
         resetForm,
     };

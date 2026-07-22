@@ -5,21 +5,28 @@ import {
   Card,
   CardContent,
   IconButton,
+  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { FEED_TEXTS, LAYOUT_TEXTS } from "../../../constants";
+import {
+  FEED_POST_TYPE_OPTIONS,
+  FEED_TEXTS,
+  LAYOUT_TEXTS,
+} from "../../../constants";
 import styles from "../styles/FeedPage.module.css";
 
 export const PostComposer = ({
   user,
   content,
+  postType,
   imagePreview,
   creatingPost,
   canSubmit,
   onContentChange,
+  onPostTypeChange,
   onImageChange,
   onRemoveImage,
   onSubmit,
@@ -47,6 +54,23 @@ export const PostComposer = ({
                 className={styles.composerInput}
                 />
             </Box>
+            </Box>
+
+            <Box className={styles.composerControls}>
+            <TextField
+                select
+                fullWidth
+                value={postType}
+                onChange={onPostTypeChange}
+                label={FEED_TEXTS.COMPOSER.TYPE_LABEL}
+                className={styles.composerSelect}
+            >
+                {FEED_POST_TYPE_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                </MenuItem>
+                ))}
+            </TextField>
             </Box>
 
             {imagePreview && (

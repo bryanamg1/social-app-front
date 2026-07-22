@@ -99,6 +99,10 @@ export const API_BODY_FIELDS = {
         TEXT: "comment_text",
     },
 
+    POSTS: {
+        TYPE: "post_type",
+    },
+
     REACTIONS: {
         STATUS: "status",
     },
@@ -119,5 +123,9 @@ export const API_QUERY_PARAMS = {
         USER_ID: "uid",
         LIMIT: "limit",
         OFFSET: "offset",
+    },
+
+    POSTS: {
+        TYPE: "postType",
     },
 };
