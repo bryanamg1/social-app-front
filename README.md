@@ -45,6 +45,7 @@ Está preparado para trabajar con despliegue frontend en Vercel y consumo de bac
 - Módulo de mensajes y conversaciones
 - Realtime con Socket.io para mensajes
 - Layout responsive para desktop, tablet y mobile
+- Ruta publica `/showcase` con resumen del producto y arquitectura
 
 ---
 
@@ -111,6 +112,20 @@ Se ajustaron feed, auth, perfil, búsqueda y mensajes para evitar overflow horiz
 3. Se accede al feed, perfiles, buscador y mensajes.
 4. Las acciones de posts, follows y conversaciones consumen la API backend.
 5. El módulo de mensajes combina REST para carga inicial y Socket.io para realtime.
+
+---
+
+## 🧭 Ruta publica Showcase
+
+La aplicacion incluye una vista publica en `/showcase` orientada a recruiters y colaboradores tecnicos. Resume:
+
+- propuesta de producto
+- funcionalidades reales implementadas
+- arquitectura frontend/backend
+- stack tecnico
+- seguridad y realtime
+- roadmap de diferenciacion
+- repositorios y deploy frontend
 
 ---
 
