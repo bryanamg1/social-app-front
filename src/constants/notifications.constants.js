@@ -41,6 +41,10 @@ export const NOTIFICATIONS_MESSAGES = {
 
 export const NOTIFICATIONS_TEXTS = {
     TOGGLE_LABEL: "Notificaciones",
+    TOGGLE_LABEL_WITH_COUNT: (unreadCount) =>
+        unreadCount
+            ? `Notificaciones, ${unreadCount} pendientes`
+            : "Notificaciones, sin pendientes",
     PANEL_TITLE: "Notificaciones",
     PANEL_SUBTITLE: "Actividad reciente en tiempo real.",
     CLOSE_PANEL: "Cerrar panel de notificaciones",

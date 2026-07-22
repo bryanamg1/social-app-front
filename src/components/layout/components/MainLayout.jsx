@@ -1,3 +1,4 @@
+import { Suspense, lazy, useId } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
@@ -17,14 +18,28 @@ import { useNotifications } from "../../../hooks/useNotifications";
 import { useUserSearch } from "../../users/hooks/useUserSearch";
 import { useUserSuggestions } from "../../users/hooks/useUserSuggestions";
 import { getUserId } from "../../users/utils/userProfileAdapter";
-import { UserSuggestionsPanel } from "../../users/components/UserSuggestionsPanel";
-import { NotificationPanel } from "../../notifications/components/NotificationPanel";
 import { NotificationToggleButton } from "../../notifications/components/NotificationToggleButton";
 import { useNotificationPanel } from "../../notifications/hooks/useNotificationPanel";
-import { UserSearchPanel } from "./UserSearchPanel";
+import { SidebarPanelSkeleton } from "./SidebarPanelSkeleton";
 
 import styles from "../styles/MainLayout.module.css";
 import notificationStyles from "../../notifications/styles/Notifications.module.css";
+
+const UserSearchPanel = lazy(() =>
+    import("./UserSearchPanel").then((module) => ({
+        default: module.UserSearchPanel,
+    }))
+);
+const UserSuggestionsPanel = lazy(() =>
+    import("../../users/components/UserSuggestionsPanel").then((module) => ({
+        default: module.UserSuggestionsPanel,
+    }))
+);
+const NotificationPanel = lazy(() =>
+    import("../../notifications/components/NotificationPanel").then((module) => ({
+        default: module.NotificationPanel,
+    }))
+);
 
 const ICONS_BY_KEY = {
     home: <HomeOutlinedIcon />,
@@ -48,6 +63,7 @@ export function MainLayout() {
     const feedRefresh = useFeedRefresh();
     const notificationPanel = useNotificationPanel();
     const notificationsState = useNotifications();
+    const notificationsPanelId = useId();
 
     const userDisplayName = getUserDisplayName(user);
     const currentUserId = getUserId(user);
@@ -104,7 +120,10 @@ export function MainLayout() {
                 </div>
             </button>
 
-            <nav className={styles.navMenu}>
+            <nav
+                className={styles.navMenu}
+                aria-label={LAYOUT_TEXTS.PRIMARY_NAV_ARIA}
+            >
                 {SIDEBAR_NAV_ITEMS.map((item) => (
                 <NavLink
                     key={item.path}
@@ -125,6 +144,7 @@ export function MainLayout() {
                 <NotificationToggleButton
                 isOpen={notificationPanel.isOpen}
                 unreadCount={notificationsState.unreadCount}
+                panelId={notificationsPanelId}
                 onToggle={notificationPanel.togglePanel}
                 buttonClassName={
                     notificationPanel.isOpen
@@ -179,26 +199,36 @@ export function MainLayout() {
             <Outlet context={{ suggestionsState }} />
         </main>
 
-        <NotificationPanel
-        isOpen={notificationPanel.isOpen}
-        notifications={notificationsState.notifications}
-        unreadCount={notificationsState.unreadCount}
-        isConnected={notificationsState.isConnected}
-        isSubscribed={notificationsState.isSubscribed}
-        loadingHistory={notificationsState.loadingHistory}
-        markingAllAsSeen={notificationsState.markingAllAsSeen}
-        error={notificationsState.error}
-        onMarkSeen={notificationsState.markNotificationSeen}
-        onMarkAllSeen={notificationsState.markAllNotificationsSeen}
-        onClose={notificationPanel.closePanel}
-        styles={notificationStyles}
-        />
+        <Suspense fallback={null}>
+            <NotificationPanel
+            panelId={notificationsPanelId}
+            isOpen={notificationPanel.isOpen}
+            notifications={notificationsState.notifications}
+            unreadCount={notificationsState.unreadCount}
+            isConnected={notificationsState.isConnected}
+            isSubscribed={notificationsState.isSubscribed}
+            loadingHistory={notificationsState.loadingHistory}
+            markingAllAsSeen={notificationsState.markingAllAsSeen}
+            error={notificationsState.error}
+            onMarkSeen={notificationsState.markNotificationSeen}
+            onMarkAllSeen={notificationsState.markAllNotificationsSeen}
+            onClose={notificationPanel.closePanel}
+            styles={notificationStyles}
+            />
+        </Suspense>
 
-        <aside className={styles.rightSidebar}>
+        <aside
+            className={styles.rightSidebar}
+            aria-label={LAYOUT_TEXTS.RIGHT_SIDEBAR_ARIA}
+        >
             <div className={styles.rightSidebarInner}>
-            <UserSearchPanel search={userSearch} />
+            <Suspense fallback={<SidebarPanelSkeleton withSearch lines={4} />}>
+                <UserSearchPanel search={userSearch} />
+            </Suspense>
 
-            <UserSuggestionsPanel suggestionsState={suggestionsState} />
+            <Suspense fallback={<SidebarPanelSkeleton lines={5} />}>
+                <UserSuggestionsPanel suggestionsState={suggestionsState} />
+            </Suspense>
 
             <section className={styles.rightCard}>
                 <h3 className={styles.rightCardTitle}>

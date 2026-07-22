@@ -3,8 +3,14 @@ export const MESSAGES_TEXTS = {
     PAGE_SUBTITLE: "Conversa en tiempo real con otros usuarios.",
     LIST_TITLE: "Conversaciones",
     LIST_EMPTY: "Todavia no tienes conversaciones.",
+    LIST_EMPTY_TITLE: "Aun no tienes conversaciones activas.",
+    LIST_EMPTY_DESCRIPTION:
+        "Inicia un mensaje desde un perfil publico o espera a que alguien abra una conversacion contigo.",
     LIST_LOADING: "Cargando conversaciones...",
     THREAD_EMPTY: "Selecciona una conversacion para ver los mensajes.",
+    THREAD_EMPTY_TITLE: "Selecciona una conversacion para ver los mensajes.",
+    THREAD_EMPTY_DESCRIPTION:
+        "Abre una conversacion existente o inicia una nueva desde un perfil publico.",
     THREAD_LOADING: "Cargando mensajes...",
     THREAD_WELCOME: "Inicia la conversacion desde un perfil publico o abre una conversacion existente.",
     INPUT_PLACEHOLDER: "Escribe un mensaje...",
@@ -14,6 +20,9 @@ export const MESSAGES_TEXTS = {
     STARTING_BUTTON: "Abriendo...",
     CREATED_AT_LABEL: "Creada",
     NO_MESSAGES: "Todavia no hay mensajes en esta conversacion.",
+    NO_MESSAGES_TITLE: "Todavia no hay mensajes en esta conversacion.",
+    NO_MESSAGES_DESCRIPTION:
+        "Envia el primer mensaje para abrir el hilo y empezar el intercambio en tiempo real.",
     CONVERSATION_FALLBACK: () => "Conversacion",
     LAST_MESSAGE_EMPTY: "Sin mensajes todavia.",
     RESULTS_FROM_PROFILE: "Conversacion iniciada desde perfil publico.",

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, Button, Typography } from "@mui/material";
 
 import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
 import { UserSuggestionsList } from "../../users/components/UserSuggestionsList";
@@ -11,6 +11,7 @@ import {
   getPostOwnerId,
 } from "../utils/postAdapter";
 import { PostCard } from "./PostCard";
+import { PostListSkeleton } from "./PostListSkeleton";
 
 import styles from "../styles/FeedPage.module.css";
 
@@ -71,12 +72,7 @@ export const PostList = ({
     });
 
     if (loadingPosts) {
-        return (
-        <Box className={styles.centerState}>
-            <CircularProgress />
-            <Typography>{FEED_TEXTS.POSTS.LOADING}</Typography>
-        </Box>
-        );
+        return <PostListSkeleton />;
     }
 
     if (error) {

@@ -26,8 +26,10 @@ export const SIDEBAR_NAV_ITEMS = [
 
 export const RIGHT_SIDEBAR_TEXTS = {
     SEARCH_TITLE: "Buscar usuarios",
+    SEARCH_INPUT_LABEL: "Buscar usuarios por email, nombre o bio",
     SEARCH_PLACEHOLDER: "Buscar por email o nombre...",
     SEARCH_RESULTS_TITLE: "Resultados",
+    SEARCH_RESULTS_ARIA: "Resultados de busqueda de usuarios",
     SEARCH_IDLE: "Escribe un nombre, email o bio para buscar usuarios.",
     SEARCH_LOADING: "Buscando usuarios...",
     SEARCH_EMPTY: "No se encontraron usuarios.",
@@ -51,6 +53,8 @@ export const LAYOUT_TEXTS = {
     MOBILE_LOGOUT: "Salir",
     ACTIVE_SESSION: "Sesion activa",
     DEFAULT_USER: "Usuario",
+    PRIMARY_NAV_ARIA: "Navegacion principal de la aplicacion",
+    RIGHT_SIDEBAR_ARIA: "Panel lateral con busqueda, sugerencias y actividad",
     REFRESH_FEED: "Actualizar feed",
     REFRESHING_FEED: "Actualizando feed...",
 };

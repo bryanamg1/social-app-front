@@ -69,7 +69,19 @@
     border-top: 1px solid rgba(148, 163, 184, 0.12);
 }
 
+.suggestionSkeletonItem {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
 .suggestionItem:first-child {
+    border-top: none;
+}
+
+.suggestionSkeletonItem:first-child {
     border-top: none;
 }
 
@@ -146,6 +158,11 @@
     display: grid;
     align-content: start;
     gap: 4px;
+}
+
+.suggestionSkeletonMeta {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .userName {

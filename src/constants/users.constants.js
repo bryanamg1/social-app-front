@@ -184,6 +184,7 @@ export const USER_SUGGESTIONS_TEXTS = {
     TITLE: "Sugerencias",
     DESCRIPTION:
         "Personas que quizas conozcas para mejorar tu feed social.",
+    LIST_ARIA: "Lista de sugerencias de usuarios",
     REFRESH_ARIA: "Actualizar sugerencias",
     REFRESH_TOOLTIP: "Actualizar sugerencias",
     RETRY_BUTTON: "Reintentar",
@@ -198,6 +199,7 @@ export const USER_SUGGESTIONS_TEXTS = {
     FOLLOW_ACTION_ERROR: "No se pudo seguir al usuario sugerido.",
     FOLLOW_BUTTON: "Seguir",
     FOLLOWING_BUTTON: "Siguiendo...",
+    FOLLOW_BUTTON_ARIA: (userName) => `Seguir a ${userName}`,
     FOLLOWERS_COUNT: (count) =>
         `${count} ${count === 1 ? "seguidor" : "seguidores"}`,
     PROJECTS_COUNT: (count) =>

@@ -38,6 +38,18 @@
     padding: 72px 24px 24px;
 }
 
+.profileSkeletonAvatar {
+    position: absolute !important;
+    left: 24px;
+    bottom: -54px;
+    border-radius: 50% !important;
+}
+
+.profileSkeletonStack {
+    display: grid;
+    gap: 6px;
+}
+
 .profileMetaGrid {
     width: 100%;
     display: grid;
@@ -376,6 +388,12 @@
         font-size: 2rem !important;
     }
 
+    .profileSkeletonAvatar {
+        left: 18px;
+        width: 92px !important;
+        height: 92px !important;
+    }
+
     .profileInfo {
         padding: 64px 18px 24px;
     }
@@ -421,6 +439,13 @@
         height: 84px !important;
         border-width: 4px;
         font-size: 1.8rem !important;
+    }
+
+    .profileSkeletonAvatar {
+        left: 16px;
+        bottom: -46px;
+        width: 84px !important;
+        height: 84px !important;
     }
 
     .profileInfo {

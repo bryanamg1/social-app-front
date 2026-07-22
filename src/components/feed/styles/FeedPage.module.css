@@ -239,6 +239,37 @@
   padding-bottom: 32px;
 }
 
+.postSkeletonCard {
+  margin: 14px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+}
+
+.postSkeletonHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.postSkeletonMeta {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.postSkeletonMedia {
+  border-radius: 22px !important;
+}
+
+.postSkeletonActions {
+  display: flex;
+  gap: 10px;
+}
+
 .postCard {
   overflow: hidden;
 }
@@ -681,6 +712,7 @@
 
   .composerCard,
   .postCard,
+  .postSkeletonCard,
   .filterPanel,
   .centerState,
   .emptyState {
@@ -732,6 +764,7 @@
 
   .composerCard,
   .postCard,
+  .postSkeletonCard,
   .filterPanel,
   .centerState,
   .emptyState,

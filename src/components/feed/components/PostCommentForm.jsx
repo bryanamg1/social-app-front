@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Alert, Box, Button, CircularProgress, TextField } from "@mui/material";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 
@@ -13,6 +14,8 @@ export const PostCommentForm = ({
     onChange,
     onSubmit,
 }) => {
+    const errorId = useId();
+
     const handleSubmit = (event) => {
         event.preventDefault();
         onSubmit();
@@ -24,6 +27,8 @@ export const PostCommentForm = ({
             value={value}
             onChange={(event) => onChange(event.target.value)}
             placeholder={FEED_TEXTS.COMMENTS.INPUT_PLACEHOLDER}
+            aria-label={FEED_TEXTS.COMMENTS.INPUT_ARIA}
+            aria-describedby={error ? errorId : undefined}
             className={styles.commentInput}
             multiline
             minRows={2}
@@ -32,7 +37,7 @@ export const PostCommentForm = ({
 
         {error && (
             <Alert severity="error" className={styles.commentFormAlert}>
-            {error}
+            <span id={errorId}>{error}</span>
             </Alert>
         )}
 

@@ -18,7 +18,7 @@ export function UserSuggestionItem({ suggestion, onFollow }) {
     const followersCount = Number(suggestion?.followers_count ?? 0) || 0;
 
     return (
-        <article className={styles.suggestionItem}>
+        <article className={styles.suggestionItem} role="listitem">
             <div className={styles.suggestionUserLine}>
                 <Link to={suggestion.profilePath} className={styles.avatarLink}>
                     <div className={styles.avatarWrapper}>
@@ -60,6 +60,7 @@ export function UserSuggestionItem({ suggestion, onFollow }) {
                     variant="outlined"
                     size="small"
                     className={styles.followButton}
+                    aria-label={USER_SUGGESTIONS_TEXTS.FOLLOW_BUTTON_ARIA(userName)}
                     disabled={suggestion.isFollowingAction}
                     onClick={() => onFollow(suggestion.id)}
                 >

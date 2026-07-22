@@ -1,7 +1,8 @@
-import { Alert, Box, CircularProgress, Typography } from "@mui/material";
+import { Alert, Typography } from "@mui/material";
 
 import { PostList } from "../../feed/components/PostList";
 import { ProfileHeader } from "../components/ProfileHeader";
+import { ProfilePageSkeleton } from "../components/ProfilePageSkeleton";
 import { ProfilePostIntentFilter } from "../components/ProfilePostIntentFilter";
 import { ProfileProjectsSection } from "../components/ProfileProjectsSection";
 import { usePublicProfile } from "../hooks/usePublicProfile";
@@ -39,12 +40,7 @@ export function PublicProfilePage() {
     } = usePublicProfile();
 
     if (loadingProfile && !profile) {
-        return (
-        <Box className={styles.centerState}>
-            <CircularProgress />
-            <Typography>{PROFILE_TEXTS.LOADING}</Typography>
-        </Box>
-        );
+        return <ProfilePageSkeleton />;
     }
 
     if (profileError) {

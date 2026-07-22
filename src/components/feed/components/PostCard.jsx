@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
   Avatar,
   Box,
@@ -67,6 +68,8 @@ export const PostCard = ({
     const isDeleting = String(deletingPostId) === String(postId);
     const avatarLetter = authorName.charAt(0).toUpperCase();
     const commentsCount = comments?.length ?? 0;
+    const commentsSectionId = useId();
+    const commentsTitleId = useId();
 
     return (
         <Card className={styles.postCard}>
@@ -138,6 +141,7 @@ export const PostCard = ({
                 className={styles.actionButton}
                 onClick={onToggleComments}
                 aria-expanded={commentsOpen}
+                aria-controls={commentsSectionId}
                 aria-label={
                 commentsOpen
                     ? FEED_TEXTS.COMMENTS.HIDE_ARIA
@@ -157,8 +161,13 @@ export const PostCard = ({
             </Box>
 
             {commentsOpen && (
-            <section className={styles.commentsPanel}>
-                <Typography className={styles.commentsTitle}>
+            <section
+                id={commentsSectionId}
+                className={styles.commentsPanel}
+                aria-label={FEED_TEXTS.COMMENTS.SECTION_ARIA}
+                aria-labelledby={commentsTitleId}
+            >
+                <Typography id={commentsTitleId} className={styles.commentsTitle}>
                 {FEED_TEXTS.COMMENTS.TITLE}
                 </Typography>
 
