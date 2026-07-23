@@ -1,4 +1,4 @@
-import { PROFILE_TEXTS } from "../../../constants";
+import { FEED_POST_TYPES, PROFILE_TEXTS } from "../../../constants";
 
 export const getUserId = (user) => {
     return user?.id ?? user?.userId ?? user?.userid ?? user?.user_id ?? user?._id;
@@ -35,6 +35,52 @@ export const getUserCreatedAt = (user) => {
     return user?.created_at ?? user?.createdAt ?? null;
 };
 
+export const normalizePostTypeSummaryEntry = (entry) => {
+    const normalizedType = `${entry?.post_type ?? entry?.postType ?? ""}`
+        .trim()
+        .toLowerCase();
+    const postType = Object.values(FEED_POST_TYPES).includes(normalizedType)
+        ? normalizedType
+        : null;
+
+    if (!postType || postType === FEED_POST_TYPES.ALL) {
+        return null;
+    }
+
+    return {
+        post_type: postType,
+        total: Number(entry?.total) || 0,
+    };
+};
+
+export const getUserPostTypeSummary = (user) => {
+    const summary =
+        user?.post_type_summary ??
+        user?.postTypeSummary ??
+        user?.activity_summary ??
+        [];
+
+    if (!Array.isArray(summary)) {
+        return [];
+    }
+
+    return summary.map(normalizePostTypeSummaryEntry).filter(Boolean);
+};
+
+export const getDominantPostType = (user) => {
+    const dominantType = `${user?.dominant_post_type ?? user?.dominantPostType ?? ""}`
+        .trim()
+        .toLowerCase();
+
+    if (!dominantType || dominantType === FEED_POST_TYPES.ALL) {
+        return null;
+    }
+
+    return Object.values(FEED_POST_TYPES).includes(dominantType)
+        ? dominantType
+        : null;
+};
+
 export const normalizeUserProfile = (user) => {
     if (!user) return null;
 
@@ -52,7 +98,67 @@ export const normalizeUserProfile = (user) => {
         bio: getUserBio(user),
         location: getUserLocation(user),
         created_at: getUserCreatedAt(user),
+        projects: getUserProjects(user),
+        post_type_summary: getUserPostTypeSummary(user),
+        dominant_post_type: getDominantPostType(user),
+        dominant_post_type_count: Number(user?.dominant_post_type_count) || 0,
+        total_posts: Number(user?.total_posts) || 0,
     };
+};
+
+const normalizeTechnologies = (value) => {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => String(item ?? "").trim())
+            .filter(Boolean);
+    }
+
+    if (typeof value === "string") {
+        return value
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    return [];
+};
+
+export const normalizeProfileProject = (project) => {
+    if (!project) return null;
+
+    const projectId =
+        project?.project_id ??
+        project?.projectId ??
+        project?.id ??
+        null;
+
+    return {
+        ...project,
+        project_id: projectId,
+        projectId,
+        title: `${project?.title ?? ""}`.trim(),
+        summary: `${project?.summary ?? ""}`.trim(),
+        technologies: normalizeTechnologies(project?.technologies),
+        technologies_text:
+            Array.isArray(project?.technologies)
+                ? project.technologies.join(", ")
+                : `${project?.technologies ?? ""}`.trim(),
+        repo_url: project?.repo_url ?? project?.repoUrl ?? "",
+        demo_url: project?.demo_url ?? project?.demoUrl ?? "",
+        status: `${project?.status ?? ""}`.trim().toLowerCase(),
+        created_at: project?.created_at ?? project?.createdAt ?? null,
+        updated_at: project?.updated_at ?? project?.updatedAt ?? null,
+    };
+};
+
+export const getUserProjects = (user) => {
+    const projects = user?.projects ?? user?.projectList ?? user?.items ?? [];
+
+    if (!Array.isArray(projects)) {
+        return [];
+    }
+
+    return projects.map(normalizeProfileProject).filter(Boolean);
 };
 
 export const getProfileFromResponse = (response) => {
@@ -74,6 +180,16 @@ export const getUpdatedProfileFromResponse = (response, currentProfile) => {
         ...(currentProfile || {}),
         ...profileData,
     });
+};
+
+export const getProjectFromResponse = (response) => {
+    const responseData = response?.data;
+    const project =
+        responseData?.data ??
+        responseData?.project ??
+        responseData;
+
+    return normalizeProfileProject(project);
 };
 
 const extractArray = (value) => {

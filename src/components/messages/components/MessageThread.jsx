@@ -1,7 +1,8 @@
-import { Alert, CircularProgress, Typography } from "@mui/material";
+import { Alert, Typography } from "@mui/material";
 
 import { MESSAGES_TEXTS } from "../../../constants";
 import { getUserName } from "../../users/utils/userProfileAdapter";
+import { MessageThreadSkeleton } from "./MessageThreadSkeleton";
 
 import styles from "../styles/MessagesPage.module.css";
 
@@ -46,10 +47,12 @@ export function MessageThread({
         return (
             <section className={styles.threadPanel}>
                 <div className={styles.emptyState}>
-                    <Typography variant="h5" className={styles.panelTitle}>
-                        {MESSAGES_TEXTS.THREAD_EMPTY}
+                    <Typography variant="h5" className={styles.emptyStateTitle}>
+                        {MESSAGES_TEXTS.THREAD_EMPTY_TITLE}
                     </Typography>
-                    <Typography>{MESSAGES_TEXTS.THREAD_WELCOME}</Typography>
+                    <Typography className={styles.emptyStateText}>
+                        {MESSAGES_TEXTS.THREAD_EMPTY_DESCRIPTION}
+                    </Typography>
                 </div>
             </section>
         );
@@ -73,10 +76,7 @@ export function MessageThread({
             </div>
 
             {loading ? (
-                <div className={styles.centerState}>
-                    <CircularProgress size={24} />
-                    <Typography>{MESSAGES_TEXTS.THREAD_LOADING}</Typography>
-                </div>
+                <MessageThreadSkeleton />
             ) : null}
 
             {!loading && error ? (
@@ -85,7 +85,12 @@ export function MessageThread({
 
             {!loading && !error && messages.length === 0 ? (
                 <div className={styles.emptyState}>
-                    <Typography>{MESSAGES_TEXTS.NO_MESSAGES}</Typography>
+                    <Typography variant="h6" className={styles.emptyStateTitle}>
+                        {MESSAGES_TEXTS.NO_MESSAGES_TITLE}
+                    </Typography>
+                    <Typography className={styles.emptyStateText}>
+                        {MESSAGES_TEXTS.NO_MESSAGES_DESCRIPTION}
+                    </Typography>
                 </div>
             ) : null}
 

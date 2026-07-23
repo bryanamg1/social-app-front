@@ -4,7 +4,7 @@ import {
     API_QUERY_PARAMS,
     HTTP_TIMEOUTS,
 } from "../../../constants";
-import { normalizeUserProfile } from "../utils/userProfileAdapter";
+import { normalizeUserSuggestion } from "../utils/userSuggestionsAdapter";
 
 export const getUserSuggestions = async ({ limit } = {}) => {
     const response = await apiClient.get(API_ENDPOINTS.FOLLOWS.SUGGESTIONS, {
@@ -17,6 +17,6 @@ export const getUserSuggestions = async ({ limit } = {}) => {
     const users = Array.isArray(response?.data?.data) ? response.data.data : [];
 
     return {
-        users: users.map(normalizeUserProfile),
+        users: users.map(normalizeUserSuggestion),
     };
 };

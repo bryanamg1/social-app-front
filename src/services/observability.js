@@ -2,6 +2,7 @@ import {
     HTTP_HEADERS,
     HTTP_STATUS,
     OBSERVABILITY_CONFIG,
+    OBSERVABILITY_TEXTS,
 } from "../constants";
 
 const isBrowser = typeof window !== "undefined";
@@ -104,7 +105,7 @@ export const recordHttpSuccess = (scope, response) => {
         scope,
         type: "http:slow",
         level: "warn",
-        message: "HTTP request completed slower than expected.",
+        message: OBSERVABILITY_TEXTS.HTTP_SLOW,
         context: {
             ...getRequestContext(response?.config),
             status: response?.status ?? null,
@@ -122,7 +123,7 @@ export const recordHttpError = (scope, error) => {
         scope,
         type: "http:error",
         level,
-        message: error?.message || "HTTP request failed.",
+        message: error?.message || OBSERVABILITY_TEXTS.HTTP_FAILED,
         context: {
             ...getRequestContext(error?.config),
             status,
@@ -144,7 +145,7 @@ export const recordSocketEvent = (scope, type, details = {}, level = "warn") => 
         scope,
         type,
         level,
-        message: "Socket lifecycle event captured.",
+        message: OBSERVABILITY_TEXTS.SOCKET_EVENT,
         context: details,
     });
 };

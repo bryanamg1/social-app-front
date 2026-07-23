@@ -1,0 +1,232 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background:
+        radial-gradient(circle at top right, rgba(192, 132, 252, 0.18), transparent 28%),
+        linear-gradient(180deg, #090b12 0%, #111522 100%);
+    color: #d6dbe6;
+}
+
+.hero,
+.section {
+    padding: 32px 28px;
+}
+
+.hero {
+    min-height: calc(100svh - 88px);
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    align-items: center;
+    gap: 28px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.heroCopy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    text-align: left;
+}
+
+.heroEyebrow,
+.sectionEyebrow,
+.cardBadge,
+.metricLabel {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7dd3fc;
+}
+
+.heroTitle,
+.sectionTitle {
+    margin: 0;
+    color: #f8fafc;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.heroTitle {
+    max-width: 12ch;
+    font-size: clamp(2.8rem, 5vw, 4.75rem);
+    line-height: 1.02;
+}
+
+.heroDescription,
+.sectionDescription,
+.cardDescription,
+.noteItem {
+    color: #b8c2d6;
+    line-height: 1.65;
+}
+
+.heroDescription {
+    max-width: 64ch;
+}
+
+.heroActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.metricGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.metricItem,
+.infoCard {
+    min-height: 100%;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 8px;
+    background: rgba(10, 14, 24, 0.62);
+    box-shadow: 0 18px 44px rgba(3, 7, 18, 0.22);
+}
+
+.metricItem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 14px 16px;
+}
+
+.metricValue {
+    color: #f8fafc;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.heroMedia {
+    align-self: stretch;
+    min-height: 360px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.82);
+}
+
+.heroImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    text-align: left;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.sectionHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 72ch;
+}
+
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.infoCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+}
+
+.cardTitle {
+    margin: 0;
+    color: #f8fafc;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.cardTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cardTag {
+    border: 1px solid rgba(125, 211, 252, 0.28);
+    background: rgba(14, 165, 233, 0.08);
+    color: #d9f3ff;
+}
+
+.linkButton {
+    margin-top: auto;
+}
+
+.noteList {
+    display: grid;
+    gap: 8px;
+}
+
+.noteItem {
+    margin: 0;
+}
+
+@media (max-width: 1024px) {
+    .hero,
+    .section {
+        padding: 28px 22px;
+    }
+
+    .hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+    }
+
+    .heroTitle {
+        max-width: none;
+        font-size: clamp(2.3rem, 7vw, 3.5rem);
+    }
+
+    .metricGrid,
+    .cardGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .heroMedia {
+        min-height: 280px;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero,
+    .section {
+        padding: 24px 16px;
+    }
+
+    .metricGrid,
+    .cardGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .heroActions {
+        width: 100%;
+    }
+
+    .heroActions :global(.MuiButton-root) {
+        flex: 1 1 100%;
+    }
+
+    .heroMedia {
+        min-height: 220px;
+    }
+}

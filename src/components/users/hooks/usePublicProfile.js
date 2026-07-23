@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
+    FEED_POST_TYPES,
     FEED_PAGINATION,
     HTTP_STATUS,
     PROFILE_TEXTS,
@@ -12,8 +13,9 @@ import { useConversationLauncher } from "../../messages/hooks/useConversationLau
 import { removePost } from "../../feed/services/feedService";
 import { getPostId } from "../../feed/utils/postAdapter";
 import { useFollowAction } from "./useFollowAction";
+import { useProjectVisibility } from "./useProjectVisibility";
 import { getPostsByUserId, getUserProfile } from "../services/userProfileService";
-import { getUserId } from "../utils/userProfileAdapter";
+import { getUserId, getUserProjects } from "../utils/userProfileAdapter";
 
 const getHasMore = ({ page, totalPages, receivedPostsCount, limit }) => {
     if (Number.isFinite(totalPages)) {
@@ -45,6 +47,7 @@ export const usePublicProfile = () => {
     const [profileError, setProfileError] = useState(null);
     const [postsError, setPostsError] = useState(null);
     const [paginationError, setPaginationError] = useState(null);
+    const [selectedPostType, setSelectedPostType] = useState(FEED_POST_TYPES.ALL);
     const [pagination, setPagination] = useState({
         page: FEED_PAGINATION.INITIAL_PAGE,
         limit: FEED_PAGINATION.PAGE_SIZE,
@@ -52,6 +55,8 @@ export const usePublicProfile = () => {
         totalPages: null,
         hasMore: false,
     });
+    const activePostType =
+        selectedPostType === FEED_POST_TYPES.ALL ? null : selectedPostType;
 
     const loadProfile = useCallback(async () => {
         if (!profileUserId) {
@@ -91,6 +96,7 @@ export const usePublicProfile = () => {
             userId: profileUserId,
             page,
             limit: FEED_PAGINATION.PAGE_SIZE,
+            postType: activePostType,
             });
             const nextPosts = postsData.posts;
             const nextMeta = postsData.meta;
@@ -144,7 +150,7 @@ export const usePublicProfile = () => {
             setLoadingMorePosts(false);
         }
         },
-        [profileUserId]
+        [activePostType, profileUserId]
     );
 
     const loadMorePosts = async () => {
@@ -177,18 +183,34 @@ export const usePublicProfile = () => {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         loadProfile();
+    }, [loadProfile]);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadPosts();
-    }, [loadProfile, loadPosts]);
+    }, [loadPosts]);
 
     const postsCount = useMemo(() => {
         return pagination.total ?? posts.length;
     }, [pagination.total, posts.length]);
 
+    const projects = useMemo(() => {
+        return getUserProjects(profile);
+    }, [profile]);
+    const projectVisibility = useProjectVisibility(projects);
+
     return {
         currentUserId,
         profile,
+        projects: projectVisibility.filteredProjects,
+        totalProjectsCount: projectVisibility.totalCount,
+        visibleProjectsCount: projectVisibility.visibleCount,
+        projectFilterOptions: projectVisibility.filterOptions,
+        selectedProjectFilter: projectVisibility.selectedFilter,
+        projectSummary: projectVisibility.summary,
         posts,
         postsCount,
+        selectedPostType,
         loadingProfile,
         loadingPosts,
         loadingMorePosts,
@@ -199,6 +221,8 @@ export const usePublicProfile = () => {
         pagination,
         followAction,
         messageAction,
+        handlePostTypeFilterChange: setSelectedPostType,
+        handleProjectFilterChange: projectVisibility.onFilterChange,
         loadMorePosts,
         handleDeletePost,
     };

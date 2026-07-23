@@ -17,6 +17,10 @@ const getVendorChunkName = (id) => {
     return 'react-vendor'
   }
 
+  if (normalizedId.includes('/@mui/icons-material/')) {
+    return 'mui-icons-vendor'
+  }
+
   if (
     normalizedId.includes('/@mui/') ||
     normalizedId.includes('/@emotion/')

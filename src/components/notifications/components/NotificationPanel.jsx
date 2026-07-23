@@ -1,3 +1,4 @@
+import { useId } from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 import { NOTIFICATIONS_TEXTS } from "../../../constants";
@@ -6,6 +7,7 @@ import { NotificationItem } from "./NotificationItem";
 
 export const NotificationPanel = ({
     isOpen,
+    panelId,
     notifications,
     unreadCount,
     isConnected,
@@ -18,6 +20,8 @@ export const NotificationPanel = ({
     onClose,
     styles,
 }) => {
+    const titleId = useId();
+    const descriptionId = useId();
     if (!isOpen) return null;
 
     const isLoading = isConnected && !isSubscribed;
@@ -37,11 +41,20 @@ export const NotificationPanel = ({
             aria-label={NOTIFICATIONS_TEXTS.CLOSE_PANEL}
         />
 
-        <section className={styles.panel} aria-label={NOTIFICATIONS_TEXTS.PANEL_TITLE}>
+        <section
+            id={panelId}
+            className={styles.panel}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={descriptionId}
+        >
             <div className={styles.panelHeader}>
             <div className={styles.panelHeaderCopy}>
-                <p className={styles.panelTitle}>{NOTIFICATIONS_TEXTS.PANEL_TITLE}</p>
-                <p className={styles.panelSubtitle}>
+                <p id={titleId} className={styles.panelTitle}>
+                    {NOTIFICATIONS_TEXTS.PANEL_TITLE}
+                </p>
+                <p id={descriptionId} className={styles.panelSubtitle}>
                 {NOTIFICATIONS_TEXTS.PANEL_SUBTITLE}
                 </p>
             </div>
@@ -71,7 +84,7 @@ export const NotificationPanel = ({
             </div>
             </div>
 
-            <div className={styles.panelStatusRow}>
+            <div className={styles.panelStatusRow} role="status" aria-live="polite">
             <div className={styles.panelStatusMeta}>
                 <span
                 className={

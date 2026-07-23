@@ -5,6 +5,7 @@ import { NOTIFICATIONS_TEXTS } from "../../../constants";
 export const NotificationToggleButton = ({
     isOpen,
     unreadCount,
+    panelId,
     onToggle,
     buttonClassName,
     iconClassName,
@@ -18,8 +19,10 @@ export const NotificationToggleButton = ({
         type="button"
         className={buttonClassName}
         onClick={onToggle}
-        aria-label={NOTIFICATIONS_TEXTS.TOGGLE_LABEL}
+        aria-label={NOTIFICATIONS_TEXTS.TOGGLE_LABEL_WITH_COUNT(unreadCount)}
         aria-expanded={isOpen}
+        aria-controls={panelId}
+        aria-haspopup="dialog"
         >
         <span className={iconClassName}>
             <NotificationsNoneOutlinedIcon />

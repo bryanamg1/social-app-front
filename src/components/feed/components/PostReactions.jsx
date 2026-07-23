@@ -27,7 +27,12 @@ export const PostReactions = ({ reactionState, onToggleReaction }) => {
 
     return (
         <Box className={styles.reactionsBlock}>
-        <Box className={styles.reactionsSummary}>
+        <Box
+            className={styles.reactionsSummary}
+            role="status"
+            aria-live="polite"
+            aria-label={FEED_TEXTS.REACTIONS.SUMMARY_ARIA}
+        >
             {reactionState.loading ? (
             <Box className={styles.reactionsLoadingState}>
                 <CircularProgress size={16} />
@@ -65,7 +70,11 @@ export const PostReactions = ({ reactionState, onToggleReaction }) => {
             </Typography>
         ) : null}
 
-        <Box className={styles.reactionActions}>
+        <Box
+            className={styles.reactionActions}
+            role="group"
+            aria-label={FEED_TEXTS.REACTIONS.GROUP_ARIA}
+        >
             {FEED_REACTION_OPTIONS.map((reaction) => {
             const isActive = reactionState.activeReaction === reaction.type;
 
@@ -79,6 +88,7 @@ export const PostReactions = ({ reactionState, onToggleReaction }) => {
                 disabled={actionDisabled}
                 onClick={() => onToggleReaction(reaction.type)}
                 aria-label={`${FEED_TEXTS.REACTIONS.TOGGLE_ARIA_PREFIX} ${reaction.label}`}
+                aria-pressed={isActive}
                 >
                 {reaction.label}
                 </Button>

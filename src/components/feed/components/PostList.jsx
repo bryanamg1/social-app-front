@@ -1,7 +1,6 @@
-import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, Button, Typography } from "@mui/material";
 
 import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
-import { UserSuggestionsList } from "../../users/components/UserSuggestionsList";
 import { usePostComments } from "../hooks/usePostComments";
 import { usePostReactions } from "../hooks/usePostReactions";
 import {
@@ -10,7 +9,9 @@ import {
   getPostId,
   getPostOwnerId,
 } from "../utils/postAdapter";
+import { FeedEmptySuggestions } from "./FeedEmptySuggestions";
 import { PostCard } from "./PostCard";
+import { PostListSkeleton } from "./PostListSkeleton";
 
 import styles from "../styles/FeedPage.module.css";
 
@@ -53,7 +54,7 @@ export const PostList = ({
     hasMore,
     emptyTitle,
     emptyDescription,
-    suggestionsState,
+    withSuggestions = false,
     onDeletePost,
     onLoadMorePosts,
     }) => {
@@ -71,12 +72,7 @@ export const PostList = ({
     });
 
     if (loadingPosts) {
-        return (
-        <Box className={styles.centerState}>
-            <CircularProgress />
-            <Typography>{FEED_TEXTS.POSTS.LOADING}</Typography>
-        </Box>
-        );
+        return <PostListSkeleton />;
     }
 
     if (error) {
@@ -98,12 +94,9 @@ export const PostList = ({
                 {emptyDescription || FEED_TEXTS.POSTS.EMPTY_DESCRIPTION}
             </Typography>
 
-            {suggestionsState ? (
+            {withSuggestions ? (
                 <div className={styles.emptySuggestions}>
-                    <UserSuggestionsList
-                        suggestionsState={suggestionsState}
-                        compact
-                    />
+                    <FeedEmptySuggestions />
                 </div>
             ) : null}
         </Box>

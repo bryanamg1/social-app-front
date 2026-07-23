@@ -1,3 +1,4 @@
+import { Suspense, lazy, useId } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
@@ -8,23 +9,27 @@ import {
   APP_BRAND,
   ROUTES,
   LAYOUT_TEXTS,
-  RIGHT_SIDEBAR_TEXTS,
+  RIGHT_SIDEBAR_CONFIG,
   SIDEBAR_NAV_ITEMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useDeferredFeature } from "../../../hooks/useDeferredFeature";
 import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
 import { useNotifications } from "../../../hooks/useNotifications";
-import { useUserSearch } from "../../users/hooks/useUserSearch";
-import { useUserSuggestions } from "../../users/hooks/useUserSuggestions";
 import { getUserId } from "../../users/utils/userProfileAdapter";
-import { UserSuggestionsPanel } from "../../users/components/UserSuggestionsPanel";
-import { NotificationPanel } from "../../notifications/components/NotificationPanel";
 import { NotificationToggleButton } from "../../notifications/components/NotificationToggleButton";
 import { useNotificationPanel } from "../../notifications/hooks/useNotificationPanel";
-import { UserSearchPanel } from "./UserSearchPanel";
+import { AuthenticatedRightSidebar } from "./AuthenticatedRightSidebar";
+import { SidebarPanelSkeleton } from "./SidebarPanelSkeleton";
 
 import styles from "../styles/MainLayout.module.css";
 import notificationStyles from "../../notifications/styles/Notifications.module.css";
+
+const NotificationPanel = lazy(() =>
+    import("../../notifications/components/NotificationPanel").then((module) => ({
+        default: module.NotificationPanel,
+    }))
+);
 
 const ICONS_BY_KEY = {
     home: <HomeOutlinedIcon />,
@@ -48,11 +53,14 @@ export function MainLayout() {
     const feedRefresh = useFeedRefresh();
     const notificationPanel = useNotificationPanel();
     const notificationsState = useNotifications();
+    const notificationsPanelId = useId();
 
     const userDisplayName = getUserDisplayName(user);
     const currentUserId = getUserId(user);
-    const userSearch = useUserSearch({ currentUserId });
-    const suggestionsState = useUserSuggestions({ currentUserId });
+    const deferredSidebarReady = useDeferredFeature({
+        enabled: !Number.isNaN(currentUserId),
+        delayMs: RIGHT_SIDEBAR_CONFIG.DEFERRED_BOOT_MS,
+    });
     const avatarLetter = userDisplayName.charAt(0).toUpperCase();
     const isFeedRoute = location.pathname === ROUTES.FEED;
 
@@ -79,11 +87,6 @@ export function MainLayout() {
             <button
                 type="button"
                 className={styles.brandButton}
-                aria-label={
-                    feedRefresh.isRefreshing
-                        ? LAYOUT_TEXTS.REFRESHING_FEED
-                        : LAYOUT_TEXTS.REFRESH_FEED
-                }
                 title={
                     feedRefresh.isRefreshing
                         ? LAYOUT_TEXTS.REFRESHING_FEED
@@ -102,9 +105,18 @@ export function MainLayout() {
                         : APP_BRAND.TAGLINE}
                 </p>
                 </div>
+
+                <span className={styles.visuallyHidden}>
+                    {feedRefresh.isRefreshing
+                        ? LAYOUT_TEXTS.REFRESHING_FEED
+                        : LAYOUT_TEXTS.REFRESH_FEED}
+                </span>
             </button>
 
-            <nav className={styles.navMenu}>
+            <nav
+                className={styles.navMenu}
+                aria-label={LAYOUT_TEXTS.PRIMARY_NAV_ARIA}
+            >
                 {SIDEBAR_NAV_ITEMS.map((item) => (
                 <NavLink
                     key={item.path}
@@ -125,6 +137,7 @@ export function MainLayout() {
                 <NotificationToggleButton
                 isOpen={notificationPanel.isOpen}
                 unreadCount={notificationsState.unreadCount}
+                panelId={notificationsPanelId}
                 onToggle={notificationPanel.togglePanel}
                 buttonClassName={
                     notificationPanel.isOpen
@@ -176,41 +189,41 @@ export function MainLayout() {
         </aside>
 
         <main className={styles.mainContent}>
-            <Outlet context={{ suggestionsState }} />
+            <Outlet />
         </main>
 
-        <NotificationPanel
-        isOpen={notificationPanel.isOpen}
-        notifications={notificationsState.notifications}
-        unreadCount={notificationsState.unreadCount}
-        isConnected={notificationsState.isConnected}
-        isSubscribed={notificationsState.isSubscribed}
-        loadingHistory={notificationsState.loadingHistory}
-        markingAllAsSeen={notificationsState.markingAllAsSeen}
-        error={notificationsState.error}
-        onMarkSeen={notificationsState.markNotificationSeen}
-        onMarkAllSeen={notificationsState.markAllNotificationsSeen}
-        onClose={notificationPanel.closePanel}
-        styles={notificationStyles}
-        />
+        <Suspense fallback={null}>
+            <NotificationPanel
+            panelId={notificationsPanelId}
+            isOpen={notificationPanel.isOpen}
+            notifications={notificationsState.notifications}
+            unreadCount={notificationsState.unreadCount}
+            isConnected={notificationsState.isConnected}
+            isSubscribed={notificationsState.isSubscribed}
+            loadingHistory={notificationsState.loadingHistory}
+            markingAllAsSeen={notificationsState.markingAllAsSeen}
+            error={notificationsState.error}
+            onMarkSeen={notificationsState.markNotificationSeen}
+            onMarkAllSeen={notificationsState.markAllNotificationsSeen}
+            onClose={notificationPanel.closePanel}
+            styles={notificationStyles}
+            />
+        </Suspense>
 
-        <aside className={styles.rightSidebar}>
-            <div className={styles.rightSidebarInner}>
-            <UserSearchPanel search={userSearch} />
-
-            <UserSuggestionsPanel suggestionsState={suggestionsState} />
-
-            <section className={styles.rightCard}>
-                <h3 className={styles.rightCardTitle}>
-                {RIGHT_SIDEBAR_TEXTS.TRENDING_TITLE}
-                </h3>
-
-                <p className={styles.rightCardText}>
-                {RIGHT_SIDEBAR_TEXTS.TRENDING_DESCRIPTION}
-                </p>
-            </section>
-            </div>
-        </aside>
+        {deferredSidebarReady ? (
+            <AuthenticatedRightSidebar currentUserId={currentUserId} />
+        ) : (
+            <aside
+                className={styles.rightSidebar}
+                aria-label={LAYOUT_TEXTS.RIGHT_SIDEBAR_ARIA}
+            >
+                <div className={styles.rightSidebarInner}>
+                    <SidebarPanelSkeleton withSearch lines={4} />
+                    <SidebarPanelSkeleton lines={5} />
+                    <SidebarPanelSkeleton lines={4} />
+                </div>
+            </aside>
+        )}
         </div>
     );
 }

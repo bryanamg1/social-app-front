@@ -13,16 +13,16 @@ import {
 
 const pendingPostsRequests = new Map();
 
-const getPostsRequestKey = ({ page, limit } = {}) => {
-    return `${API_ENDPOINTS.POSTS.ALL}:${page ?? ""}:${limit ?? ""}`;
+const getPostsRequestKey = ({ page, limit, postType } = {}) => {
+    return `${API_ENDPOINTS.POSTS.ALL}:${page ?? ""}:${limit ?? ""}:${postType ?? ""}`;
 };
 
-const getFollowingFeedRequestKey = ({ page, limit } = {}) => {
-    return `${API_ENDPOINTS.FOLLOWS.FEED}:${page ?? ""}:${limit ?? ""}`;
+const getFollowingFeedRequestKey = ({ page, limit, postType } = {}) => {
+    return `${API_ENDPOINTS.FOLLOWS.FEED}:${page ?? ""}:${limit ?? ""}:${postType ?? ""}`;
 };
 
-export const getAllPosts = async ({ page, limit } = {}) => {
-    const requestKey = getPostsRequestKey({ page, limit });
+export const getAllPosts = async ({ page, limit, postType } = {}) => {
+    const requestKey = getPostsRequestKey({ page, limit, postType });
 
     if (pendingPostsRequests.has(requestKey)) {
         return pendingPostsRequests.get(requestKey);
@@ -32,6 +32,7 @@ export const getAllPosts = async ({ page, limit } = {}) => {
         params: {
         [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
         [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
+        [API_QUERY_PARAMS.POSTS.TYPE]: postType || undefined,
         },
     })
         .then((response) => getPostsFromResponse(response))
@@ -44,8 +45,8 @@ export const getAllPosts = async ({ page, limit } = {}) => {
     return request;
 };
 
-export const getFollowingFeed = async ({ page, limit } = {}) => {
-    const requestKey = getFollowingFeedRequestKey({ page, limit });
+export const getFollowingFeed = async ({ page, limit, postType } = {}) => {
+    const requestKey = getFollowingFeedRequestKey({ page, limit, postType });
 
     if (pendingPostsRequests.has(requestKey)) {
         return pendingPostsRequests.get(requestKey);
@@ -56,6 +57,7 @@ export const getFollowingFeed = async ({ page, limit } = {}) => {
             params: {
                 [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
                 [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
+                [API_QUERY_PARAMS.POSTS.TYPE]: postType || undefined,
             },
         })
         .then((response) => getPostsFromResponse(response))
@@ -68,7 +70,7 @@ export const getFollowingFeed = async ({ page, limit } = {}) => {
     return request;
 };
 
-export const createPost = async ({ userId, content, image }) => {
+export const createPost = async ({ userId, content, image, postType }) => {
     const formData = new FormData();
 
     if (content?.trim()) {
@@ -78,6 +80,10 @@ export const createPost = async ({ userId, content, image }) => {
 
     if (image) {
         formData.append("image", image);
+    }
+
+    if (postType) {
+        formData.append(API_BODY_FIELDS.POSTS.TYPE, postType);
     }
 
     const response = await apiClient.post(API_ENDPOINTS.POSTS.CREATE(userId), formData, {

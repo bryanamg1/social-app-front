@@ -88,6 +88,28 @@
     text-align: center;
 }
 
+.emptyStateCompact {
+    min-height: 160px;
+    display: grid;
+    place-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.emptyStateTitle,
+.emptyStateText {
+    margin: 0;
+}
+
+.emptyStateTitle {
+    color: #f8fafc;
+    font-weight: 800;
+}
+
+.emptyStateText {
+    color: #94a3b8;
+}
+
 .statusText {
     color: #94a3b8;
 }
@@ -125,6 +147,17 @@
     border: 1px solid rgba(56, 189, 248, 0.42) !important;
     background: rgba(8, 47, 73, 0.45) !important;
     color: #f8fafc !important;
+}
+
+.conversationSkeletonItem {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(2, 6, 23, 0.38);
 }
 
 .conversationMeta {
@@ -167,6 +200,18 @@
     padding-right: 4px;
 }
 
+.threadSkeleton {
+    display: grid;
+    gap: 16px;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.threadSkeletonHeader {
+    display: grid;
+    gap: 4px;
+}
+
 .messageRow,
 .messageRowOwn {
     display: flex;
@@ -195,6 +240,14 @@
 .messageBubbleOwn {
     color: #082f49;
     background: linear-gradient(135deg, #67e8f9, #38bdf8);
+}
+
+.messageSkeletonBubble {
+    width: min(78%, 520px);
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(30, 41, 59, 0.62);
 }
 
 .messageContent {
