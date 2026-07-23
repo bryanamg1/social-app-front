@@ -48,6 +48,10 @@ export const RIGHT_SIDEBAR_SEARCH = {
     ERROR_TEXT: "No se pudo buscar usuarios.",
 };
 
+export const RIGHT_SIDEBAR_CONFIG = {
+    DEFERRED_BOOT_MS: 900,
+};
+
 export const LAYOUT_TEXTS = {
     LOGOUT: "Cerrar sesion",
     MOBILE_LOGOUT: "Salir",

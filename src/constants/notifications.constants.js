@@ -39,6 +39,10 @@ export const NOTIFICATIONS_MESSAGES = {
         "useNotifications debe usarse dentro de NotificationProvider.",
 };
 
+export const NOTIFICATIONS_RUNTIME_CONFIG = {
+    DEFERRED_BOOT_MS: 1200,
+};
+
 export const NOTIFICATIONS_TEXTS = {
     TOGGLE_LABEL: "Notificaciones",
     TOGGLE_LABEL_WITH_COUNT: (unreadCount) =>

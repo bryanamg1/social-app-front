@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
     NOTIFICATIONS_ERRORS,
+    NOTIFICATIONS_RUNTIME_CONFIG,
     NOTIFICATIONS_SOCKET_EVENTS,
 } from "../constants";
 import { useAuth } from "../hooks/useAuth";
+import { useDeferredFeature } from "../hooks/useDeferredFeature";
 import {
     disconnectNotificationsSocket,
     getNotificationsSocket,
@@ -53,9 +55,13 @@ export function NotificationProvider({ children }) {
     const [error, setError] = useState(EMPTY_STATE.error);
 
     const currentUserId = getCurrentUserId(user);
+    const notificationsEnabled = useDeferredFeature({
+        enabled: isAuthenticated && !Number.isNaN(currentUserId),
+        delayMs: NOTIFICATIONS_RUNTIME_CONFIG.DEFERRED_BOOT_MS,
+    });
 
     useEffect(() => {
-        if (!isAuthenticated || Number.isNaN(currentUserId)) {
+        if (!notificationsEnabled) {
             return undefined;
         }
 
@@ -90,10 +96,10 @@ export function NotificationProvider({ children }) {
         return () => {
             isActive = false;
         };
-    }, [currentUserId, isAuthenticated]);
+    }, [currentUserId, notificationsEnabled]);
 
     useEffect(() => {
-        if (!isAuthenticated || Number.isNaN(currentUserId)) {
+        if (!notificationsEnabled) {
             disconnectNotificationsSocket();
             return undefined;
         }
@@ -203,7 +209,7 @@ export function NotificationProvider({ children }) {
             setIsSubscribed(EMPTY_STATE.isSubscribed);
             setError(EMPTY_STATE.error);
         };
-    }, [currentUserId, isAuthenticated]);
+    }, [currentUserId, notificationsEnabled]);
 
     const markNotificationSeen = useCallback(async (notificationId) => {
         if (!notificationId) return;
@@ -261,46 +267,45 @@ export function NotificationProvider({ children }) {
     const value = useMemo(
         () => ({
             notifications:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? notifications
                     : EMPTY_STATE.notifications,
             unreadCount:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? unreadCount
                     : EMPTY_STATE.unreadCount,
             isConnected:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? isConnected
                     : EMPTY_STATE.isConnected,
             isSubscribed:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? isSubscribed
                     : EMPTY_STATE.isSubscribed,
             loadingHistory:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? loadingHistory
                     : false,
             markingAllAsSeen:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? markingAllAsSeen
                     : false,
             error:
-                isAuthenticated && !Number.isNaN(currentUserId)
+                notificationsEnabled
                     ? error
                     : EMPTY_STATE.error,
             markNotificationSeen,
             markAllNotificationsSeen,
         }),
         [
-            currentUserId,
             error,
-            isAuthenticated,
             isConnected,
             isSubscribed,
             loadingHistory,
             markingAllAsSeen,
             markAllNotificationsSeen,
             markNotificationSeen,
+            notificationsEnabled,
             notifications,
             unreadCount,
         ]

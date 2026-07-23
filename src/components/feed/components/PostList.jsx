@@ -1,7 +1,6 @@
 import { Alert, Box, Button, Typography } from "@mui/material";
 
 import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
-import { UserSuggestionsList } from "../../users/components/UserSuggestionsList";
 import { usePostComments } from "../hooks/usePostComments";
 import { usePostReactions } from "../hooks/usePostReactions";
 import {
@@ -10,6 +9,7 @@ import {
   getPostId,
   getPostOwnerId,
 } from "../utils/postAdapter";
+import { FeedEmptySuggestions } from "./FeedEmptySuggestions";
 import { PostCard } from "./PostCard";
 import { PostListSkeleton } from "./PostListSkeleton";
 
@@ -54,7 +54,7 @@ export const PostList = ({
     hasMore,
     emptyTitle,
     emptyDescription,
-    suggestionsState,
+    withSuggestions = false,
     onDeletePost,
     onLoadMorePosts,
     }) => {
@@ -94,12 +94,9 @@ export const PostList = ({
                 {emptyDescription || FEED_TEXTS.POSTS.EMPTY_DESCRIPTION}
             </Typography>
 
-            {suggestionsState ? (
+            {withSuggestions ? (
                 <div className={styles.emptySuggestions}>
-                    <UserSuggestionsList
-                        suggestionsState={suggestionsState}
-                        compact
-                    />
+                    <FeedEmptySuggestions />
                 </div>
             ) : null}
         </Box>

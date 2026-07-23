@@ -9,32 +9,22 @@ import {
   APP_BRAND,
   ROUTES,
   LAYOUT_TEXTS,
-  RIGHT_SIDEBAR_TEXTS,
+  RIGHT_SIDEBAR_CONFIG,
   SIDEBAR_NAV_ITEMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
+import { useDeferredFeature } from "../../../hooks/useDeferredFeature";
 import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
 import { useNotifications } from "../../../hooks/useNotifications";
-import { useUserSearch } from "../../users/hooks/useUserSearch";
-import { useUserSuggestions } from "../../users/hooks/useUserSuggestions";
 import { getUserId } from "../../users/utils/userProfileAdapter";
 import { NotificationToggleButton } from "../../notifications/components/NotificationToggleButton";
 import { useNotificationPanel } from "../../notifications/hooks/useNotificationPanel";
+import { AuthenticatedRightSidebar } from "./AuthenticatedRightSidebar";
 import { SidebarPanelSkeleton } from "./SidebarPanelSkeleton";
 
 import styles from "../styles/MainLayout.module.css";
 import notificationStyles from "../../notifications/styles/Notifications.module.css";
 
-const UserSearchPanel = lazy(() =>
-    import("./UserSearchPanel").then((module) => ({
-        default: module.UserSearchPanel,
-    }))
-);
-const UserSuggestionsPanel = lazy(() =>
-    import("../../users/components/UserSuggestionsPanel").then((module) => ({
-        default: module.UserSuggestionsPanel,
-    }))
-);
 const NotificationPanel = lazy(() =>
     import("../../notifications/components/NotificationPanel").then((module) => ({
         default: module.NotificationPanel,
@@ -67,8 +57,10 @@ export function MainLayout() {
 
     const userDisplayName = getUserDisplayName(user);
     const currentUserId = getUserId(user);
-    const userSearch = useUserSearch({ currentUserId });
-    const suggestionsState = useUserSuggestions({ currentUserId });
+    const deferredSidebarReady = useDeferredFeature({
+        enabled: !Number.isNaN(currentUserId),
+        delayMs: RIGHT_SIDEBAR_CONFIG.DEFERRED_BOOT_MS,
+    });
     const avatarLetter = userDisplayName.charAt(0).toUpperCase();
     const isFeedRoute = location.pathname === ROUTES.FEED;
 
@@ -197,7 +189,7 @@ export function MainLayout() {
         </aside>
 
         <main className={styles.mainContent}>
-            <Outlet context={{ suggestionsState }} />
+            <Outlet />
         </main>
 
         <Suspense fallback={null}>
@@ -218,30 +210,20 @@ export function MainLayout() {
             />
         </Suspense>
 
-        <aside
-            className={styles.rightSidebar}
-            aria-label={LAYOUT_TEXTS.RIGHT_SIDEBAR_ARIA}
-        >
-            <div className={styles.rightSidebarInner}>
-            <Suspense fallback={<SidebarPanelSkeleton withSearch lines={4} />}>
-                <UserSearchPanel search={userSearch} />
-            </Suspense>
-
-            <Suspense fallback={<SidebarPanelSkeleton lines={5} />}>
-                <UserSuggestionsPanel suggestionsState={suggestionsState} />
-            </Suspense>
-
-            <section className={styles.rightCard}>
-                <h3 className={styles.rightCardTitle}>
-                {RIGHT_SIDEBAR_TEXTS.TRENDING_TITLE}
-                </h3>
-
-                <p className={styles.rightCardText}>
-                {RIGHT_SIDEBAR_TEXTS.TRENDING_DESCRIPTION}
-                </p>
-            </section>
-            </div>
-        </aside>
+        {deferredSidebarReady ? (
+            <AuthenticatedRightSidebar currentUserId={currentUserId} />
+        ) : (
+            <aside
+                className={styles.rightSidebar}
+                aria-label={LAYOUT_TEXTS.RIGHT_SIDEBAR_ARIA}
+            >
+                <div className={styles.rightSidebarInner}>
+                    <SidebarPanelSkeleton withSearch lines={4} />
+                    <SidebarPanelSkeleton lines={5} />
+                    <SidebarPanelSkeleton lines={4} />
+                </div>
+            </aside>
+        )}
         </div>
     );
 }

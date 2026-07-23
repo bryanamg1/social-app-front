@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
 
 import { FEED_MODES, FEED_POST_TYPES, FEED_TEXTS } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
@@ -19,7 +18,6 @@ const getCurrentUserId = (user) => {
 
 const FeedPage = () => {
     const { user } = useAuth();
-    const { suggestionsState } = useOutletContext();
     const feedRefresh = useFeedRefresh();
     const [selectedPostType, setSelectedPostType] = useState(FEED_POST_TYPES.ALL);
     const activePostType =
@@ -118,7 +116,7 @@ const FeedPage = () => {
             hasMore={pagination.hasMore}
             emptyTitle={FEED_TEXTS.POSTS.FOLLOWING_EMPTY_TITLE}
             emptyDescription={FEED_TEXTS.POSTS.FOLLOWING_EMPTY_DESCRIPTION}
-            suggestionsState={suggestionsState}
+            withSuggestions
             onDeletePost={handleDeletePost}
             onLoadMorePosts={loadMorePosts}
         />
