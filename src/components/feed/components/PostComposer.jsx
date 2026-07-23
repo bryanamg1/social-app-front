@@ -5,25 +5,34 @@ import {
   Card,
   CardContent,
   IconButton,
+  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
+import { useRef } from "react";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { FEED_TEXTS, LAYOUT_TEXTS } from "../../../constants";
+import {
+  FEED_POST_TYPE_OPTIONS,
+  FEED_TEXTS,
+  LAYOUT_TEXTS,
+} from "../../../constants";
 import styles from "../styles/FeedPage.module.css";
 
 export const PostComposer = ({
   user,
   content,
+  postType,
   imagePreview,
   creatingPost,
   canSubmit,
   onContentChange,
+  onPostTypeChange,
   onImageChange,
   onRemoveImage,
   onSubmit,
 }) => {
+    const imageInputRef = useRef(null);
     const avatarLetter =
         user?.email?.charAt(0)?.toUpperCase() ||
         LAYOUT_TEXTS.DEFAULT_USER.charAt(0).toUpperCase();
@@ -49,6 +58,23 @@ export const PostComposer = ({
             </Box>
             </Box>
 
+            <Box className={styles.composerControls}>
+            <TextField
+                select
+                fullWidth
+                value={postType}
+                onChange={onPostTypeChange}
+                label={FEED_TEXTS.COMPOSER.TYPE_LABEL}
+                className={styles.composerSelect}
+            >
+                {FEED_POST_TYPE_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                </MenuItem>
+                ))}
+            </TextField>
+            </Box>
+
             {imagePreview && (
             <Box className={styles.previewWrapper}>
                 <img
@@ -68,18 +94,21 @@ export const PostComposer = ({
             )}
 
             <Box className={styles.composerActions}>
-            <Button
-                component="label"
-                startIcon={<ImageOutlinedIcon />}
-                className={styles.secondaryButton}
-            >
-                {FEED_TEXTS.COMPOSER.IMAGE_BUTTON}
-                <input
+            <input
+                ref={imageInputRef}
                 hidden
                 type="file"
                 accept="image/*"
                 onChange={onImageChange}
-                />
+            />
+
+            <Button
+                type="button"
+                startIcon={<ImageOutlinedIcon />}
+                className={styles.secondaryButton}
+                onClick={() => imageInputRef.current?.click()}
+            >
+                {FEED_TEXTS.COMPOSER.IMAGE_BUTTON}
             </Button>
 
             <Button

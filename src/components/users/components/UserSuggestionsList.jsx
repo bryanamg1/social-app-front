@@ -1,20 +1,14 @@
-import { Alert, Button, CircularProgress } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 
 import { USER_SUGGESTIONS_TEXTS } from "../../../constants";
 import { UserSuggestionItem } from "./UserSuggestionItem";
+import { UserSuggestionsSkeletonList } from "./UserSuggestionsSkeletonList";
 
 import styles from "../styles/UserSuggestionsPanel.module.css";
 
 export function UserSuggestionsList({ suggestionsState, compact = false }) {
     if (suggestionsState.loading) {
-        return (
-            <div className={styles.statusBlock}>
-                <CircularProgress size={20} />
-                <p className={styles.statusText}>
-                    {USER_SUGGESTIONS_TEXTS.LOADING}
-                </p>
-            </div>
-        );
+        return <UserSuggestionsSkeletonList />;
     }
 
     if (suggestionsState.error) {
@@ -38,14 +32,22 @@ export function UserSuggestionsList({ suggestionsState, compact = false }) {
 
     if (suggestionsState.isEmpty) {
         return (
-            <p className={compact ? styles.emptyTextCompact : styles.emptyText}>
+            <p
+                role="status"
+                aria-live="polite"
+                className={compact ? styles.emptyTextCompact : styles.emptyText}
+            >
                 {USER_SUGGESTIONS_TEXTS.EMPTY}
             </p>
         );
     }
 
     return (
-        <div className={styles.suggestionsList}>
+        <div
+            className={styles.suggestionsList}
+            role="list"
+            aria-label={USER_SUGGESTIONS_TEXTS.LIST_ARIA}
+        >
             {suggestionsState.suggestions.map((suggestion) => (
                 <UserSuggestionItem
                     key={suggestion.id}

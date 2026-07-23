@@ -31,6 +31,15 @@ export const getPostImage = (post) => {
     );
 };
 
+export const getPostType = (post) => {
+    return (
+        post?.post_type ??
+        post?.postType ??
+        post?.type ??
+        ""
+    );
+};
+
 export const getPostAuthorName = (post) => {
     return (
         post?.user_name ??

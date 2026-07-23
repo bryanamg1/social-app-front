@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Link } from "react-router-dom";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
@@ -23,6 +24,9 @@ const getStatusMessage = (search) => {
 
 export function UserSearchPanel({ search }) {
     const statusMessage = getStatusMessage(search);
+    const inputId = useId();
+    const statusId = useId();
+    const resultsTitleId = useId();
 
     return (
         <>
@@ -30,18 +34,25 @@ export function UserSearchPanel({ search }) {
             <SearchOutlinedIcon className={styles.searchIcon} />
 
             <input
+            id={inputId}
             type="search"
             value={search.query}
             placeholder={RIGHT_SIDEBAR_TEXTS.SEARCH_PLACEHOLDER}
+            aria-label={RIGHT_SIDEBAR_TEXTS.SEARCH_INPUT_LABEL}
+            aria-describedby={statusMessage ? statusId : resultsTitleId}
             className={styles.searchInput}
             onChange={search.onQueryChange}
             autoComplete="off"
             />
         </div>
 
-        <section className={styles.resultsCard}>
+        <section
+            className={styles.resultsCard}
+            aria-labelledby={resultsTitleId}
+            aria-label={RIGHT_SIDEBAR_TEXTS.SEARCH_RESULTS_ARIA}
+        >
             <div className={styles.resultsHeader}>
-            <h3 className={styles.resultsTitle}>
+            <h3 id={resultsTitleId} className={styles.resultsTitle}>
                 {RIGHT_SIDEBAR_TEXTS.SEARCH_RESULTS_TITLE}
             </h3>
 
@@ -54,6 +65,9 @@ export function UserSearchPanel({ search }) {
 
             {statusMessage ? (
                 <p
+                id={statusId}
+                role={search.error ? "alert" : "status"}
+                aria-live="polite"
                 className={
                     search.error ? styles.errorText : styles.statusText
                 }
@@ -63,7 +77,7 @@ export function UserSearchPanel({ search }) {
             ) : null}
 
             {search.results.length > 0 ? (
-                <div className={styles.resultsList}>
+                <div className={styles.resultsList} role="list">
                 {search.results.map((user) => {
                     const userName = getUserName(user);
                     const email = getUserEmail(user);
@@ -75,6 +89,7 @@ export function UserSearchPanel({ search }) {
                         key={user.user_id}
                         to={user.profilePath}
                         className={styles.resultLink}
+                        aria-label={`${userName}, ${email}`}
                         onClick={search.onResultSelect}
                     >
                         <div className={styles.resultAvatarWrapper}>

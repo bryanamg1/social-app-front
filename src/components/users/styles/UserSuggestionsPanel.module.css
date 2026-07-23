@@ -23,6 +23,13 @@
 .userName,
 .userBio,
 .userStats,
+.projectSignalLabel,
+.projectSignalCount,
+.projectSignalTitle,
+.projectSignalStatus,
+.intentSignalLabel,
+.intentSignalValue,
+.intentSignalCount,
 .statusText,
 .emptyText,
 .emptyTextCompact {
@@ -62,7 +69,19 @@
     border-top: 1px solid rgba(148, 163, 184, 0.12);
 }
 
+.suggestionSkeletonItem {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
 .suggestionItem:first-child {
+    border-top: none;
+}
+
+.suggestionSkeletonItem:first-child {
     border-top: none;
 }
 
@@ -138,7 +157,12 @@
 .meta {
     display: grid;
     align-content: start;
-    gap: 3px;
+    gap: 4px;
+}
+
+.suggestionSkeletonMeta {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .userName {
@@ -164,6 +188,87 @@
     font-weight: 800;
     white-space: nowrap;
     opacity: 0.88;
+}
+
+.intentSignalRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.intentSignalLabel {
+    color: #94a3b8;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.intentSignalValue {
+    color: #67e8f9;
+    font-size: 0.69rem;
+    font-weight: 900;
+}
+
+.intentSignalCount {
+    color: #cbd5e1;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.projectSignalBlock {
+    display: grid;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(56, 189, 248, 0.14);
+    background: rgba(14, 165, 233, 0.08);
+}
+
+.projectSignalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.projectSignalLabel {
+    color: #67e8f9;
+    font-size: 0.68rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.projectSignalCount {
+    color: #cbd5e1;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.projectSignalTitle {
+    color: #f8fafc;
+    font-size: 0.76rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.projectSignalStatus {
+    color: #94a3b8;
+    font-size: 0.7rem;
+    line-height: 1.35;
+}
+
+.projectSignalTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.projectSignalTag {
+    border: 1px solid rgba(103, 232, 249, 0.16);
+    background: rgba(15, 23, 42, 0.52);
+    color: #e2e8f0;
 }
 
 .followButton {

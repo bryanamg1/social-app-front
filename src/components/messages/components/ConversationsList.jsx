@@ -1,6 +1,7 @@
-import { Button, CircularProgress, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 import { MESSAGES_TEXTS } from "../../../constants";
+import { ConversationsListSkeleton } from "./ConversationsListSkeleton";
 
 import styles from "../styles/MessagesPage.module.css";
 
@@ -38,10 +39,7 @@ export function ConversationsList({
             </div>
 
             {loading ? (
-                <div className={styles.centerState}>
-                    <CircularProgress size={24} />
-                    <Typography>{MESSAGES_TEXTS.LIST_LOADING}</Typography>
-                </div>
+                <ConversationsListSkeleton />
             ) : null}
 
             {!loading && error ? (
@@ -49,7 +47,14 @@ export function ConversationsList({
             ) : null}
 
             {!loading && !error && conversations.length === 0 ? (
-                <p className={styles.statusText}>{MESSAGES_TEXTS.LIST_EMPTY}</p>
+                <div className={styles.emptyStateCompact}>
+                    <Typography variant="h6" className={styles.emptyStateTitle}>
+                        {MESSAGES_TEXTS.LIST_EMPTY_TITLE}
+                    </Typography>
+                    <Typography className={styles.emptyStateText}>
+                        {MESSAGES_TEXTS.LIST_EMPTY_DESCRIPTION}
+                    </Typography>
+                </div>
             ) : null}
 
             {!loading && !error && conversations.length > 0 ? (

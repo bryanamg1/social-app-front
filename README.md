@@ -45,6 +45,7 @@ Está preparado para trabajar con despliegue frontend en Vercel y consumo de bac
 - Módulo de mensajes y conversaciones
 - Realtime con Socket.io para mensajes
 - Layout responsive para desktop, tablet y mobile
+- Ruta publica `/showcase` con resumen del producto y arquitectura
 
 ---
 
@@ -111,6 +112,20 @@ Se ajustaron feed, auth, perfil, búsqueda y mensajes para evitar overflow horiz
 3. Se accede al feed, perfiles, buscador y mensajes.
 4. Las acciones de posts, follows y conversaciones consumen la API backend.
 5. El módulo de mensajes combina REST para carga inicial y Socket.io para realtime.
+
+---
+
+## 🧭 Ruta publica Showcase
+
+La aplicacion incluye una vista publica en `/showcase` orientada a recruiters y colaboradores tecnicos. Resume:
+
+- propuesta de producto
+- funcionalidades reales implementadas
+- arquitectura frontend/backend
+- stack tecnico
+- seguridad y realtime
+- roadmap de diferenciacion
+- repositorios y deploy frontend
 
 ---
 
@@ -190,4 +205,35 @@ Este frontend consume la API del repositorio backend del proyecto Social App, in
 
 **Bryan Marquez**  
 Full Stack Developer
+
+---
+
+## Medicion real con Lighthouse y Web Vitals
+
+Flujo minimo recomendado para medir sobre build productiva:
+
+```bash
+npm run build
+npm run preview:measure
+```
+
+Luego:
+
+1. Abrir `http://localhost:4173`.
+2. Ejecutar Lighthouse desde Chrome DevTools sobre rutas reales como `/login`, `/feed` y `/messages`.
+3. Si la medicion usa backend local, conservar `localhost` como origen para evitar falsos negativos de CORS al auditar rutas autenticadas.
+3. Revisar Web Vitals capturados en consola o en:
+
+```js
+window.__SOCIAL_APP_WEB_VITALS__
+window.__SOCIAL_APP_OBSERVABILITY__
+```
+
+Metricas instrumentadas:
+
+- `TTFB`
+- `FCP`
+- `LCP`
+- `CLS`
+- `INP`
 

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import {
   Avatar,
   Box,
@@ -22,10 +23,12 @@ import {
   getPostId,
   getPostImage,
   getPostOwnerId,
+  getPostType,
 } from "../utils/postAdapter";
 import { PostCommentForm } from "./PostCommentForm";
 import { PostComments } from "./PostComments";
 import { PostReactions } from "./PostReactions";
+import { PostTypeBadge } from "./PostTypeBadge";
 
 import styles from "../styles/FeedPage.module.css";
 
@@ -60,10 +63,13 @@ export const PostCard = ({
     const content = getPostContent(post);
     const image = getPostImage(post);
     const createdAt = getPostCreatedAt(post);
+    const postType = getPostType(post);
 
     const isDeleting = String(deletingPostId) === String(postId);
     const avatarLetter = authorName.charAt(0).toUpperCase();
     const commentsCount = comments?.length ?? 0;
+    const commentsSectionId = useId();
+    const commentsTitleId = useId();
 
     return (
         <Card className={styles.postCard}>
@@ -107,6 +113,12 @@ export const PostCard = ({
             <Typography className={styles.postContent}>{content}</Typography>
             )}
 
+            {postType && (
+            <Box className={styles.postMeta}>
+                <PostTypeBadge postType={postType} />
+            </Box>
+            )}
+
             {image && (
             <Box className={styles.postImageWrapper}>
                 <img
@@ -129,6 +141,7 @@ export const PostCard = ({
                 className={styles.actionButton}
                 onClick={onToggleComments}
                 aria-expanded={commentsOpen}
+                aria-controls={commentsSectionId}
                 aria-label={
                 commentsOpen
                     ? FEED_TEXTS.COMMENTS.HIDE_ARIA
@@ -148,8 +161,13 @@ export const PostCard = ({
             </Box>
 
             {commentsOpen && (
-            <section className={styles.commentsPanel}>
-                <Typography className={styles.commentsTitle}>
+            <section
+                id={commentsSectionId}
+                className={styles.commentsPanel}
+                aria-label={FEED_TEXTS.COMMENTS.SECTION_ARIA}
+                aria-labelledby={commentsTitleId}
+            >
+                <Typography id={commentsTitleId} className={styles.commentsTitle}>
                 {FEED_TEXTS.COMMENTS.TITLE}
                 </Typography>
 

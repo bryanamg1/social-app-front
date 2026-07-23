@@ -15,6 +15,9 @@ const ForgotPasswordPage = lazy(() =>
 const ResetPasswordPage = lazy(() =>
     import("../components/auth/pages/ResetPasswordPage")
 );
+const ShowcasePage = lazy(() =>
+    import("../components/showcase/pages/ShowcasePage")
+);
 const FeedPage = lazy(() => import("../components/feed/pages/FeedPage"));
 const MainLayout = lazy(() =>
     import("../components/layout/components/MainLayout").then((module) => ({
@@ -55,6 +58,7 @@ export function AppRoutes() {
         >
             <Routes>
             <Route path={ROUTES.ROOT} element={<RootRouteRedirect />} />
+            <Route path={ROUTES.SHOWCASE} element={<ShowcasePage />} />
 
             <Route element={<PublicRoute />}>
                 <Route path={ROUTES.LOGIN} element={<LoginPage />} />
