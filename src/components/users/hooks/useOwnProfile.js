@@ -5,6 +5,7 @@ import {
     FEED_POST_TYPES,
     FEED_PAGINATION,
     HTTP_STATUS,
+    PROFILE_AVATAR_CONFIG,
     PROFILE_PROJECT_STATUS_VALUES,
     PROFILE_TEXTS,
 } from "../../../constants";
@@ -16,6 +17,7 @@ import {
     deleteUserProject,
     getPostsByUserId,
     getUserProfile,
+    uploadUserAvatar,
     updateUserProject,
     updateUserProfile,
 } from "../services/userProfileService";
@@ -72,12 +74,15 @@ export const useOwnProfile = () => {
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
     const [updatingProfile, setUpdatingProfile] = useState(false);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const [deletingPostId, setDeletingPostId] = useState(null);
     const [profileError, setProfileError] = useState(null);
     const [postsError, setPostsError] = useState(null);
     const [paginationError, setPaginationError] = useState(null);
     const [updateError, setUpdateError] = useState(null);
     const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [avatarError, setAvatarError] = useState(null);
+    const [avatarSuccess, setAvatarSuccess] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [profileForm, setProfileForm] = useState(() => createProfileForm(user));
     const [projectError, setProjectError] = useState(null);
@@ -107,6 +112,7 @@ export const useOwnProfile = () => {
         try {
         setLoadingProfile(true);
         setProfileError(null);
+        setAvatarError(null);
 
         const nextProfile = await getUserProfile(currentUserId);
 
@@ -207,6 +213,7 @@ export const useOwnProfile = () => {
     const handleProfileFieldChange = (field, value) => {
         setUpdateSuccess(false);
         setUpdateError(null);
+        setAvatarSuccess(false);
         setProfileForm((currentForm) => ({
         ...currentForm,
         [field]: value,
@@ -217,6 +224,8 @@ export const useOwnProfile = () => {
         setProfileForm(createProfileForm(profile || user));
         setUpdateError(null);
         setUpdateSuccess(false);
+        setAvatarError(null);
+        setAvatarSuccess(false);
         setIsEditing(true);
     };
 
@@ -255,7 +264,45 @@ export const useOwnProfile = () => {
     const cancelEditing = () => {
         setProfileForm(createProfileForm(profile || user));
         setUpdateError(null);
+        setAvatarError(null);
         setIsEditing(false);
+    };
+
+    const handleAvatarSelect = async (file) => {
+        if (!currentUserId || !file) return;
+
+        if (!PROFILE_AVATAR_CONFIG.ACCEPTED_FILE_TYPES.includes(file.type)) {
+            setAvatarSuccess(false);
+            setAvatarError(PROFILE_TEXTS.ERRORS.AVATAR_INVALID_TYPE);
+            return;
+        }
+
+        if (file.size > PROFILE_AVATAR_CONFIG.MAX_FILE_SIZE_BYTES) {
+            setAvatarSuccess(false);
+            setAvatarError(PROFILE_TEXTS.ERRORS.AVATAR_FILE_TOO_LARGE);
+            return;
+        }
+
+        try {
+            setUploadingAvatar(true);
+            setAvatarError(null);
+            setAvatarSuccess(false);
+
+            const nextProfile = await uploadUserAvatar({
+                file,
+                currentProfile: profile || user,
+            });
+
+            setProfile(nextProfile);
+            setProfileForm(createProfileForm(nextProfile));
+            updateUser(nextProfile);
+            setAvatarSuccess(true);
+        } catch {
+            setAvatarError(PROFILE_TEXTS.ERRORS.UPDATE_AVATAR);
+            setAvatarSuccess(false);
+        } finally {
+            setUploadingAvatar(false);
+        }
     };
 
     const submitProfile = async () => {
@@ -285,6 +332,7 @@ export const useOwnProfile = () => {
         updateUser(nextProfile);
         setIsEditing(false);
         setUpdateSuccess(true);
+        setAvatarSuccess(false);
         } catch (error) {
         setUpdateError(getProfileUpdateError(error));
         } finally {
@@ -429,12 +477,15 @@ export const useOwnProfile = () => {
         loadingPosts,
         loadingMorePosts,
         updatingProfile,
+        uploadingAvatar,
         deletingPostId,
         profileError,
         postsError,
         paginationError,
         updateError,
         updateSuccess,
+        avatarError,
+        avatarSuccess,
         projectError,
         projectSuccess,
         savingProject,
@@ -455,6 +506,7 @@ export const useOwnProfile = () => {
         handlePostTypeFilterChange: setSelectedPostType,
         handleProjectFilterChange: projectVisibility.onFilterChange,
         handleProfileFieldChange,
+        handleAvatarSelect,
         handleProjectFieldChange,
         submitProfile,
         submitProject,

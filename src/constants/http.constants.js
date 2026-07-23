@@ -79,6 +79,10 @@ export const API_ENDPOINTS = {
         MARK_SEEN: (notificationId) => `/notifications/${notificationId}/seen`,
         MARK_ALL_SEEN: "/notifications/seen-all",
     },
+
+    IMAGES: {
+        AVATAR: "/image/avatar",
+    },
 };
 
 export const API_BODY_FIELDS = {

@@ -48,6 +48,33 @@ export const updateUserProfile = async ({
     return getUpdatedProfileFromResponse(response, currentProfile);
 };
 
+export const uploadUserAvatar = async ({ file, currentProfile }) => {
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const response = await apiClient.post(API_ENDPOINTS.IMAGES.AVATAR, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+
+    return getUpdatedProfileFromResponse(
+        {
+            data: {
+                data: {
+                    ...(currentProfile || {}),
+                    avatar_url:
+                        response?.data?.avatar_url ??
+                        response?.data?.data?.avatar_url ??
+                        "",
+                },
+            },
+        },
+        currentProfile
+    );
+};
+
 export const getPostsByUserId = async ({ userId, page, limit, postType = null }) => {
     const params = {
         [API_QUERY_PARAMS.PAGINATION.PAGE]: page,

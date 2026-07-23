@@ -8,6 +8,7 @@ export const PROFILE_TEXTS = {
     SAVING_PROFILE: "Guardando...",
     LOADING: "Cargando perfil...",
     UPDATE_SUCCESS: "Perfil actualizado correctamente.",
+    AVATAR_UPDATE_SUCCESS: "Avatar actualizado correctamente.",
 
     FOLLOW: {
         FOLLOW_BUTTON: "Seguir",
@@ -38,6 +39,12 @@ export const PROFILE_TEXTS = {
         USER_NAME_LABEL: "Nombre de usuario",
         BIO_LABEL: "Bio",
         LOCATION_LABEL: "Ubicacion",
+    },
+
+    AVATAR: {
+        CHANGE_BUTTON: "Cambiar avatar",
+        CHANGING_BUTTON: "Subiendo avatar...",
+        INPUT_ARIA: "Seleccionar imagen de avatar",
     },
 
     POSTS: {
@@ -106,6 +113,7 @@ export const PROFILE_TEXTS = {
         LOAD_POSTS: "No se pudieron cargar las publicaciones del usuario.",
         NO_PROFILE_CHANGES: "No hay cambios para guardar.",
         UPDATE_PROFILE: "No se pudo actualizar el perfil.",
+        UPDATE_AVATAR: "No se pudo actualizar el avatar.",
         USER_NAME_EXIST: "Este nombre de usuario ya esta en uso.",
         FOLLOW_ACTION: "No se pudo actualizar el seguimiento.",
         FOLLOW_STATUS: "No se pudo consultar el estado de seguimiento.",
@@ -116,7 +124,14 @@ export const PROFILE_TEXTS = {
         PROJECT_STATUS_INVALID: "El estado del proyecto no es valido.",
         PROJECT_REPO_URL_INVALID: "La URL del repositorio no es valida.",
         PROJECT_DEMO_URL_INVALID: "La URL del demo no es valida.",
+        AVATAR_INVALID_TYPE: "Selecciona una imagen JPG, PNG o WEBP.",
+        AVATAR_FILE_TOO_LARGE: "La imagen supera el maximo permitido de 10 MB.",
     },
+};
+
+export const PROFILE_AVATAR_CONFIG = {
+    MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024,
+    ACCEPTED_FILE_TYPES: ["image/jpeg", "image/png", "image/webp"],
 };
 
 export const PROFILE_FORM_FIELDS = {
