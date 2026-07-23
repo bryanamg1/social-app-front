@@ -39,7 +39,6 @@ export const API_ENDPOINTS = {
         REGISTER: "/auth/register",
         RESET_PASSWORD: "/auth/reset-password",
         UPDATE_MY_PROFILE: "/auth/me/profile",
-        UPDATE_PROFILE: (userId) => `/auth/update/${userId}`,
         SEARCH_USERS: "/auth/usersSearch",
     },
 
