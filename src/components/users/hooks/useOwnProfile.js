@@ -15,11 +15,11 @@ import { getPostId } from "../../feed/utils/postAdapter";
 import {
     createUserProject,
     deleteUserProject,
+    getAuthenticatedUserProfile,
     getPostsByUserId,
-    getUserProfile,
     uploadUserAvatar,
     updateUserProject,
-    updateUserProfile,
+    updateAuthenticatedUserProfile,
 } from "../services/userProfileService";
 import {
     getUserBio,
@@ -114,7 +114,7 @@ export const useOwnProfile = () => {
         setProfileError(null);
         setAvatarError(null);
 
-        const nextProfile = await getUserProfile(currentUserId);
+        const nextProfile = await getAuthenticatedUserProfile();
 
         setProfile(nextProfile);
         setProfileForm(createProfileForm(nextProfile));
@@ -319,8 +319,7 @@ export const useOwnProfile = () => {
         setUpdateError(null);
         setUpdateSuccess(false);
 
-        const nextProfile = await updateUserProfile({
-            userId: currentUserId,
+        const nextProfile = await updateAuthenticatedUserProfile({
             userName: profileForm.userName,
             bio: profileForm.bio,
             location: profileForm.location,

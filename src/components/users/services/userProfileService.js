@@ -8,14 +8,13 @@ import {
     getUserPostsFromResponse,
 } from "../utils/userProfileAdapter";
 
-export const getUserProfile = async (userId) => {
-    const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE(userId));
+export const getAuthenticatedUserProfile = async () => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTH.MY_PROFILE);
 
     return getProfileFromResponse(response);
 };
 
-export const updateUserProfile = async ({
-    userId,
+export const updateAuthenticatedUserProfile = async ({
     userName,
     bio,
     location,
@@ -41,7 +40,7 @@ export const updateUserProfile = async ({
     }
 
     const response = await apiClient.patch(
-        API_ENDPOINTS.AUTH.UPDATE_PROFILE(userId),
+        API_ENDPOINTS.AUTH.UPDATE_MY_PROFILE,
         payload
     );
 
@@ -73,6 +72,12 @@ export const uploadUserAvatar = async ({ file, currentProfile }) => {
         },
         currentProfile
     );
+};
+
+export const getUserProfile = async (userId) => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE(userId));
+
+    return getProfileFromResponse(response);
 };
 
 export const getPostsByUserId = async ({ userId, page, limit, postType = null }) => {
