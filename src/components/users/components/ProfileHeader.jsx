@@ -12,6 +12,7 @@ import {
     getUserName,
 } from "../utils/userProfileAdapter";
 import { ProfileActivitySummary } from "./ProfileActivitySummary";
+import { ProfileAvatarUploadButton } from "./ProfileAvatarUploadButton";
 import { ProfileEditForm } from "./ProfileEditForm";
 import { ProfileFollowButton } from "./ProfileFollowButton";
 
@@ -25,13 +26,17 @@ export function ProfileHeader({
     isEditing,
     form,
     updating,
+    uploadingAvatar,
     updateError,
     updateSuccess,
+    avatarError,
+    avatarSuccess,
     followAction,
     secondaryAction,
     onStartEditing,
     onCancelEditing,
     onFieldChange,
+    onAvatarSelect,
     onSubmitProfile,
 }) {
     const userName = getUserName(profile);
@@ -56,6 +61,14 @@ export function ProfileHeader({
             >
             {avatarLetter}
             </Avatar>
+
+            {canEdit ? (
+                <ProfileAvatarUploadButton
+                    disabled={updating}
+                    loading={uploadingAvatar}
+                    onSelectFile={onAvatarSelect}
+                />
+            ) : null}
         </header>
 
         <section className={styles.profileInfo}>
@@ -128,6 +141,14 @@ export function ProfileHeader({
 
             {secondaryAction?.isVisible && secondaryAction.error ? (
                 <Alert severity="error">{secondaryAction.error}</Alert>
+            ) : null}
+
+            {canEdit && avatarError ? (
+                <Alert severity="error">{avatarError}</Alert>
+            ) : null}
+
+            {canEdit && avatarSuccess ? (
+                <Alert severity="success">{PROFILE_TEXTS.AVATAR_UPDATE_SUCCESS}</Alert>
             ) : null}
 
             {canEdit && updateSuccess && (

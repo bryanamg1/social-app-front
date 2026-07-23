@@ -8,14 +8,13 @@ import {
     getUserPostsFromResponse,
 } from "../utils/userProfileAdapter";
 
-export const getUserProfile = async (userId) => {
-    const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE(userId));
+export const getAuthenticatedUserProfile = async () => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTH.MY_PROFILE);
 
     return getProfileFromResponse(response);
 };
 
-export const updateUserProfile = async ({
-    userId,
+export const updateAuthenticatedUserProfile = async ({
     userName,
     bio,
     location,
@@ -41,11 +40,44 @@ export const updateUserProfile = async ({
     }
 
     const response = await apiClient.patch(
-        API_ENDPOINTS.AUTH.UPDATE_PROFILE(userId),
+        API_ENDPOINTS.AUTH.UPDATE_MY_PROFILE,
         payload
     );
 
     return getUpdatedProfileFromResponse(response, currentProfile);
+};
+
+export const uploadUserAvatar = async ({ file, currentProfile }) => {
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const response = await apiClient.post(API_ENDPOINTS.IMAGES.AVATAR, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+
+    return getUpdatedProfileFromResponse(
+        {
+            data: {
+                data: {
+                    ...(currentProfile || {}),
+                    avatar_url:
+                        response?.data?.avatar_url ??
+                        response?.data?.data?.avatar_url ??
+                        "",
+                },
+            },
+        },
+        currentProfile
+    );
+};
+
+export const getUserProfile = async (userId) => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE(userId));
+
+    return getProfileFromResponse(response);
 };
 
 export const getPostsByUserId = async ({ userId, page, limit, postType = null }) => {

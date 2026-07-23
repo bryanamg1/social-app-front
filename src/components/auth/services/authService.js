@@ -78,12 +78,6 @@ const normalizeLoginResponse = (response, email) => {
         throw new Error(AUTH_MESSAGES.TOKEN_NOT_FOUND);
     }
 
-    const refreshToken =
-        payload?.refreshToken ??
-        payload?.refresh_token ??
-        payload?.refresh ??
-        null;
-
     const userFromApi =
         payload?.user ??
         payload?.profile ??
@@ -107,7 +101,6 @@ const normalizeLoginResponse = (response, email) => {
     return {
         token,
         accessToken: token,
-        refreshToken,
         user,
     };
 };
