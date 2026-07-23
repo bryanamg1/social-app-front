@@ -70,7 +70,7 @@ export const getFollowingFeed = async ({ page, limit, postType } = {}) => {
     return request;
 };
 
-export const createPost = async ({ userId, content, image, postType }) => {
+export const createPost = async ({ content, image, postType }) => {
     const formData = new FormData();
 
     if (content?.trim()) {
@@ -86,7 +86,7 @@ export const createPost = async ({ userId, content, image, postType }) => {
         formData.append(API_BODY_FIELDS.POSTS.TYPE, postType);
     }
 
-    const response = await apiClient.post(API_ENDPOINTS.POSTS.CREATE(userId), formData, {
+    const response = await apiClient.post(API_ENDPOINTS.POSTS.CREATE, formData, {
         headers: {
         "Content-Type": "multipart/form-data",
         },
@@ -106,8 +106,8 @@ export const getCommentsByPostId = async (postId) => {
     return getCommentsFromResponse(response);
 };
 
-export const createComment = async ({ userId, postId, commentText }) => {
-    const response = await apiClient.post(API_ENDPOINTS.COMMENTS.ADD(userId, postId), {
+export const createComment = async ({ postId, commentText }) => {
+    const response = await apiClient.post(API_ENDPOINTS.COMMENTS.ADD(postId), {
         [API_BODY_FIELDS.COMMENTS.TEXT]: commentText.trim(),
     });
 
@@ -120,15 +120,15 @@ export const getPostReactions = async (postId) => {
     return getPostReactionsFromResponse(response);
 };
 
-export const getMyPostReaction = async ({ userId, postId }) => {
-    const response = await apiClient.get(API_ENDPOINTS.REACTIONS.MY_POST(userId, postId));
+export const getMyPostReaction = async ({ postId }) => {
+    const response = await apiClient.get(API_ENDPOINTS.REACTIONS.MY_POST(postId));
 
     return getMyReactionFromResponse(response);
 };
 
-export const togglePostReaction = async ({ userId, postId, reactionType }) => {
+export const togglePostReaction = async ({ postId, reactionType }) => {
     const response = await apiClient.post(
-        API_ENDPOINTS.REACTIONS.TOGGLE_POST(userId, postId),
+        API_ENDPOINTS.REACTIONS.TOGGLE_POST(postId),
         {
         [API_BODY_FIELDS.REACTIONS.STATUS]: reactionType,
         }

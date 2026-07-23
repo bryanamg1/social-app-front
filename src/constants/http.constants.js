@@ -58,22 +58,20 @@ export const API_ENDPOINTS = {
 
     POSTS: {
         ALL: "/posts/allpost",
-        CREATE: (userId) => `/posts/CreatePost/${userId}`,
+        CREATE: "/posts",
         BY_USER: (userId) => `/posts/postByUserId/${userId}`,
         REMOVE: (postId) => `/posts/removePost/${postId}`,
     },
 
     COMMENTS: {
         READ_BY_POST: (postId) => `/comments/readComment/${postId}`,
-        ADD: (userId, postId) => `/comments/addComment/${userId}/${postId}`,
+        ADD: (postId) => `/comments/${postId}`,
     },
 
     REACTIONS: {
-        TOGGLE_POST: (userId, postId) =>
-            `/reactions/toggleReaction/${userId}/${postId}`,
+        TOGGLE_POST: (postId) => `/reactions/posts/${postId}`,
         BY_POST: (postId) => `/reactions/reactionsPost/${postId}`,
-        MY_POST: (userId, postId) =>
-            `/reactions/${userId}/${postId}/byUserInPost`,
+        MY_POST: (postId) => `/reactions/posts/${postId}/mine`,
     },
 
     NOTIFICATIONS: {
