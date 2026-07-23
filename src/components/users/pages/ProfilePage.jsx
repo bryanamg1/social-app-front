@@ -23,12 +23,15 @@ export function ProfilePage() {
         loadingPosts,
         loadingMorePosts,
         updatingProfile,
+        uploadingAvatar,
         deletingPostId,
         profileError,
         postsError,
         paginationError,
         updateError,
         updateSuccess,
+        avatarError,
+        avatarSuccess,
         projectError,
         projectSuccess,
         savingProject,
@@ -52,6 +55,7 @@ export function ProfilePage() {
         handlePostTypeFilterChange,
         handleProjectFilterChange,
         handleProfileFieldChange,
+        handleAvatarSelect,
         handleProjectFieldChange,
         submitProfile,
         submitProject,
@@ -81,11 +85,15 @@ export function ProfilePage() {
             isEditing={isEditing}
             form={profileForm}
             updating={updatingProfile}
+            uploadingAvatar={uploadingAvatar}
             updateError={updateError}
             updateSuccess={updateSuccess}
+            avatarError={avatarError}
+            avatarSuccess={avatarSuccess}
             onStartEditing={startEditing}
             onCancelEditing={cancelEditing}
             onFieldChange={handleProfileFieldChange}
+            onAvatarSelect={handleAvatarSelect}
             onSubmitProfile={submitProfile}
         />
 
