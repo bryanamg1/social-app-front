@@ -60,3 +60,15 @@ export const sendSocketMessage = ({
         [API_BODY_FIELDS.CONVERSATIONS.CONTENT]: content,
     });
 };
+
+export const sendTypingState = ({
+    conversationId,
+    isTyping,
+}) => {
+    const socket = getMessagesSocket();
+
+    socket.emit(MESSAGES_SOCKET_EVENTS.TYPING, {
+        conversation_id: conversationId,
+        is_typing: Boolean(isTyping),
+    });
+};

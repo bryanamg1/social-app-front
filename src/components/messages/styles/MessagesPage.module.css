@@ -242,6 +242,21 @@
     background: linear-gradient(135deg, #67e8f9, #38bdf8);
 }
 
+.typingBubble {
+    max-width: min(78%, 320px);
+    padding: 10px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(30, 41, 59, 0.74);
+}
+
+.typingText {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
 .messageSkeletonBubble {
     width: min(78%, 520px);
     padding: 12px 14px;

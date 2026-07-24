@@ -34,6 +34,13 @@ const getThreadTitle = ({ selectedConversation, targetUser }) => {
     return MESSAGES_TEXTS.PAGE_TITLE;
 };
 
+const getParticipantName = ({ selectedConversation, targetUser }) => {
+    return (
+        getThreadTitle({ selectedConversation, targetUser }) ||
+        MESSAGES_TEXTS.CONVERSATION_FALLBACK()
+    );
+};
+
 export function MessageThread({
     currentUserId,
     selectedConversation,
@@ -42,6 +49,7 @@ export function MessageThread({
     loading,
     error,
     socketConnected,
+    participantTyping,
 }) {
     if (!selectedConversation) {
         return (
@@ -61,6 +69,10 @@ export function MessageThread({
     const connectionStatusText = socketConnected
         ? MESSAGES_TEXTS.THREAD_STATUS_READY
         : MESSAGES_TEXTS.THREAD_STATUS_OFFLINE;
+    const participantName = getParticipantName({
+        selectedConversation,
+        targetUser,
+    });
 
     return (
         <section className={styles.threadPanel}>
@@ -126,6 +138,16 @@ export function MessageThread({
                             </div>
                         );
                     })}
+
+                    {participantTyping ? (
+                        <div className={styles.messageRow}>
+                            <div className={styles.typingBubble}>
+                                <p className={styles.typingText}>
+                                    {MESSAGES_TEXTS.TYPING_INDICATOR(participantName)}
+                                </p>
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
             ) : null}
         </section>

@@ -60,6 +60,7 @@ export function MessagesPage() {
                         loading={messages.loadingMessages}
                         error={messages.messagesError}
                         socketConnected={messages.socketConnected}
+                        participantTyping={messages.participantTyping}
                     />
 
                     <MessageComposer

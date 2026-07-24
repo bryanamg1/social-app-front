@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import {
     MESSAGES_API_DEFAULTS,
     MESSAGES_ERRORS,
     MESSAGES_QUERY_PARAMS,
+    MESSAGES_RUNTIME_CONFIG,
     MESSAGES_SOCKET_EVENTS,
 } from "../../../constants";
 import {
@@ -15,6 +16,7 @@ import {
     disconnectMessagesSocket,
     getMessagesSocket,
     joinConversationRoom,
+    sendTypingState,
     sendSocketMessage,
 } from "../services/messagesSocketService";
 import { recordSocketEvent } from "../../../services/observability";
@@ -65,8 +67,12 @@ export const useMessages = ({ currentUserId }) => {
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [sendingMessage, setSendingMessage] = useState(false);
     const [socketConnected, setSocketConnected] = useState(false);
+    const [participantTyping, setParticipantTyping] = useState(false);
     const [conversationsError, setConversationsError] = useState(null);
     const [messagesError, setMessagesError] = useState(null);
+    const typingTimeoutRef = useRef(null);
+    const remoteTypingTimeoutRef = useRef(null);
+    const isTypingRef = useRef(false);
     const selectedConversationId =
         searchParams.get(MESSAGES_QUERY_PARAMS.CONVERSATION_ID) || null;
     const initialConversationId = location.state?.conversationId;
@@ -211,6 +217,29 @@ export const useMessages = ({ currentUserId }) => {
                 mergeConversationUpdate(currentConversations, normalizedMessage)
             );
             setSendingMessage(false);
+            setParticipantTyping(false);
+        };
+
+        const handleTyping = (socketPayload) => {
+            if (
+                !socketPayload ||
+                String(socketPayload?.conversation_id) !==
+                    String(selectedConversationId) ||
+                String(socketPayload?.user_id) === String(currentUserId)
+            ) {
+                return;
+            }
+
+            const nextTypingState = Boolean(socketPayload?.is_typing);
+
+            window.clearTimeout(remoteTypingTimeoutRef.current);
+            setParticipantTyping(nextTypingState);
+
+            if (nextTypingState) {
+                remoteTypingTimeoutRef.current = window.setTimeout(() => {
+                    setParticipantTyping(false);
+                }, MESSAGES_RUNTIME_CONFIG.TYPING_VISIBILITY_MS);
+            }
         };
 
         const handleSocketError = (socketPayload) => {
@@ -227,6 +256,7 @@ export const useMessages = ({ currentUserId }) => {
         socket.on("connect_error", handleConnectError);
         socket.on(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
         socket.on(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
+        socket.on(MESSAGES_SOCKET_EVENTS.TYPING, handleTyping);
         socket.on(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
 
         if (socket.connected) {
@@ -241,12 +271,41 @@ export const useMessages = ({ currentUserId }) => {
             socket.off("connect_error", handleConnectError);
             socket.off(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
             socket.off(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
+            socket.off(MESSAGES_SOCKET_EVENTS.TYPING, handleTyping);
             socket.off(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
+            window.clearTimeout(remoteTypingTimeoutRef.current);
             disconnectMessagesSocket();
         };
     }, [currentUserId, selectedConversationId]);
 
+    useEffect(() => {
+        return () => {
+            window.clearTimeout(typingTimeoutRef.current);
+            window.clearTimeout(remoteTypingTimeoutRef.current);
+        };
+    }, []);
+
+    const broadcastTypingState = (isTyping) => {
+        if (!selectedConversationId || !currentUserId) {
+            return;
+        }
+
+        if (isTypingRef.current === isTyping) {
+            return;
+        }
+
+        sendTypingState({
+            conversationId: selectedConversationId,
+            isTyping,
+        });
+        isTypingRef.current = isTyping;
+    };
+
     const handleSelectConversation = (conversationId) => {
+        window.clearTimeout(typingTimeoutRef.current);
+        window.clearTimeout(remoteTypingTimeoutRef.current);
+        broadcastTypingState(false);
+        setParticipantTyping(false);
         setMessages([]);
         setSearchParams({
             [MESSAGES_QUERY_PARAMS.CONVERSATION_ID]: String(conversationId),
@@ -255,7 +314,25 @@ export const useMessages = ({ currentUserId }) => {
     };
 
     const handleDraftChange = (event) => {
-        setDraft(event.target.value);
+        const nextDraft = event.target.value;
+
+        setDraft(nextDraft);
+
+        if (!selectedConversationId || !currentUserId) {
+            return;
+        }
+
+        if (!nextDraft.trim()) {
+            window.clearTimeout(typingTimeoutRef.current);
+            broadcastTypingState(false);
+            return;
+        }
+
+        broadcastTypingState(true);
+        window.clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = window.setTimeout(() => {
+            broadcastTypingState(false);
+        }, MESSAGES_RUNTIME_CONFIG.TYPING_IDLE_MS);
     };
 
     const handleSendMessage = () => {
@@ -267,6 +344,8 @@ export const useMessages = ({ currentUserId }) => {
 
         setSendingMessage(true);
         setMessagesError(null);
+        window.clearTimeout(typingTimeoutRef.current);
+        broadcastTypingState(false);
         sendSocketMessage({
             conversationId: selectedConversationId,
             content: nextContent,
@@ -305,6 +384,7 @@ export const useMessages = ({ currentUserId }) => {
         loadingMessages,
         sendingMessage,
         socketConnected,
+        participantTyping,
         conversationsError,
         messagesError,
         selectedConversation,

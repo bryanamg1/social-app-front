@@ -40,6 +40,8 @@ export const MESSAGES_TEXTS = {
     COMPOSER_STATUS_OFFLINE:
         "La conexion realtime esta inactiva. Espera a que se recupere antes de enviar.",
     COMPOSER_STATUS_SENDING: "Enviando mensaje...",
+    TYPING_INDICATOR: (participantName = "La otra persona") =>
+        `${participantName} esta escribiendo...`,
 };
 
 export const MESSAGES_ERRORS = {
@@ -59,11 +61,17 @@ export const MESSAGES_API_DEFAULTS = {
     INITIAL_OFFSET: 0,
 };
 
+export const MESSAGES_RUNTIME_CONFIG = {
+    TYPING_IDLE_MS: 1200,
+    TYPING_VISIBILITY_MS: 2200,
+};
+
 export const MESSAGES_SOCKET_EVENTS = {
     JOIN: "messages:join",
     JOINED: "messages:joined",
     SEND: "messages:send",
     NEW: "messages:new",
     SENT: "messages:sent",
+    TYPING: "messages:typing",
     ERROR: "messages:error",
 };
