@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
     API_ERROR_CODES,
+    PROFILE_DIRECT_MESSAGE_VALUES,
     FEED_PAGINATION,
     FEED_POST_TYPES,
     HTTP_STATUS,
     PROFILE_AVATAR_CONFIG,
+    PROFILE_PRIVACY_VISIBILITY_VALUES,
     PROFILE_POST_VIEW_VALUES,
     PROFILE_PROJECT_STATUS_VALUES,
     PROFILE_TEXTS,
@@ -22,9 +24,11 @@ import {
     createUserProject,
     deleteUserProject,
     getAuthenticatedUserProfile,
+    getAuthenticatedUserPrivacySettings,
     getPostsByUserId,
     getSavedPostsForProfile,
     uploadUserAvatar,
+    updateAuthenticatedUserPrivacySettings,
     updateAuthenticatedUserProfile,
     updateUserProject,
 } from "../services/userProfileService";
@@ -42,6 +46,15 @@ const createProfileForm = (profile) => ({
     userName: getUserName(profile),
     bio: getUserBio(profile),
     location: getUserLocation(profile),
+});
+
+const createPrivacyForm = (profile) => ({
+    profileVisibility:
+        profile?.privacy_settings?.profile_visibility ??
+        PROFILE_PRIVACY_VISIBILITY_VALUES.PUBLIC,
+    directMessagePermission:
+        profile?.privacy_settings?.direct_message_permission ??
+        PROFILE_DIRECT_MESSAGE_VALUES.EVERYONE,
 });
 
 const createProjectForm = (project = null) => ({
@@ -96,10 +109,14 @@ export const useOwnProfile = () => {
     const [paginationError, setPaginationError] = useState(null);
     const [updateError, setUpdateError] = useState(null);
     const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [privacyError, setPrivacyError] = useState(null);
+    const [privacySuccess, setPrivacySuccess] = useState(false);
+    const [updatingPrivacy, setUpdatingPrivacy] = useState(false);
     const [avatarError, setAvatarError] = useState(null);
     const [avatarSuccess, setAvatarSuccess] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [profileForm, setProfileForm] = useState(() => createProfileForm(user));
+    const [privacyForm, setPrivacyForm] = useState(() => createPrivacyForm(user));
     const [projectError, setProjectError] = useState(null);
     const [projectSuccess, setProjectSuccess] = useState(null);
     const [savingProject, setSavingProject] = useState(false);
@@ -133,11 +150,20 @@ export const useOwnProfile = () => {
             setProfileError(null);
             setAvatarError(null);
 
-            const nextProfile = await getAuthenticatedUserProfile();
+            const [nextProfile, privacySettings] = await Promise.all([
+                getAuthenticatedUserProfile(),
+                getAuthenticatedUserPrivacySettings(),
+            ]);
+            const normalizedProfile = {
+                ...nextProfile,
+                privacy_settings:
+                    privacySettings ?? nextProfile?.privacy_settings ?? undefined,
+            };
 
-            setProfile(nextProfile);
-            setProfileForm(createProfileForm(nextProfile));
-            updateUser(nextProfile);
+            setProfile(normalizedProfile);
+            setProfileForm(createProfileForm(normalizedProfile));
+            setPrivacyForm(createPrivacyForm(normalizedProfile));
+            updateUser(normalizedProfile);
         } catch {
             setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
         } finally {
@@ -241,7 +267,17 @@ export const useOwnProfile = () => {
         setUpdateSuccess(false);
         setUpdateError(null);
         setAvatarSuccess(false);
+        setPrivacySuccess(false);
         setProfileForm((currentForm) => ({
+            ...currentForm,
+            [field]: value,
+        }));
+    };
+
+    const handlePrivacyFieldChange = (field, value) => {
+        setPrivacyError(null);
+        setPrivacySuccess(false);
+        setPrivacyForm((currentForm) => ({
             ...currentForm,
             [field]: value,
         }));
@@ -322,6 +358,7 @@ export const useOwnProfile = () => {
 
             setProfile(nextProfile);
             setProfileForm(createProfileForm(nextProfile));
+            setPrivacyForm(createPrivacyForm(nextProfile));
             updateUser(nextProfile);
             setAvatarSuccess(true);
         } catch {
@@ -355,6 +392,7 @@ export const useOwnProfile = () => {
 
             setProfile(nextProfile);
             setProfileForm(createProfileForm(nextProfile));
+            setPrivacyForm(createPrivacyForm(nextProfile));
             updateUser(nextProfile);
             setIsEditing(false);
             setUpdateSuccess(true);
@@ -426,6 +464,48 @@ export const useOwnProfile = () => {
             }
         } finally {
             setSavingProject(false);
+        }
+    };
+
+    const submitPrivacy = async () => {
+        if (!currentUserId) return;
+
+        const currentPrivacy = createPrivacyForm(profile || user);
+        const hasChanges =
+            currentPrivacy.profileVisibility !== privacyForm.profileVisibility ||
+            currentPrivacy.directMessagePermission !==
+                privacyForm.directMessagePermission;
+
+        if (!hasChanges) {
+            setPrivacySuccess(false);
+            setPrivacyError(PROFILE_TEXTS.ERRORS.NO_PRIVACY_CHANGES);
+            return;
+        }
+
+        try {
+            setUpdatingPrivacy(true);
+            setPrivacyError(null);
+            setPrivacySuccess(false);
+
+            const nextPrivacySettings =
+                await updateAuthenticatedUserPrivacySettings({
+                    profileVisibility: privacyForm.profileVisibility,
+                    directMessagePermission: privacyForm.directMessagePermission,
+                });
+
+            const nextProfile = {
+                ...(profile || user),
+                privacy_settings: nextPrivacySettings,
+            };
+
+            setProfile(nextProfile);
+            setPrivacyForm(createPrivacyForm(nextProfile));
+            updateUser(nextProfile);
+            setPrivacySuccess(true);
+        } catch {
+            setPrivacyError(PROFILE_TEXTS.ERRORS.UPDATE_PRIVACY);
+        } finally {
+            setUpdatingPrivacy(false);
         }
     };
 
@@ -553,6 +633,9 @@ export const useOwnProfile = () => {
         paginationError,
         updateError,
         updateSuccess,
+        privacyError,
+        privacySuccess,
+        updatingPrivacy,
         avatarError,
         avatarSuccess,
         projectError,
@@ -561,6 +644,7 @@ export const useOwnProfile = () => {
         deletingProjectId,
         isEditing,
         profileForm,
+        privacyForm,
         projectForm,
         selectedPostType,
         selectedPostsView,
@@ -578,8 +662,10 @@ export const useOwnProfile = () => {
         handleProjectFilterChange: projectVisibility.onFilterChange,
         handleProfileFieldChange,
         handleAvatarSelect,
+        handlePrivacyFieldChange,
         handleProjectFieldChange,
         submitProfile,
+        submitPrivacy,
         submitProject,
         handleDeleteProject,
         handleDeletePost,

@@ -1,5 +1,10 @@
 import { FEED_POST_TYPES, PROFILE_TEXTS } from "../../../constants";
 
+const DEFAULT_PRIVACY_SETTINGS = {
+    profile_visibility: "public",
+    direct_message_permission: "everyone",
+};
+
 export const getUserId = (user) => {
     return user?.id ?? user?.userId ?? user?.userid ?? user?.user_id ?? user?._id;
 };
@@ -103,6 +108,20 @@ export const normalizeUserProfile = (user) => {
         dominant_post_type: getDominantPostType(user),
         dominant_post_type_count: Number(user?.dominant_post_type_count) || 0,
         total_posts: Number(user?.total_posts) || 0,
+        privacy_settings: {
+            ...DEFAULT_PRIVACY_SETTINGS,
+            ...(user?.privacy_settings ?? user?.privacySettings ?? {}),
+            profile_visibility:
+                user?.privacy_settings?.profile_visibility ??
+                user?.privacySettings?.profile_visibility ??
+                user?.privacySettings?.profileVisibility ??
+                DEFAULT_PRIVACY_SETTINGS.profile_visibility,
+            direct_message_permission:
+                user?.privacy_settings?.direct_message_permission ??
+                user?.privacySettings?.direct_message_permission ??
+                user?.privacySettings?.directMessagePermission ??
+                DEFAULT_PRIVACY_SETTINGS.direct_message_permission,
+        },
     };
 };
 

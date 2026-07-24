@@ -2,7 +2,7 @@ import { useEffect, useId, useRef } from "react";
 import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
-import { FEED_TEXTS, ROUTES } from "../../../constants";
+import { FEED_TEXTS, REPORT_TARGET_TYPES, ROUTES } from "../../../constants";
 import {
     formatPostDate,
     getPostAuthorName,
@@ -14,6 +14,8 @@ import {
     getPostPinnedState,
     getPostType,
 } from "../utils/postAdapter";
+import { ReportDialog } from "../../reports/components/ReportDialog";
+import { useReportDialog } from "../../reports/hooks/useReportDialog";
 import { PostActionBar } from "./PostActionBar";
 import { PostCommentForm } from "./PostCommentForm";
 import { PostComments } from "./PostComments";
@@ -79,6 +81,11 @@ export const PostCard = ({
     const commentsSectionId = useId();
     const commentsTitleId = useId();
     const postCardRef = useRef(null);
+    const report = useReportDialog({
+        targetType: REPORT_TARGET_TYPES.POST,
+        targetId: postId,
+        enabled: Boolean(currentUserId) && !isOwner && Boolean(postId),
+    });
 
     useEffect(() => {
         if (!isHighlighted || !postCardRef.current) {
@@ -184,7 +191,10 @@ export const PostCard = ({
                     onToggleComments={onToggleComments}
                     onTogglePinned={() => onTogglePinnedPost(post)}
                     onToggleSaved={() => onToggleSavedPost(postId)}
+                    onReport={report.openDialog}
                 />
+
+                {!isOwner ? <ReportDialog report={report} /> : null}
 
                 <Box className={styles.commentsSummary}>
                     <Typography className={styles.commentsCount}>

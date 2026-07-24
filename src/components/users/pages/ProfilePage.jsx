@@ -3,6 +3,7 @@ import { Alert, Typography } from "@mui/material";
 import { PostList } from "../../feed/components/PostList";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { ProfilePageSkeleton } from "../components/ProfilePageSkeleton";
+import { ProfilePrivacySection } from "../components/ProfilePrivacySection";
 import { ProfilePostIntentFilter } from "../components/ProfilePostIntentFilter";
 import { ProfilePostsModeSelector } from "../components/ProfilePostsModeSelector";
 import { ProfileProjectsSection } from "../components/ProfileProjectsSection";
@@ -32,6 +33,9 @@ export function ProfilePage() {
         paginationError,
         updateError,
         updateSuccess,
+        privacyError,
+        privacySuccess,
+        updatingPrivacy,
         avatarError,
         avatarSuccess,
         projectError,
@@ -40,6 +44,7 @@ export function ProfilePage() {
         deletingProjectId,
         isEditing,
         profileForm,
+        privacyForm,
         projectForm,
         selectedPostType,
         selectedPostsView,
@@ -59,9 +64,11 @@ export function ProfilePage() {
         handlePostsViewChange,
         handleProjectFilterChange,
         handleProfileFieldChange,
+        handlePrivacyFieldChange,
         handleAvatarSelect,
         handleProjectFieldChange,
         submitProfile,
+        submitPrivacy,
         submitProject,
         handleDeleteProject,
         handleDeletePost,
@@ -103,6 +110,15 @@ export function ProfilePage() {
             onFieldChange={handleProfileFieldChange}
             onAvatarSelect={handleAvatarSelect}
             onSubmitProfile={submitProfile}
+        />
+
+        <ProfilePrivacySection
+            form={privacyForm}
+            updating={updatingPrivacy}
+            error={privacyError}
+            success={privacySuccess}
+            onChange={handlePrivacyFieldChange}
+            onSubmit={submitPrivacy}
         />
 
         <ProfileProjectsSection

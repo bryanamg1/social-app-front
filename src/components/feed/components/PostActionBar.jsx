@@ -6,9 +6,10 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 
-import { FEED_TEXTS } from "../../../constants";
+import { FEED_TEXTS, REPORT_TEXTS } from "../../../constants";
 
 import styles from "../styles/FeedPage.module.css";
 
@@ -26,6 +27,7 @@ export const PostActionBar = ({
     onToggleComments,
     onTogglePinned,
     onToggleSaved,
+    onReport,
 }) => {
     return (
         <Box className={styles.postActions}>
@@ -93,7 +95,17 @@ export const PostActionBar = ({
                         {FEED_TEXTS.POSTS.DELETE_ARIA}
                     </Button>
                 </Box>
-            ) : null}
+            ) : (
+                <Box className={styles.postActionGroup}>
+                    <Button
+                        startIcon={<FlagOutlinedIcon />}
+                        className={styles.actionButton}
+                        onClick={onReport}
+                    >
+                        {REPORT_TEXTS.BUTTON}
+                    </Button>
+                </Box>
+            )}
         </Box>
     );
 };

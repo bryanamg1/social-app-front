@@ -9,6 +9,7 @@ export const PROFILE_TEXTS = {
     LOADING: "Cargando perfil...",
     UPDATE_SUCCESS: "Perfil actualizado correctamente.",
     AVATAR_UPDATE_SUCCESS: "Avatar actualizado correctamente.",
+    PRIVACY_UPDATE_SUCCESS: "Preferencias de privacidad actualizadas correctamente.",
 
     FOLLOW: {
         FOLLOW_BUTTON: "Seguir",
@@ -75,6 +76,24 @@ export const PROFILE_TEXTS = {
         VIEW_LABEL: "Coleccion de posts",
     },
 
+    PRIVACY: {
+        TITLE: "Privacidad",
+        DESCRIPTION:
+            "Controla quien puede ver tu perfil y quien puede iniciar mensajes directos.",
+        PROFILE_VISIBILITY_LABEL: "Visibilidad del perfil",
+        DIRECT_MESSAGE_PERMISSION_LABEL: "Mensajes directos",
+        SAVE_BUTTON: "Guardar privacidad",
+        SAVING_BUTTON: "Guardando privacidad...",
+        PROFILE_VISIBILITY_PUBLIC: "Publico",
+        PROFILE_VISIBILITY_FOLLOWERS: "Solo seguidores",
+        DIRECT_MESSAGE_EVERYONE: "Cualquier usuario autenticado",
+        DIRECT_MESSAGE_FOLLOWERS: "Solo seguidores",
+        PROFILE_VISIBILITY_HELPER:
+            "Si eliges solo seguidores, los visitantes sin follow no podran abrir tu perfil publico.",
+        DIRECT_MESSAGE_HELPER:
+            "Puedes limitar nuevos mensajes directos solo a usuarios que ya te siguen.",
+    },
+
     ACTIVITY: {
         TITLE: "Actividad",
         DESCRIPTION:
@@ -134,12 +153,15 @@ export const PROFILE_TEXTS = {
         LOAD_POSTS: "No se pudieron cargar las publicaciones del usuario.",
         NO_PROFILE_CHANGES: "No hay cambios para guardar.",
         UPDATE_PROFILE: "No se pudo actualizar el perfil.",
+        UPDATE_PRIVACY: "No se pudieron actualizar las preferencias de privacidad.",
         UPDATE_AVATAR: "No se pudo actualizar el avatar.",
         USER_NAME_EXIST: "Este nombre de usuario ya esta en uso.",
+        PROFILE_PRIVATE: "Este perfil solo esta disponible para seguidores.",
         FOLLOW_ACTION: "No se pudo actualizar el seguimiento.",
         FOLLOW_STATUS: "No se pudo consultar el estado de seguimiento.",
         BLOCK_ACTION: "No se pudo actualizar el bloqueo.",
         RELATIONSHIP_STATUS: "No se pudo consultar el estado de la relacion.",
+        NO_PRIVACY_CHANGES: "No hay cambios de privacidad para guardar.",
         LOAD_PROJECTS: "No se pudieron cargar los proyectos del perfil.",
         SAVE_PROJECT: "No se pudo guardar el proyecto.",
         DELETE_PROJECT: "No se pudo eliminar el proyecto.",
@@ -167,6 +189,38 @@ export const PROFILE_POST_VIEW_VALUES = {
     OWN: "own",
     SAVED: "saved",
 };
+
+export const PROFILE_PRIVACY_VISIBILITY_VALUES = {
+    PUBLIC: "public",
+    FOLLOWERS: "followers",
+};
+
+export const PROFILE_PRIVACY_VISIBILITY_OPTIONS = [
+    {
+        value: PROFILE_PRIVACY_VISIBILITY_VALUES.PUBLIC,
+        label: PROFILE_TEXTS.PRIVACY.PROFILE_VISIBILITY_PUBLIC,
+    },
+    {
+        value: PROFILE_PRIVACY_VISIBILITY_VALUES.FOLLOWERS,
+        label: PROFILE_TEXTS.PRIVACY.PROFILE_VISIBILITY_FOLLOWERS,
+    },
+];
+
+export const PROFILE_DIRECT_MESSAGE_VALUES = {
+    EVERYONE: "everyone",
+    FOLLOWERS: "followers",
+};
+
+export const PROFILE_DIRECT_MESSAGE_OPTIONS = [
+    {
+        value: PROFILE_DIRECT_MESSAGE_VALUES.EVERYONE,
+        label: PROFILE_TEXTS.PRIVACY.DIRECT_MESSAGE_EVERYONE,
+    },
+    {
+        value: PROFILE_DIRECT_MESSAGE_VALUES.FOLLOWERS,
+        label: PROFILE_TEXTS.PRIVACY.DIRECT_MESSAGE_FOLLOWERS,
+    },
+];
 
 export const PROFILE_POST_VIEW_OPTIONS = [
     {

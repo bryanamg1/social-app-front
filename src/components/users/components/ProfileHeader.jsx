@@ -16,6 +16,7 @@ import { ProfileAvatarUploadButton } from "./ProfileAvatarUploadButton";
 import { ProfileBlockButton } from "./ProfileBlockButton";
 import { ProfileEditForm } from "./ProfileEditForm";
 import { ProfileFollowButton } from "./ProfileFollowButton";
+import { ProfileReportButton } from "./ProfileReportButton";
 
 import styles from "../pages/ProfilePage.module.css";
 
@@ -34,6 +35,7 @@ export function ProfileHeader({
     avatarSuccess,
     followAction,
     blockAction,
+    reportAction,
     secondaryAction,
     onStartEditing,
     onCancelEditing,
@@ -130,6 +132,7 @@ export function ProfileHeader({
             <Stack direction="row" spacing={1.25} useFlexGap sx={{ flexWrap: "wrap" }}>
                 <ProfileFollowButton followAction={followAction} />
                 <ProfileBlockButton blockAction={blockAction} />
+                <ProfileReportButton reportAction={reportAction} />
 
                 {secondaryAction?.isVisible ? (
                     <Button

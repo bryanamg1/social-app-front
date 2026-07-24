@@ -14,6 +14,12 @@ export const getAuthenticatedUserProfile = async () => {
     return getProfileFromResponse(response);
 };
 
+export const getAuthenticatedUserPrivacySettings = async () => {
+    const response = await apiClient.get(API_ENDPOINTS.AUTH.MY_PRIVACY);
+
+    return response?.data?.data ?? null;
+};
+
 export const updateAuthenticatedUserProfile = async ({
     userName,
     bio,
@@ -45,6 +51,19 @@ export const updateAuthenticatedUserProfile = async ({
     );
 
     return getUpdatedProfileFromResponse(response, currentProfile);
+};
+
+export const updateAuthenticatedUserPrivacySettings = async ({
+    profileVisibility,
+    directMessagePermission,
+}) => {
+    const response = await apiClient.patch(API_ENDPOINTS.AUTH.MY_PRIVACY, {
+        [API_BODY_FIELDS.PRIVACY.PROFILE_VISIBILITY]: profileVisibility,
+        [API_BODY_FIELDS.PRIVACY.DIRECT_MESSAGE_PERMISSION]:
+            directMessagePermission,
+    });
+
+    return response?.data?.data ?? null;
 };
 
 export const uploadUserAvatar = async ({ file, currentProfile }) => {

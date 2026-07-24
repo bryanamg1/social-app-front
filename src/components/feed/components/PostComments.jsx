@@ -97,6 +97,7 @@ export const PostComments = ({
                             onSubmitEditedComment(postKey, commentKey, commentId)
                         }
                         onDeleteComment={() => onDeleteComment(postKey, commentKey, commentId)}
+                        currentUserId={currentUserId}
                     />
                 );
             })}

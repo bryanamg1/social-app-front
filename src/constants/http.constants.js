@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
         FORGOT_PASSWORD: "/auth/forgot-password",
         GOOGLE: "/auth/google",
         LOGIN: "/auth/login",
+        MY_PRIVACY: "/auth/me/privacy",
         MY_PROFILE: "/auth/me/profile",
         PROFILE: (userId) => `/auth/users/${userId}`,
         PROFILE_PROJECTS: (userId) => `/auth/users/${userId}/projects`,
@@ -97,6 +98,13 @@ export const API_ENDPOINTS = {
         MARK_ALL_SEEN: "/notifications/seen-all",
     },
 
+    REPORTS: {
+        CREATE: "/reports",
+        MINE: "/reports/mine",
+        QUEUE: "/reports/queue",
+        UPDATE_STATUS: (reportId) => `/reports/${reportId}/status`,
+    },
+
     IMAGES: {
         AVATAR: "/image/avatar",
     },
@@ -107,6 +115,11 @@ export const API_BODY_FIELDS = {
         USER_NAME: "user_name",
         BIO: "bio",
         LOCATION: "location",
+    },
+
+    PRIVACY: {
+        PROFILE_VISIBILITY: "profile_visibility",
+        DIRECT_MESSAGE_PERMISSION: "direct_message_permission",
     },
 
     PROJECTS: {
@@ -136,6 +149,13 @@ export const API_BODY_FIELDS = {
 
     REACTIONS: {
         STATUS: "status",
+    },
+
+    REPORTS: {
+        TARGET_TYPE: "target_type",
+        TARGET_ID: "target_id",
+        REASON_CODE: "reason_code",
+        DETAILS: "details",
     },
 };
 

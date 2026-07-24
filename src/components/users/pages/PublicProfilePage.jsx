@@ -30,6 +30,7 @@ export function PublicProfilePage() {
         pagination,
         followAction,
         blockAction,
+        reportAction,
         messageAction,
         isBlockedRelationship,
         relationshipStatusError,
@@ -69,6 +70,7 @@ export function PublicProfilePage() {
             description={PROFILE_TEXTS.PUBLIC_DESCRIPTION}
             followAction={followAction}
             blockAction={blockAction}
+            reportAction={reportAction}
             secondaryAction={messageAction}
         />
 

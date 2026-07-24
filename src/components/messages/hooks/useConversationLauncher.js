@@ -15,6 +15,7 @@ export const useConversationLauncher = ({
     currentUserId,
     targetUser,
     blocked = false,
+    disabled = false,
 }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -25,7 +26,7 @@ export const useConversationLauncher = ({
         targetUserId &&
         String(currentUserId) === String(targetUserId);
     const isVisible = Boolean(
-        currentUserId && targetUserId && !isOwnProfile && !blocked
+        currentUserId && targetUserId && !isOwnProfile && !blocked && !disabled
     );
 
     const handleStartConversation = async () => {

@@ -17,6 +17,7 @@ import {
 } from "../../feed/services/feedService";
 import { getPostId } from "../../feed/utils/postAdapter";
 import { useConversationLauncher } from "../../messages/hooks/useConversationLauncher";
+import { useReportDialog } from "../../reports/hooks/useReportDialog";
 import { getPostsByUserId, getUserProfile } from "../services/userProfileService";
 import { getUserId, getUserProjects } from "../utils/userProfileAdapter";
 import { useBlockAction } from "./useBlockAction";
@@ -68,6 +69,17 @@ export const usePublicProfile = () => {
         currentUserId,
         targetUser: profile,
         blocked: isBlockedRelationship,
+        disabled:
+            profile?.privacy_settings?.direct_message_permission === "followers" &&
+            !followAction.isFollowing,
+    });
+    const profileReport = useReportDialog({
+        targetType: "user",
+        targetId: profile?.user_id ?? profile?.id ?? null,
+        enabled:
+            Boolean(currentUserId) &&
+            Boolean(profileUserId) &&
+            String(currentUserId) !== String(profileUserId),
     });
     const [posts, setPosts] = useState([]);
     const [loadingProfile, setLoadingProfile] = useState(false);
@@ -102,8 +114,16 @@ export const usePublicProfile = () => {
             const nextProfile = await getUserProfile(profileUserId);
 
             setProfile(nextProfile);
-        } catch {
-            setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
+        } catch (error) {
+            const isPrivateProfile =
+                error?.response?.status === 403 &&
+                error?.response?.data?.code === "PROFILE_PRIVATE";
+
+            setProfileError(
+                isPrivateProfile
+                    ? PROFILE_TEXTS.ERRORS.PROFILE_PRIVATE
+                    : PROFILE_TEXTS.ERRORS.LOAD_PROFILE
+            );
         } finally {
             setLoadingProfile(false);
         }
@@ -301,6 +321,14 @@ export const usePublicProfile = () => {
         pagination,
         followAction,
         blockAction,
+        reportAction: {
+            isVisible:
+                Boolean(currentUserId) &&
+                Boolean(profileUserId) &&
+                Boolean(profile?.user_id ?? profile?.id) &&
+                String(currentUserId) !== String(profileUserId),
+            report: profileReport,
+        },
         messageAction,
         isBlockedRelationship,
         relationshipStatusError: relationshipStatus.error,
