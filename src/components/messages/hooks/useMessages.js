@@ -11,6 +11,7 @@ import {
 import {
     getConversationMessages,
     getMyConversations,
+    markConversationRead as markConversationReadRequest,
 } from "../services/messagesService";
 import {
     disconnectMessagesSocket,
@@ -39,6 +40,9 @@ const mergeConversationUpdate = (conversations, message) => {
             ...conversation,
             last_message: message.content,
             last_message_at: message.created_at,
+            last_message_sender_id: message.sender_id ?? null,
+            last_message_read_at: message.read_at ?? null,
+            unread_count: 0,
         };
     });
 
@@ -55,6 +59,42 @@ const mergeIncomingMessage = (messages, incomingMessage) => {
     }
 
     return [...messages, incomingMessage];
+};
+
+const applyConversationReadState = (
+    conversations,
+    conversationId,
+    readerUserId,
+    readAt
+) => {
+    return conversations.map((conversation) => {
+        if (String(conversation.conversation_id) !== String(conversationId)) {
+            return conversation;
+        }
+
+        return {
+            ...conversation,
+            unread_count: 0,
+            last_message_read_at:
+                String(conversation.last_message_sender_id) !== String(readerUserId)
+                    ? readAt
+                    : conversation.last_message_read_at,
+        };
+    });
+};
+
+const applyMessagesReadState = (messages, readerUserId, readAt) => {
+    return messages.map((message) => {
+        if (String(message.sender_id) === String(readerUserId)) {
+            return message;
+        }
+
+        return {
+            ...message,
+            read_at: readAt,
+            read_by_user_id: readerUserId,
+        };
+    });
 };
 
 export const useMessages = ({ currentUserId }) => {
@@ -133,6 +173,28 @@ export const useMessages = ({ currentUserId }) => {
                 if (!isActive) return;
 
                 setMessages(nextMessages);
+
+                const readState = await markConversationReadRequest({
+                    conversationId: selectedConversationId,
+                });
+
+                if (!isActive || !readState?.read_at) return;
+
+                setMessages((currentMessages) =>
+                    applyMessagesReadState(
+                        currentMessages,
+                        currentUserId,
+                        readState.read_at
+                    )
+                );
+                setConversations((currentConversations) =>
+                    applyConversationReadState(
+                        currentConversations,
+                        selectedConversationId,
+                        currentUserId,
+                        readState.read_at
+                    )
+                );
             } catch {
                 if (!isActive) return;
 
@@ -218,6 +280,41 @@ export const useMessages = ({ currentUserId }) => {
             );
             setSendingMessage(false);
             setParticipantTyping(false);
+
+            if (String(normalizedMessage.sender_id) !== String(currentUserId)) {
+                markConversationReadRequest({
+                    conversationId: selectedConversationId,
+                }).catch(() => undefined);
+            }
+        };
+
+        const handleReadState = (socketPayload) => {
+            if (
+                !socketPayload ||
+                String(socketPayload?.conversation_id) !==
+                    String(selectedConversationId)
+            ) {
+                return;
+            }
+
+            const readerUserId = socketPayload?.user_id;
+            const readAt = socketPayload?.read_at ?? null;
+
+            if (!readerUserId || !readAt) {
+                return;
+            }
+
+            setMessages((currentMessages) =>
+                applyMessagesReadState(currentMessages, readerUserId, readAt)
+            );
+            setConversations((currentConversations) =>
+                applyConversationReadState(
+                    currentConversations,
+                    selectedConversationId,
+                    readerUserId,
+                    readAt
+                )
+            );
         };
 
         const handleTyping = (socketPayload) => {
@@ -256,6 +353,7 @@ export const useMessages = ({ currentUserId }) => {
         socket.on("connect_error", handleConnectError);
         socket.on(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
         socket.on(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
+        socket.on(MESSAGES_SOCKET_EVENTS.READ, handleReadState);
         socket.on(MESSAGES_SOCKET_EVENTS.TYPING, handleTyping);
         socket.on(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
 
@@ -271,6 +369,7 @@ export const useMessages = ({ currentUserId }) => {
             socket.off("connect_error", handleConnectError);
             socket.off(MESSAGES_SOCKET_EVENTS.JOINED, handleJoined);
             socket.off(MESSAGES_SOCKET_EVENTS.NEW, handleNewMessage);
+            socket.off(MESSAGES_SOCKET_EVENTS.READ, handleReadState);
             socket.off(MESSAGES_SOCKET_EVENTS.TYPING, handleTyping);
             socket.off(MESSAGES_SOCKET_EVENTS.ERROR, handleSocketError);
             window.clearTimeout(remoteTypingTimeoutRef.current);

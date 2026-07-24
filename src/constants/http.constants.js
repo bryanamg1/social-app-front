@@ -46,6 +46,7 @@ export const API_ENDPOINTS = {
         CREATE_OR_GET: "/conversations/addConversations",
         LIST: "/conversations/myConversations",
         MESSAGES: (conversationId) => `/conversations/readMessage/${conversationId}/message`,
+        MARK_READ: (conversationId) => `/conversations/${conversationId}/read`,
         SEND: "/conversations/sendMessage",
     },
 
@@ -88,6 +89,7 @@ export const API_ENDPOINTS = {
 
     NOTIFICATIONS: {
         LIST: "/notifications",
+        PREFERENCES: "/notifications/preferences",
         MARK_SEEN: (notificationId) => `/notifications/${notificationId}/seen`,
         MARK_ALL_SEEN: "/notifications/seen-all",
     },

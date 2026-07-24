@@ -11,6 +11,20 @@ export const getMyNotifications = async () => {
     return getNotificationsFromResponse(response);
 };
 
+export const getNotificationPreferences = async () => {
+    const response = await apiClient.get(API_ENDPOINTS.NOTIFICATIONS.PREFERENCES);
+    return response?.data?.data ?? null;
+};
+
+export const updateNotificationPreferences = async (changes) => {
+    const response = await apiClient.patch(
+        API_ENDPOINTS.NOTIFICATIONS.PREFERENCES,
+        changes
+    );
+
+    return response?.data?.data ?? null;
+};
+
 export const markNotificationSeen = async ({ notificationId }) => {
     const response = await apiClient.patch(
         API_ENDPOINTS.NOTIFICATIONS.MARK_SEEN(notificationId)

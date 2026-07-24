@@ -59,6 +59,10 @@ export function AppRoutes() {
             <Routes>
             <Route path={ROUTES.ROOT} element={<RootRouteRedirect />} />
             <Route path={ROUTES.SHOWCASE} element={<ShowcasePage />} />
+            <Route
+                path={ROUTES.PROFILE_DETAIL}
+                element={<PublicProfilePage />}
+            />
 
             <Route element={<PublicRoute />}>
                 <Route path={ROUTES.LOGIN} element={<LoginPage />} />
@@ -78,10 +82,6 @@ export function AppRoutes() {
                 <Route path={ROUTES.HOME} element={<FeedPage />} />
                 <Route path={ROUTES.MESSAGES} element={<MessagesPage />} />
                 <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
-                <Route
-                    path={ROUTES.PROFILE_DETAIL}
-                    element={<PublicProfilePage />}
-                />
                 </Route>
             </Route>
 

@@ -42,3 +42,11 @@ export const getConversationMessages = async ({
 
     return getMessagesFromResponse(response);
 };
+
+export const markConversationRead = async ({ conversationId }) => {
+    const response = await apiClient.patch(
+        API_ENDPOINTS.CONVERSATIONS.MARK_READ(conversationId)
+    );
+
+    return response?.data?.data ?? null;
+};

@@ -78,8 +78,18 @@ export function ConversationsList({
                                 }
                             >
                                 <span className={styles.conversationMeta}>
-                                    <span className={styles.conversationName}>
-                                        {getConversationTitle(conversation)}
+                                    <span className={styles.conversationHeader}>
+                                        <span className={styles.conversationName}>
+                                            {getConversationTitle(conversation)}
+                                        </span>
+
+                                        {conversation.unread_count ? (
+                                            <span className={styles.conversationUnreadBadge}>
+                                                {conversation.unread_count > 99
+                                                    ? "99+"
+                                                    : conversation.unread_count}
+                                            </span>
+                                        ) : null}
                                     </span>
                                     <span className={styles.conversationPreview}>
                                         {conversation.last_message ||

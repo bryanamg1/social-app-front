@@ -30,8 +30,10 @@ export const NOTIFICATIONS_ERRORS = {
     SOCKET: "No se pudo conectar el canal de notificaciones.",
     SUBSCRIBE: "No se pudo suscribir el canal de notificaciones.",
     LOAD: "No se pudo cargar el historial de notificaciones.",
+    LOAD_PREFERENCES: "No se pudieron cargar las preferencias de notificaciones.",
     MARK_SEEN: "No se pudo marcar la notificacion como leida.",
     MARK_ALL_SEEN: "No se pudieron marcar todas como leidas.",
+    UPDATE_PREFERENCES: "No se pudieron actualizar las preferencias de notificaciones.",
 };
 
 export const NOTIFICATIONS_MESSAGES = {
@@ -41,11 +43,58 @@ export const NOTIFICATIONS_MESSAGES = {
 
 export const NOTIFICATIONS_RUNTIME_CONFIG = {
     DEFERRED_BOOT_MS: 1200,
+    GROUP_WINDOW_MS: 1000 * 60 * 60 * 12,
 };
 
 export const NOTIFICATIONS_TARGETS = {
     DEFAULT_ACTION: "Abrir",
 };
+
+export const NOTIFICATION_PREFERENCE_KEYS = {
+    FOLLOW_USER: "follow_user",
+    COMMENT_POST: "comment_post",
+    REACTION_POST: "reaction_post",
+    REACTION_COMMENT: "reaction_comment",
+    REPLY_COMMENT: "reply_comment",
+    REPOST: "repost",
+    MENTION_USER: "mention_user",
+    MESSAGE: "message",
+};
+
+export const NOTIFICATION_PREFERENCE_ITEMS = [
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.FOLLOW_USER,
+        type: NOTIFICATIONS_TYPES.FOLLOW_USER,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.COMMENT_POST,
+        type: NOTIFICATIONS_TYPES.COMMENT_POST,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.REACTION_POST,
+        type: NOTIFICATIONS_TYPES.REACTION_POST,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.REACTION_COMMENT,
+        type: NOTIFICATIONS_TYPES.REACTION_COMMENT,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.REPLY_COMMENT,
+        type: NOTIFICATIONS_TYPES.REPLY_COMMENT,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.REPOST,
+        type: NOTIFICATIONS_TYPES.REPOST,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.MENTION_USER,
+        type: NOTIFICATIONS_TYPES.MENTION_USER,
+    },
+    {
+        key: NOTIFICATION_PREFERENCE_KEYS.MESSAGE,
+        type: NOTIFICATIONS_TYPES.MESSAGE,
+    },
+];
 
 export const NOTIFICATIONS_TEXTS = {
     TOGGLE_LABEL: "Notificaciones",
@@ -55,6 +104,12 @@ export const NOTIFICATIONS_TEXTS = {
             : "Notificaciones, sin pendientes",
     PANEL_TITLE: "Notificaciones",
     PANEL_SUBTITLE: "Actividad reciente en tiempo real.",
+    PREFERENCES_TITLE: "Preferencias",
+    PREFERENCES_OPEN: "Preferencias",
+    PREFERENCES_LOADING: "Cargando preferencias...",
+    PREFERENCES_SAVING: "Guardando...",
+    PREFERENCES_HELPER:
+        "Controla que tipos de actividad generan nuevas notificaciones en tu cuenta.",
     CLOSE_PANEL: "Cerrar panel de notificaciones",
     LOADING_HISTORY: "Cargando historial de notificaciones...",
     EMPTY_TITLE: "Todavia no hay notificaciones",
@@ -68,6 +123,7 @@ export const NOTIFICATIONS_TEXTS = {
     MARKING_ALL_READ: "Marcando...",
     MARK_READ: "Marcar leida",
     OPEN_ACTION: "Abrir",
+    GROUP_COUNT: (count) => `${count} eventos`,
     READ_LABEL: "Leida",
     NOW: "Ahora",
     UNKNOWN_USER: "Alguien",
@@ -88,6 +144,16 @@ export const NOTIFICATIONS_TEXTS = {
         MENTION_USER: "Nueva mencion",
         MESSAGE: "Nuevo mensaje",
         default: "Nueva actividad",
+    },
+    PREFERENCE_LABELS: {
+        FOLLOW_USER: "Seguidores",
+        COMMENT_POST: "Comentarios en posts",
+        REACTION_POST: "Reacciones en posts",
+        REACTION_COMMENT: "Reacciones en comentarios",
+        REPLY_COMMENT: "Respuestas a comentarios",
+        REPOST: "Reposts",
+        MENTION_USER: "Menciones",
+        MESSAGE: "Mensajes",
     },
     TYPE_DESCRIPTIONS: {
         FOLLOW_USER: (fromUserLabel) => `${fromUserLabel} comenzo a seguirte.`,

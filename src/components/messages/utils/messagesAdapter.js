@@ -10,6 +10,9 @@ export const normalizeConversation = (conversation) => {
         modified_at: conversation.modified_at ?? null,
         last_message: conversation.last_message ?? "",
         last_message_at: conversation.last_message_at ?? conversation.created_at ?? null,
+        last_message_sender_id: conversation.last_message_sender_id ?? null,
+        last_message_read_at: conversation.last_message_read_at ?? null,
+        unread_count: Number(conversation.unread_count ?? 0) || 0,
         participant_user_id: conversation.participant_user_id ?? null,
         participant_user_name: conversation.participant_user_name ?? null,
         participant_email: conversation.participant_email ?? "",
@@ -28,6 +31,8 @@ export const normalizeMessage = (message) => {
         content: message.content ?? "",
         created_at: message.created_at ?? null,
         modified_at: message.modified_at ?? null,
+        read_at: message.read_at ?? null,
+        read_by_user_id: message.read_by_user_id ?? message.readByUserId ?? null,
     };
 };
 

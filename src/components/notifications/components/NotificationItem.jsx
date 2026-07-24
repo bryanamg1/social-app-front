@@ -1,7 +1,6 @@
 import {
     formatNotificationDate,
     getNotificationDescription,
-    getNotificationId,
     getNotificationTitle,
     getNotificationCreatedAt,
     isNotificationSeen,
@@ -14,10 +13,11 @@ export const NotificationItem = ({
     onMarkSeen,
     onOpen,
     canOpen = false,
+    totalCount = 1,
+    unreadCount = 0,
 }) => {
     const createdAt = getNotificationCreatedAt(notification);
-    const notificationId = getNotificationId(notification);
-    const seen = isNotificationSeen(notification);
+    const seen = unreadCount === 0 || isNotificationSeen(notification);
 
     return (
         <article
@@ -30,10 +30,17 @@ export const NotificationItem = ({
             <p className={styles.notificationTitle}>
                 {getNotificationTitle(notification)}
             </p>
+            <div className={styles.notificationHeaderMeta}>
+                {totalCount > 1 ? (
+                    <span className={styles.notificationGroupBadge}>
+                        {NOTIFICATIONS_TEXTS.GROUP_COUNT(totalCount)}
+                    </span>
+                ) : null}
 
-            <span className={styles.notificationDate}>
-                {formatNotificationDate(createdAt)}
-            </span>
+                <span className={styles.notificationDate}>
+                    {formatNotificationDate(createdAt)}
+                </span>
+            </div>
             </div>
 
             <p className={styles.notificationText}>
@@ -60,7 +67,7 @@ export const NotificationItem = ({
                         <button
                             type="button"
                             className={styles.notificationActionButton}
-                            onClick={() => onMarkSeen(notificationId)}
+                            onClick={onMarkSeen}
                         >
                             {NOTIFICATIONS_TEXTS.MARK_READ}
                         </button>

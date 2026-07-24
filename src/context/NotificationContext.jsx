@@ -14,8 +14,10 @@ import {
 } from "../components/notifications/services/notificationsSocketService";
 import {
     getMyNotifications,
+    getNotificationPreferences as getNotificationPreferencesRequest,
     markAllNotificationsSeen as markAllNotificationsSeenRequest,
     markNotificationSeen as markNotificationSeenRequest,
+    updateNotificationPreferences as updateNotificationPreferencesRequest,
 } from "../components/notifications/services/notificationsService";
 import { isNotificationSeen } from "../components/notifications/utils/notificationAdapter";
 import { recordSocketEvent } from "../services/observability";
@@ -26,6 +28,7 @@ const EMPTY_STATE = {
     unreadCount: 0,
     isConnected: false,
     isSubscribed: false,
+    preferences: null,
     error: null,
 };
 
@@ -51,7 +54,10 @@ export function NotificationProvider({ children }) {
     const [isConnected, setIsConnected] = useState(EMPTY_STATE.isConnected);
     const [isSubscribed, setIsSubscribed] = useState(EMPTY_STATE.isSubscribed);
     const [loadingHistory, setLoadingHistory] = useState(false);
+    const [loadingPreferences, setLoadingPreferences] = useState(false);
     const [markingAllAsSeen, setMarkingAllAsSeen] = useState(false);
+    const [updatingPreferences, setUpdatingPreferences] = useState(false);
+    const [preferences, setPreferences] = useState(EMPTY_STATE.preferences);
     const [error, setError] = useState(EMPTY_STATE.error);
 
     const currentUserId = getCurrentUserId(user);
@@ -70,13 +76,16 @@ export function NotificationProvider({ children }) {
         const loadNotifications = async () => {
             try {
                 setLoadingHistory(true);
+                setLoadingPreferences(true);
                 setError(null);
 
                 const nextNotifications = await getMyNotifications();
+                const nextPreferences = await getNotificationPreferencesRequest();
 
                 if (!isActive) return;
 
                 setNotifications(nextNotifications);
+                setPreferences(nextPreferences);
                 setUnreadCount(
                     nextNotifications.filter((notification) => !isNotificationSeen(notification))
                         .length
@@ -87,6 +96,7 @@ export function NotificationProvider({ children }) {
             } finally {
                 if (isActive) {
                     setLoadingHistory(false);
+                    setLoadingPreferences(false);
                 }
             }
         };
@@ -207,6 +217,9 @@ export function NotificationProvider({ children }) {
             setUnreadCount(EMPTY_STATE.unreadCount);
             setIsConnected(EMPTY_STATE.isConnected);
             setIsSubscribed(EMPTY_STATE.isSubscribed);
+            setPreferences(EMPTY_STATE.preferences);
+            setLoadingPreferences(false);
+            setUpdatingPreferences(false);
             setError(EMPTY_STATE.error);
         };
     }, [currentUserId, notificationsEnabled]);
@@ -243,6 +256,52 @@ export function NotificationProvider({ children }) {
         }
     }, [notifications]);
 
+    const markNotificationsSeen = useCallback(
+        async (notificationIds = []) => {
+            const uniqueIds = [...new Set(notificationIds.map(String).filter(Boolean))];
+
+            if (uniqueIds.length === 0) return;
+
+            try {
+                setError(null);
+
+                await Promise.all(
+                    uniqueIds.map((notificationId) =>
+                        markNotificationSeenRequest({ notificationId })
+                    )
+                );
+
+                setNotifications((currentNotifications) =>
+                    currentNotifications.map((notification) =>
+                        uniqueIds.includes(String(notification?.id))
+                            ? {
+                                  ...notification,
+                                  seen: true,
+                              }
+                            : notification
+                    )
+                );
+                setUnreadCount((currentUnreadCount) =>
+                    Math.max(
+                        0,
+                        currentUnreadCount -
+                            uniqueIds.filter((notificationId) => {
+                                const matchedNotification = notifications.find(
+                                    (notification) =>
+                                        String(notification?.id) === String(notificationId)
+                                );
+
+                                return matchedNotification && !isNotificationSeen(matchedNotification);
+                            }).length
+                    )
+                );
+            } catch {
+                setError(NOTIFICATIONS_ERRORS.MARK_SEEN);
+            }
+        },
+        [notifications]
+    );
+
     const markAllNotificationsSeen = useCallback(async () => {
         try {
             setMarkingAllAsSeen(true);
@@ -264,6 +323,21 @@ export function NotificationProvider({ children }) {
         }
     }, []);
 
+    const updateNotificationPreferences = useCallback(async (changes) => {
+        try {
+            setUpdatingPreferences(true);
+            setError(null);
+
+            const nextPreferences = await updateNotificationPreferencesRequest(changes);
+
+            setPreferences(nextPreferences);
+        } catch {
+            setError(NOTIFICATIONS_ERRORS.UPDATE_PREFERENCES);
+        } finally {
+            setUpdatingPreferences(false);
+        }
+    }, []);
+
     const value = useMemo(
         () => ({
             notifications:
@@ -282,32 +356,51 @@ export function NotificationProvider({ children }) {
                 notificationsEnabled
                     ? isSubscribed
                     : EMPTY_STATE.isSubscribed,
+            preferences:
+                notificationsEnabled
+                    ? preferences
+                    : EMPTY_STATE.preferences,
             loadingHistory:
                 notificationsEnabled
                     ? loadingHistory
                     : false,
+            loadingPreferences:
+                notificationsEnabled
+                    ? loadingPreferences
+                    : false,
             markingAllAsSeen:
                 notificationsEnabled
                     ? markingAllAsSeen
+                    : false,
+            updatingPreferences:
+                notificationsEnabled
+                    ? updatingPreferences
                     : false,
             error:
                 notificationsEnabled
                     ? error
                     : EMPTY_STATE.error,
             markNotificationSeen,
+            markNotificationsSeen,
             markAllNotificationsSeen,
+            updateNotificationPreferences,
         }),
         [
             error,
             isConnected,
             isSubscribed,
             loadingHistory,
+            loadingPreferences,
             markingAllAsSeen,
             markAllNotificationsSeen,
             markNotificationSeen,
+            markNotificationsSeen,
             notificationsEnabled,
             notifications,
+            preferences,
             unreadCount,
+            updateNotificationPreferences,
+            updatingPreferences,
         ]
     );
 

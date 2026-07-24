@@ -1,12 +1,13 @@
-import { useId } from "react";
+import { useId, useMemo, useState } from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 import { NOTIFICATIONS_TEXTS } from "../../../constants";
 import {
-    getNotificationKey,
+    groupNotifications,
     getNotificationTarget,
 } from "../utils/notificationAdapter";
 import { NotificationItem } from "./NotificationItem";
+import { NotificationPreferencesSection } from "./NotificationPreferencesSection";
 
 export const NotificationPanel = ({
     isOpen,
@@ -16,16 +17,25 @@ export const NotificationPanel = ({
     isConnected,
     isSubscribed,
     loadingHistory,
+    preferences,
+    loadingPreferences,
     markingAllAsSeen,
+    updatingPreferences,
     error,
-    onMarkSeen,
+    onMarkManySeen,
     onMarkAllSeen,
+    onUpdatePreference,
     onOpenNotification,
     onClose,
     styles,
 }) => {
     const titleId = useId();
     const descriptionId = useId();
+    const [showPreferences, setShowPreferences] = useState(false);
+    const groupedNotifications = useMemo(
+        () => groupNotifications(notifications),
+        [notifications]
+    );
     if (!isOpen) return null;
 
     const isLoading = isConnected && !isSubscribed;
@@ -64,6 +74,14 @@ export const NotificationPanel = ({
             </div>
 
             <div className={styles.panelHeaderActions}>
+                <button
+                type="button"
+                className={styles.panelActionButton}
+                onClick={() => setShowPreferences((currentValue) => !currentValue)}
+                >
+                {NOTIFICATIONS_TEXTS.PREFERENCES_OPEN}
+                </button>
+
                 <button
                 type="button"
                 className={styles.panelActionButton}
@@ -106,6 +124,20 @@ export const NotificationPanel = ({
             </span>
             </div>
 
+            {showPreferences ? (
+                <NotificationPreferencesSection
+                    preferences={preferences}
+                    loading={loadingPreferences}
+                    updating={updatingPreferences}
+                    onChange={(preferenceKey, checked) =>
+                        onUpdatePreference({
+                            [preferenceKey]: checked,
+                        })
+                    }
+                    styles={styles}
+                />
+            ) : null}
+
             {error ? (
             <div className={styles.panelState}>
                 <p className={styles.panelStateTitle}>{NOTIFICATIONS_TEXTS.ERROR_FALLBACK}</p>
@@ -135,21 +167,26 @@ export const NotificationPanel = ({
             </div>
             ) : (
             <div className={styles.panelList}>
-                {notifications.map((notification, index) => {
-                    const notificationTarget = getNotificationTarget(notification);
+                {groupedNotifications.map((group) => {
+                    const notificationTarget = getNotificationTarget(group.notification);
+                    const unseenIds = group.items
+                        .filter((item) => !item?.seen)
+                        .map((item) => item?.id);
 
                     return (
                         <NotificationItem
-                            key={getNotificationKey(notification, index)}
-                            notification={notification}
+                            key={group.id}
+                            notification={group.notification}
                             styles={styles}
+                            totalCount={group.totalCount}
+                            unreadCount={group.unreadCount}
                             canOpen={Boolean(notificationTarget)}
-                            onMarkSeen={onMarkSeen}
+                            onMarkSeen={() => onMarkManySeen(unseenIds)}
                             onOpen={
                                 notificationTarget
                                     ? () =>
                                           onOpenNotification(
-                                              notification,
+                                              group.items,
                                               notificationTarget
                                           )
                                     : undefined

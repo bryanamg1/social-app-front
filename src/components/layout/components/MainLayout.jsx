@@ -68,11 +68,17 @@ export function MainLayout() {
     const avatarLetter = userDisplayName.charAt(0).toUpperCase();
     const isFeedRoute = location.pathname === ROUTES.FEED;
 
-    const handleOpenNotification = async (notification, target) => {
-        const notificationId = getNotificationId(notification);
+    const handleOpenNotification = async (notificationsToOpen, target) => {
+        const nextNotifications = Array.isArray(notificationsToOpen)
+            ? notificationsToOpen
+            : [notificationsToOpen];
+        const unreadIds = nextNotifications
+            .filter((notification) => !isNotificationSeen(notification))
+            .map((notification) => getNotificationId(notification))
+            .filter(Boolean);
 
-        if (notificationId && !isNotificationSeen(notification)) {
-            await notificationsState.markNotificationSeen(notificationId);
+        if (unreadIds.length > 0) {
+            await notificationsState.markNotificationsSeen(unreadIds);
         }
 
         notificationPanel.closePanel();
@@ -229,10 +235,14 @@ export function MainLayout() {
             isConnected={notificationsState.isConnected}
             isSubscribed={notificationsState.isSubscribed}
             loadingHistory={notificationsState.loadingHistory}
+            preferences={notificationsState.preferences}
+            loadingPreferences={notificationsState.loadingPreferences}
             markingAllAsSeen={notificationsState.markingAllAsSeen}
+            updatingPreferences={notificationsState.updatingPreferences}
             error={notificationsState.error}
-            onMarkSeen={notificationsState.markNotificationSeen}
+            onMarkManySeen={notificationsState.markNotificationsSeen}
             onMarkAllSeen={notificationsState.markAllNotificationsSeen}
+            onUpdatePreference={notificationsState.updateNotificationPreferences}
             onOpenNotification={handleOpenNotification}
             onClose={notificationPanel.closePanel}
             styles={notificationStyles}

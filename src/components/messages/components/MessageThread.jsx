@@ -133,6 +133,9 @@ export function MessageThread({
                                     </p>
                                     <span className={styles.messageTimestamp}>
                                         {formatDateTime(message.created_at)}
+                                        {isOwnMessage && message.read_at
+                                            ? ` · ${MESSAGES_TEXTS.THREAD_READ_LABEL}`
+                                            : ""}
                                     </span>
                                 </div>
                             </div>

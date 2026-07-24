@@ -31,6 +31,7 @@ export const MESSAGES_TEXTS = {
     THREAD_STATUS_READY: "Conversacion sincronizada y lista para responder.",
     THREAD_STATUS_OFFLINE:
         "Realtime desconectado. Puedes seguir leyendo el historial mientras vuelve la conexion.",
+    THREAD_READ_LABEL: "Leido",
     COMPOSER_DISABLED_PLACEHOLDER:
         "Selecciona una conversacion para escribir tu mensaje.",
     COMPOSER_STATUS_IDLE:
@@ -42,6 +43,7 @@ export const MESSAGES_TEXTS = {
     COMPOSER_STATUS_SENDING: "Enviando mensaje...",
     TYPING_INDICATOR: (participantName = "La otra persona") =>
         `${participantName} esta escribiendo...`,
+    UNREAD_COUNT: (count) => `${count} pendientes`,
 };
 
 export const MESSAGES_ERRORS = {
@@ -71,6 +73,7 @@ export const MESSAGES_SOCKET_EVENTS = {
     JOINED: "messages:joined",
     SEND: "messages:send",
     NEW: "messages:new",
+    READ: "messages:read",
     SENT: "messages:sent",
     TYPING: "messages:typing",
     ERROR: "messages:error",

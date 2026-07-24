@@ -212,11 +212,27 @@
   gap: 10px;
 }
 
+.notificationHeaderMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
 .notificationTitle {
   margin: 0;
   color: #f8fafc;
   font-size: 0.86rem;
   font-weight: 800;
+}
+
+.notificationGroupBadge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #cbd5e1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(56, 189, 248, 0.12);
 }
 
 .notificationDate {
@@ -270,6 +286,55 @@
   color: #64748b;
   font-size: 0.72rem;
   font-weight: 800;
+}
+
+.preferencesSection {
+  display: grid;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.preferencesHeader {
+  display: grid;
+  gap: 4px;
+}
+
+.preferencesTitle {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.preferencesHelper,
+.preferencesState {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.preferencesList {
+  display: grid;
+  gap: 8px;
+}
+
+.preferenceItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.36);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.preferenceLabel {
+  color: #e5eefb;
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
 @media (max-width: 820px) {

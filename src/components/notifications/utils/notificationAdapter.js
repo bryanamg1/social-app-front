@@ -1,6 +1,7 @@
 import {
     FEED_QUERY_PARAMS,
     MESSAGES_QUERY_PARAMS,
+    NOTIFICATIONS_RUNTIME_CONFIG,
     NOTIFICATIONS_TEXTS,
     NOTIFICATIONS_TYPE_ALIASES,
     NOTIFICATIONS_TYPES,
@@ -147,6 +148,16 @@ export const getNotificationDescription = (notification) => {
     return formatter(fromUserLabel, relatedLabel);
 };
 
+const getNotificationTargetKey = (notification) => {
+    const target = getNotificationTarget(notification);
+
+    if (!target?.pathname) {
+        return "";
+    }
+
+    return `${target.pathname}${target.search ?? ""}`;
+};
+
 const buildSearch = (params) => {
     const searchParams = new URLSearchParams();
 
@@ -212,4 +223,47 @@ export const getNotificationTarget = (notification) => {
         default:
             return null;
     }
+};
+
+export const groupNotifications = (notifications = []) => {
+    const groups = [];
+
+    notifications.forEach((notification, index) => {
+        const createdAt = getNotificationCreatedAt(notification);
+        const timestamp = createdAt ? new Date(createdAt).getTime() : Date.now();
+        const groupKey = [
+            getNotificationType(notification),
+            getNotificationTargetKey(notification),
+            notification?.from_user_id ?? notification?.from_userId ?? "actor",
+        ].join(":");
+        const previousGroup = groups.at(-1);
+
+        if (
+            previousGroup &&
+            previousGroup.groupKey === groupKey &&
+            Math.abs(previousGroup.lastTimestamp - timestamp) <=
+                NOTIFICATIONS_RUNTIME_CONFIG.GROUP_WINDOW_MS
+        ) {
+            previousGroup.items.push(notification);
+            previousGroup.totalCount += 1;
+
+            if (!isNotificationSeen(notification)) {
+                previousGroup.unreadCount += 1;
+            }
+
+            return;
+        }
+
+        groups.push({
+            id: getNotificationKey(notification, index),
+            groupKey,
+            notification,
+            items: [notification],
+            totalCount: 1,
+            unreadCount: isNotificationSeen(notification) ? 0 : 1,
+            lastTimestamp: timestamp,
+        });
+    });
+
+    return groups;
 };
