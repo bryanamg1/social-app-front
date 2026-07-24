@@ -19,8 +19,10 @@ import { getPostId } from "../../feed/utils/postAdapter";
 import { useConversationLauncher } from "../../messages/hooks/useConversationLauncher";
 import { getPostsByUserId, getUserProfile } from "../services/userProfileService";
 import { getUserId, getUserProjects } from "../utils/userProfileAdapter";
+import { useBlockAction } from "./useBlockAction";
 import { useFollowAction } from "./useFollowAction";
 import { useProjectVisibility } from "./useProjectVisibility";
+import { useRelationshipStatus } from "./useRelationshipStatus";
 
 const getHasMore = ({ page, totalPages, receivedPostsCount, limit }) => {
     if (Number.isFinite(totalPages)) {
@@ -43,14 +45,29 @@ export const usePublicProfile = () => {
     const { user } = useAuth();
     const profileUserId = params[ROUTE_PARAMS.USER_ID];
     const currentUserId = getUserId(user);
+    const relationshipStatus = useRelationshipStatus({
+        targetUserId: profileUserId,
+        currentUserId,
+    });
+    const isBlockedRelationship = Boolean(
+        relationshipStatus.status.isBlocked ||
+            relationshipStatus.status.isBlockedByUser
+    );
     const [profile, setProfile] = useState(null);
     const followAction = useFollowAction({
         targetUserId: profileUserId,
         currentUserId,
+        relationshipStatus,
+    });
+    const blockAction = useBlockAction({
+        targetUserId: profileUserId,
+        currentUserId,
+        relationshipStatus,
     });
     const messageAction = useConversationLauncher({
         currentUserId,
         targetUser: profile,
+        blocked: isBlockedRelationship,
     });
     const [posts, setPosts] = useState([]);
     const [loadingProfile, setLoadingProfile] = useState(false);
@@ -95,6 +112,21 @@ export const usePublicProfile = () => {
     const loadPosts = useCallback(
         async ({ page = FEED_PAGINATION.INITIAL_PAGE, append = false } = {}) => {
             if (!profileUserId) return;
+            if (relationshipStatus.isVisible && relationshipStatus.loading) return;
+
+            if (isBlockedRelationship) {
+                setPosts([]);
+                setPostsError(null);
+                setPaginationError(null);
+                setPagination({
+                    page: FEED_PAGINATION.INITIAL_PAGE,
+                    limit: FEED_PAGINATION.PAGE_SIZE,
+                    total: 0,
+                    totalPages: 0,
+                    hasMore: false,
+                });
+                return;
+            }
 
             try {
                 if (append) {
@@ -164,7 +196,13 @@ export const usePublicProfile = () => {
                 setLoadingMorePosts(false);
             }
         },
-        [activePostType, profileUserId]
+        [
+            activePostType,
+            isBlockedRelationship,
+            profileUserId,
+            relationshipStatus.isVisible,
+            relationshipStatus.loading,
+        ]
     );
 
     const loadMorePosts = async () => {
@@ -262,7 +300,10 @@ export const usePublicProfile = () => {
         paginationError,
         pagination,
         followAction,
+        blockAction,
         messageAction,
+        isBlockedRelationship,
+        relationshipStatusError: relationshipStatus.error,
         handlePostTypeFilterChange: setSelectedPostType,
         handleProjectFilterChange: projectVisibility.onFilterChange,
         loadMorePosts,

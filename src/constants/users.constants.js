@@ -26,6 +26,24 @@ export const PROFILE_TEXTS = {
         LOADING_HINT: "Actualizando estado de seguimiento...",
     },
 
+    BLOCK: {
+        BLOCK_BUTTON: "Bloquear",
+        UNBLOCK_BUTTON: "Desbloquear",
+        LOADING: "Actualizando bloqueo...",
+        BLOCK_SUCCESS: "Has bloqueado a este usuario.",
+        UNBLOCK_SUCCESS: "Has desbloqueado a este usuario.",
+        BLOCK_HINT:
+            "Bloquear corta follows y conversaciones activas con este perfil.",
+        UNBLOCK_HINT:
+            "Puedes desbloquear este perfil para volver a interactuar.",
+        BLOCKED_NOTICE:
+            "Has bloqueado este perfil. Sus proyectos y publicaciones se ocultan en esta vista.",
+        BLOCKED_BY_USER_NOTICE:
+            "Este perfil no esta disponible por una relacion de bloqueo activa.",
+        CONFIRM_BLOCK:
+            "Al bloquear se cortan follows y conversaciones activas. Deseas continuar?",
+    },
+
     FIELDS: {
         EMAIL: "Email",
         MEMBER_SINCE: "Miembro desde",
@@ -120,6 +138,8 @@ export const PROFILE_TEXTS = {
         USER_NAME_EXIST: "Este nombre de usuario ya esta en uso.",
         FOLLOW_ACTION: "No se pudo actualizar el seguimiento.",
         FOLLOW_STATUS: "No se pudo consultar el estado de seguimiento.",
+        BLOCK_ACTION: "No se pudo actualizar el bloqueo.",
+        RELATIONSHIP_STATUS: "No se pudo consultar el estado de la relacion.",
         LOAD_PROJECTS: "No se pudieron cargar los proyectos del perfil.",
         SAVE_PROJECT: "No se pudo guardar el proyecto.",
         DELETE_PROJECT: "No se pudo eliminar el proyecto.",

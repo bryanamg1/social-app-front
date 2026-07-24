@@ -11,7 +11,11 @@ import {
 import { createOrGetConversation } from "../services/messagesService";
 import { normalizeConversationTarget } from "../utils/messagesAdapter";
 
-export const useConversationLauncher = ({ currentUserId, targetUser }) => {
+export const useConversationLauncher = ({
+    currentUserId,
+    targetUser,
+    blocked = false,
+}) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -20,7 +24,9 @@ export const useConversationLauncher = ({ currentUserId, targetUser }) => {
         currentUserId &&
         targetUserId &&
         String(currentUserId) === String(targetUserId);
-    const isVisible = Boolean(currentUserId && targetUserId && !isOwnProfile);
+    const isVisible = Boolean(
+        currentUserId && targetUserId && !isOwnProfile && !blocked
+    );
 
     const handleStartConversation = async () => {
         if (!isVisible || loading) return;

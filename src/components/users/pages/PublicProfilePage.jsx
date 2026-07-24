@@ -29,7 +29,10 @@ export function PublicProfilePage() {
         paginationError,
         pagination,
         followAction,
+        blockAction,
         messageAction,
+        isBlockedRelationship,
+        relationshipStatusError,
         handlePostTypeFilterChange,
         projectFilterOptions,
         selectedProjectFilter,
@@ -65,48 +68,65 @@ export function PublicProfilePage() {
             canEdit={false}
             description={PROFILE_TEXTS.PUBLIC_DESCRIPTION}
             followAction={followAction}
+            blockAction={blockAction}
             secondaryAction={messageAction}
         />
 
-        <ProfileProjectsSection
-            projects={projects}
-            totalProjectsCount={totalProjectsCount}
-            visibleProjectsCount={visibleProjectsCount}
-            projectFilterOptions={projectFilterOptions}
-            selectedProjectFilter={selectedProjectFilter}
-            projectSummary={projectSummary}
-            projectForm={null}
-            onProjectFilterChange={handleProjectFilterChange}
-        />
+        {relationshipStatusError ? (
+            <Alert severity="warning" className={styles.alert}>
+                {relationshipStatusError}
+            </Alert>
+        ) : null}
 
-        <section className={styles.postsSection}>
-            <Typography variant="h5" className={styles.postsTitle}>
-            {PROFILE_TEXTS.POSTS.TITLE}
-            </Typography>
+        {isBlockedRelationship ? (
+            <Alert severity="info" className={styles.alert}>
+                {blockAction?.isBlocked
+                    ? PROFILE_TEXTS.BLOCK.BLOCKED_NOTICE
+                    : PROFILE_TEXTS.BLOCK.BLOCKED_BY_USER_NOTICE}
+            </Alert>
+        ) : (
+            <>
+                <ProfileProjectsSection
+                    projects={projects}
+                    totalProjectsCount={totalProjectsCount}
+                    visibleProjectsCount={visibleProjectsCount}
+                    projectFilterOptions={projectFilterOptions}
+                    selectedProjectFilter={selectedProjectFilter}
+                    projectSummary={projectSummary}
+                    projectForm={null}
+                    onProjectFilterChange={handleProjectFilterChange}
+                />
 
-            <ProfilePostIntentFilter
-                selectedPostType={selectedPostType}
-                onSelectPostType={handlePostTypeFilterChange}
-            />
+                <section className={styles.postsSection}>
+                    <Typography variant="h5" className={styles.postsTitle}>
+                    {PROFILE_TEXTS.POSTS.TITLE}
+                    </Typography>
 
-            <PostList
-            posts={posts}
-            currentUserId={currentUserId}
-            loadingPosts={loadingPosts}
-            loadingMorePosts={loadingMorePosts}
-            deletingPostId={deletingPostId}
-            error={postsError}
-            paginationError={paginationError}
-            hasMore={pagination.hasMore}
-            emptyDescription={PROFILE_TEXTS.POSTS.EMPTY_BY_TYPE}
-            onDeletePost={handleDeletePost}
-            onLoadMorePosts={loadMorePosts}
-            onUpdatePost={handleUpdatePost}
-            onTogglePinnedPost={handleTogglePinnedPost}
-            onToggleSavedPost={handleToggleSavedPost}
-            savedPosts={savedPosts}
-            />
-        </section>
+                    <ProfilePostIntentFilter
+                        selectedPostType={selectedPostType}
+                        onSelectPostType={handlePostTypeFilterChange}
+                    />
+
+                    <PostList
+                    posts={posts}
+                    currentUserId={currentUserId}
+                    loadingPosts={loadingPosts}
+                    loadingMorePosts={loadingMorePosts}
+                    deletingPostId={deletingPostId}
+                    error={postsError}
+                    paginationError={paginationError}
+                    hasMore={pagination.hasMore}
+                    emptyDescription={PROFILE_TEXTS.POSTS.EMPTY_BY_TYPE}
+                    onDeletePost={handleDeletePost}
+                    onLoadMorePosts={loadMorePosts}
+                    onUpdatePost={handleUpdatePost}
+                    onTogglePinnedPost={handleTogglePinnedPost}
+                    onToggleSavedPost={handleToggleSavedPost}
+                    savedPosts={savedPosts}
+                    />
+                </section>
+            </>
+        )}
         </main>
     );
 }

@@ -24,6 +24,7 @@ export const API_ERROR_CODES = {
     FOLLOW_USER: "FOLLOW_USER",
     NOT_FOLLOWING: "NOT_FOLLOWING",
     FOLLOW_STATUS_READ_FAILED: "FOLLOW_STATUS_READ_FAILED",
+    BLOCK_RELATIONSHIP_FORBIDDEN: "BLOCK_RELATIONSHIP_FORBIDDEN",
 };
 
 export const API_ENDPOINTS = {
@@ -56,6 +57,8 @@ export const API_ENDPOINTS = {
         STATUS: (userId) => `/follows/users/${userId}/status`,
         FOLLOW_USER: (userId) => `/follows/users/${userId}/follow`,
         UNFOLLOW_USER: (userId) => `/follows/users/${userId}/unfollow`,
+        BLOCK_USER: (userId) => `/follows/users/${userId}/block`,
+        UNBLOCK_USER: (userId) => `/follows/users/${userId}/unblock`,
     },
 
     POSTS: {
