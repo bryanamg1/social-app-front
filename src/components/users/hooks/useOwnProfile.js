@@ -2,24 +2,31 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
     API_ERROR_CODES,
-    FEED_POST_TYPES,
     FEED_PAGINATION,
+    FEED_POST_TYPES,
     HTTP_STATUS,
     PROFILE_AVATAR_CONFIG,
+    PROFILE_POST_VIEW_VALUES,
     PROFILE_PROJECT_STATUS_VALUES,
     PROFILE_TEXTS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
-import { removePost } from "../../feed/services/feedService";
+import { useSavedPosts } from "../../feed/hooks/useSavedPosts";
+import {
+    removePost,
+    togglePinnedPost,
+    updatePost,
+} from "../../feed/services/feedService";
 import { getPostId } from "../../feed/utils/postAdapter";
 import {
     createUserProject,
     deleteUserProject,
     getAuthenticatedUserProfile,
     getPostsByUserId,
+    getSavedPostsForProfile,
     uploadUserAvatar,
-    updateUserProject,
     updateAuthenticatedUserProfile,
+    updateUserProject,
 } from "../services/userProfileService";
 import {
     getUserBio,
@@ -65,6 +72,14 @@ const getProfileUpdateError = (error) => {
     return PROFILE_TEXTS.ERRORS.UPDATE_PROFILE;
 };
 
+const replacePostInList = (currentPosts, updatedPost) => {
+    const updatedPostId = String(getPostId(updatedPost));
+
+    return currentPosts.map((post) =>
+        String(getPostId(post)) === updatedPostId ? updatedPost : post
+    );
+};
+
 export const useOwnProfile = () => {
     const { user, updateUser } = useAuth();
     const currentUserId = getUserId(user);
@@ -93,6 +108,9 @@ export const useOwnProfile = () => {
     const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
     const [editingProjectId, setEditingProjectId] = useState(null);
     const [selectedPostType, setSelectedPostType] = useState(FEED_POST_TYPES.ALL);
+    const [selectedPostsView, setSelectedPostsView] = useState(
+        PROFILE_POST_VIEW_VALUES.OWN
+    );
     const [pagination, setPagination] = useState({
         page: FEED_PAGINATION.INITIAL_PAGE,
         limit: FEED_PAGINATION.PAGE_SIZE,
@@ -102,111 +120,120 @@ export const useOwnProfile = () => {
     });
     const activePostType =
         selectedPostType === FEED_POST_TYPES.ALL ? null : selectedPostType;
+    const savedPosts = useSavedPosts({ currentUserId });
 
     const loadProfile = useCallback(async () => {
         if (!currentUserId) {
-        setProfileError(PROFILE_TEXTS.ERRORS.AUTH_USER_MISSING);
-        return;
+            setProfileError(PROFILE_TEXTS.ERRORS.AUTH_USER_MISSING);
+            return;
         }
 
         try {
-        setLoadingProfile(true);
-        setProfileError(null);
-        setAvatarError(null);
+            setLoadingProfile(true);
+            setProfileError(null);
+            setAvatarError(null);
 
-        const nextProfile = await getAuthenticatedUserProfile();
+            const nextProfile = await getAuthenticatedUserProfile();
 
-        setProfile(nextProfile);
-        setProfileForm(createProfileForm(nextProfile));
-        updateUser(nextProfile);
+            setProfile(nextProfile);
+            setProfileForm(createProfileForm(nextProfile));
+            updateUser(nextProfile);
         } catch {
-        setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
+            setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
         } finally {
-        setLoadingProfile(false);
+            setLoadingProfile(false);
         }
     }, [currentUserId, updateUser]);
 
     const loadPosts = useCallback(
         async ({ page = FEED_PAGINATION.INITIAL_PAGE, append = false } = {}) => {
-        if (!currentUserId) return;
+            if (!currentUserId) return;
 
-        try {
+            try {
+                if (append) {
+                    setLoadingMorePosts(true);
+                    setPaginationError(null);
+                } else {
+                    setLoadingPosts(true);
+                    setPostsError(null);
+                    setPaginationError(null);
+                }
+
+                const postsData =
+                    selectedPostsView === PROFILE_POST_VIEW_VALUES.SAVED
+                        ? await getSavedPostsForProfile({
+                            page,
+                            limit: FEED_PAGINATION.PAGE_SIZE,
+                            postType: activePostType,
+                        })
+                        : await getPostsByUserId({
+                            userId: currentUserId,
+                            page,
+                            limit: FEED_PAGINATION.PAGE_SIZE,
+                            postType: activePostType,
+                        });
+
+                const nextPosts = postsData.posts;
+                const nextMeta = postsData.meta;
+                const nextPage = Number(nextMeta.page) || page;
+                const nextLimit = Number(nextMeta.limit) || FEED_PAGINATION.PAGE_SIZE;
+                const nextTotal = Number.isFinite(Number(nextMeta.total))
+                    ? Number(nextMeta.total)
+                    : null;
+                const nextTotalPages = Number.isFinite(Number(nextMeta.totalPages))
+                    ? Number(nextMeta.totalPages)
+                    : null;
+
+                setPosts((currentPosts) =>
+                    append ? [...currentPosts, ...nextPosts] : nextPosts
+                );
+                setPagination({
+                    page: nextPage,
+                    limit: nextLimit,
+                    total: nextTotal,
+                    totalPages: nextTotalPages,
+                    hasMore: getHasMore({
+                        page: nextPage,
+                        totalPages: nextTotalPages,
+                        receivedPostsCount: nextPosts.length,
+                        limit: nextLimit,
+                    }),
+                });
+            } catch (error) {
+                const isNotFound = error?.response?.status === HTTP_STATUS.NOT_FOUND;
+
+                if (isNotFound) {
+                    if (!append) {
+                        setPosts([]);
+                        setPostsError(null);
+                    }
+
+                    setPagination((currentPagination) => ({
+                        ...currentPagination,
+                        hasMore: false,
+                    }));
+                    return;
+                }
+
             if (append) {
-            setLoadingMorePosts(true);
-            setPaginationError(null);
+                setPaginationError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
             } else {
-            setLoadingPosts(true);
-            setPostsError(null);
-            setPaginationError(null);
+                    setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
             }
-
-            const postsData = await getPostsByUserId({
-            userId: currentUserId,
-            page,
-            limit: FEED_PAGINATION.PAGE_SIZE,
-            postType: activePostType,
-            });
-            const nextPosts = postsData.posts;
-            const nextMeta = postsData.meta;
-            const nextPage = Number(nextMeta.page) || page;
-            const nextLimit = Number(nextMeta.limit) || FEED_PAGINATION.PAGE_SIZE;
-            const nextTotal = Number.isFinite(Number(nextMeta.total))
-            ? Number(nextMeta.total)
-            : null;
-            const nextTotalPages = Number.isFinite(Number(nextMeta.totalPages))
-            ? Number(nextMeta.totalPages)
-            : null;
-
-            setPosts((currentPosts) =>
-            append ? [...currentPosts, ...nextPosts] : nextPosts
-            );
-            setPagination({
-            page: nextPage,
-            limit: nextLimit,
-            total: nextTotal,
-            totalPages: nextTotalPages,
-            hasMore: getHasMore({
-                page: nextPage,
-                totalPages: nextTotalPages,
-                receivedPostsCount: nextPosts.length,
-                limit: nextLimit,
-            }),
-            });
-        } catch (error) {
-            const isNotFound = error?.response?.status === HTTP_STATUS.NOT_FOUND;
-
-            if (isNotFound) {
-            if (!append) {
-                setPosts([]);
-                setPostsError(null);
+            } finally {
+                setLoadingPosts(false);
+                setLoadingMorePosts(false);
             }
-
-            setPagination((currentPagination) => ({
-                ...currentPagination,
-                hasMore: false,
-            }));
-            return;
-            }
-
-            if (append) {
-            setPaginationError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
-            } else {
-            setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
-            }
-        } finally {
-            setLoadingPosts(false);
-            setLoadingMorePosts(false);
-        }
         },
-        [activePostType, currentUserId]
+        [activePostType, currentUserId, selectedPostsView]
     );
 
     const loadMorePosts = async () => {
         if (loadingMorePosts || !pagination.hasMore) return;
 
         await loadPosts({
-        page: pagination.page + 1,
-        append: true,
+            page: pagination.page + 1,
+            append: true,
         });
     };
 
@@ -215,8 +242,8 @@ export const useOwnProfile = () => {
         setUpdateError(null);
         setAvatarSuccess(false);
         setProfileForm((currentForm) => ({
-        ...currentForm,
-        [field]: value,
+            ...currentForm,
+            [field]: value,
         }));
     };
 
@@ -309,33 +336,33 @@ export const useOwnProfile = () => {
         if (!currentUserId || !profileForm.userName.trim()) return;
 
         if (!hasProfileFormChanges(profile, profileForm)) {
-        setUpdateSuccess(false);
-        setUpdateError(PROFILE_TEXTS.ERRORS.NO_PROFILE_CHANGES);
-        return;
+            setUpdateSuccess(false);
+            setUpdateError(PROFILE_TEXTS.ERRORS.NO_PROFILE_CHANGES);
+            return;
         }
 
         try {
-        setUpdatingProfile(true);
-        setUpdateError(null);
-        setUpdateSuccess(false);
+            setUpdatingProfile(true);
+            setUpdateError(null);
+            setUpdateSuccess(false);
 
-        const nextProfile = await updateAuthenticatedUserProfile({
-            userName: profileForm.userName,
-            bio: profileForm.bio,
-            location: profileForm.location,
-            currentProfile: profile,
-        });
+            const nextProfile = await updateAuthenticatedUserProfile({
+                userName: profileForm.userName,
+                bio: profileForm.bio,
+                location: profileForm.location,
+                currentProfile: profile,
+            });
 
-        setProfile(nextProfile);
-        setProfileForm(createProfileForm(nextProfile));
-        updateUser(nextProfile);
-        setIsEditing(false);
-        setUpdateSuccess(true);
-        setAvatarSuccess(false);
+            setProfile(nextProfile);
+            setProfileForm(createProfileForm(nextProfile));
+            updateUser(nextProfile);
+            setIsEditing(false);
+            setUpdateSuccess(true);
+            setAvatarSuccess(false);
         } catch (error) {
-        setUpdateError(getProfileUpdateError(error));
+            setUpdateError(getProfileUpdateError(error));
         } finally {
-        setUpdatingProfile(false);
+            setUpdatingProfile(false);
         }
     };
 
@@ -426,21 +453,63 @@ export const useOwnProfile = () => {
 
     const handleDeletePost = async (postId) => {
         try {
-        setDeletingPostId(postId);
-        setPostsError(null);
-        setPaginationError(null);
+            setDeletingPostId(postId);
+            setPostsError(null);
+            setPaginationError(null);
 
-        await removePost(postId);
+            await removePost(postId);
+            savedPosts.removeSavedPostId(postId);
 
-        setPosts((currentPosts) =>
-            currentPosts.filter((post) => String(getPostId(post)) !== String(postId))
-        );
+            setPosts((currentPosts) =>
+                currentPosts.filter((post) => String(getPostId(post)) !== String(postId))
+            );
         } catch {
-        setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
+            setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
         } finally {
-        setDeletingPostId(null);
+            setDeletingPostId(null);
         }
     };
+
+    const handleUpdatePost = useCallback(async (postId, payload) => {
+        const updatedPost = await updatePost({
+            postId,
+            content: payload.content,
+            postType: payload.postType,
+        });
+
+        setPosts((currentPosts) => replacePostInList(currentPosts, updatedPost));
+
+        return updatedPost;
+    }, []);
+
+    const handleTogglePinnedPost = useCallback(async (postId, pinned) => {
+        const updatedPost = await togglePinnedPost({
+            postId,
+            pinned,
+        });
+
+        if (selectedPostsView === PROFILE_POST_VIEW_VALUES.SAVED) {
+            await loadPosts();
+            return updatedPost;
+        }
+
+        setPosts((currentPosts) => replacePostInList(currentPosts, updatedPost));
+
+        return updatedPost;
+    }, [loadPosts, selectedPostsView]);
+
+    const handleToggleSavedPost = useCallback(async (postId) => {
+        const nextSavedState = await savedPosts.toggleSavedPost(postId);
+
+        if (
+            selectedPostsView === PROFILE_POST_VIEW_VALUES.SAVED &&
+            nextSavedState === false
+        ) {
+            await loadPosts();
+        }
+
+        return nextSavedState;
+    }, [loadPosts, savedPosts, selectedPostsView]);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -464,6 +533,7 @@ export const useOwnProfile = () => {
     return {
         currentUserId,
         profile: profile || user,
+        profilePostsCount: Number(profile?.total_posts) || 0,
         projects: projectVisibility.filteredProjects,
         totalProjectsCount: projectVisibility.totalCount,
         visibleProjectsCount: projectVisibility.visibleCount,
@@ -493,6 +563,7 @@ export const useOwnProfile = () => {
         profileForm,
         projectForm,
         selectedPostType,
+        selectedPostsView,
         isProjectFormOpen,
         editingProjectId,
         pagination,
@@ -503,6 +574,7 @@ export const useOwnProfile = () => {
         openEditProjectForm,
         cancelProjectForm,
         handlePostTypeFilterChange: setSelectedPostType,
+        handlePostsViewChange: setSelectedPostsView,
         handleProjectFilterChange: projectVisibility.onFilterChange,
         handleProfileFieldChange,
         handleAvatarSelect,
@@ -511,5 +583,9 @@ export const useOwnProfile = () => {
         submitProject,
         handleDeleteProject,
         handleDeletePost,
+        handleUpdatePost,
+        handleTogglePinnedPost,
+        handleToggleSavedPost,
+        savedPosts,
     };
 };

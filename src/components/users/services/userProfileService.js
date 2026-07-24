@@ -97,6 +97,23 @@ export const getPostsByUserId = async ({ userId, page, limit, postType = null })
     return getUserPostsFromResponse(response);
 };
 
+export const getSavedPostsForProfile = async ({ page, limit, postType = null }) => {
+    const params = {
+        [API_QUERY_PARAMS.PAGINATION.PAGE]: page,
+        [API_QUERY_PARAMS.PAGINATION.LIMIT]: limit,
+    };
+
+    if (postType) {
+        params[API_QUERY_PARAMS.POSTS.TYPE] = postType;
+    }
+
+    const response = await apiClient.get(API_ENDPOINTS.POSTS.SAVED, {
+        params,
+    });
+
+    return getUserPostsFromResponse(response);
+};
+
 export const createUserProject = async ({ userId, project }) => {
     const response = await apiClient.post(
         API_ENDPOINTS.AUTH.PROFILE_PROJECTS(userId),

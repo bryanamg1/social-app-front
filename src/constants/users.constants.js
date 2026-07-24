@@ -49,9 +49,12 @@ export const PROFILE_TEXTS = {
 
     POSTS: {
         TITLE: "Publicaciones",
+        SAVED_TITLE: "Posts guardados",
         COUNT_LABEL: "publicaciones",
         FILTER_LABEL: "Filtrar publicaciones",
         EMPTY_BY_TYPE: "No hay publicaciones de esta intencion todavia.",
+        EMPTY_SAVED: "Todavia no guardaste posts en esta vista.",
+        VIEW_LABEL: "Coleccion de posts",
     },
 
     ACTIVITY: {
@@ -139,6 +142,22 @@ export const PROFILE_FORM_FIELDS = {
     BIO: "bio",
     LOCATION: "location",
 };
+
+export const PROFILE_POST_VIEW_VALUES = {
+    OWN: "own",
+    SAVED: "saved",
+};
+
+export const PROFILE_POST_VIEW_OPTIONS = [
+    {
+        value: PROFILE_POST_VIEW_VALUES.OWN,
+        label: PROFILE_TEXTS.POSTS.TITLE,
+    },
+    {
+        value: PROFILE_POST_VIEW_VALUES.SAVED,
+        label: PROFILE_TEXTS.POSTS.SAVED_TITLE,
+    },
+];
 
 export const PROFILE_PROJECT_STATUS_VALUES = {
     PLANNED: "planned",

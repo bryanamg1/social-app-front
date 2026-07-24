@@ -2,20 +2,25 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
-    FEED_POST_TYPES,
     FEED_PAGINATION,
+    FEED_POST_TYPES,
     HTTP_STATUS,
     PROFILE_TEXTS,
     ROUTE_PARAMS,
 } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
-import { useConversationLauncher } from "../../messages/hooks/useConversationLauncher";
-import { removePost } from "../../feed/services/feedService";
+import { useSavedPosts } from "../../feed/hooks/useSavedPosts";
+import {
+    removePost,
+    togglePinnedPost,
+    updatePost,
+} from "../../feed/services/feedService";
 import { getPostId } from "../../feed/utils/postAdapter";
-import { useFollowAction } from "./useFollowAction";
-import { useProjectVisibility } from "./useProjectVisibility";
+import { useConversationLauncher } from "../../messages/hooks/useConversationLauncher";
 import { getPostsByUserId, getUserProfile } from "../services/userProfileService";
 import { getUserId, getUserProjects } from "../utils/userProfileAdapter";
+import { useFollowAction } from "./useFollowAction";
+import { useProjectVisibility } from "./useProjectVisibility";
 
 const getHasMore = ({ page, totalPages, receivedPostsCount, limit }) => {
     if (Number.isFinite(totalPages)) {
@@ -23,6 +28,14 @@ const getHasMore = ({ page, totalPages, receivedPostsCount, limit }) => {
     }
 
     return receivedPostsCount >= limit;
+};
+
+const replacePostInList = (currentPosts, updatedPost) => {
+    const updatedPostId = String(getPostId(updatedPost));
+
+    return currentPosts.map((post) =>
+        String(getPostId(post)) === updatedPostId ? updatedPost : post
+    );
 };
 
 export const usePublicProfile = () => {
@@ -57,98 +70,99 @@ export const usePublicProfile = () => {
     });
     const activePostType =
         selectedPostType === FEED_POST_TYPES.ALL ? null : selectedPostType;
+    const savedPosts = useSavedPosts({ currentUserId });
 
     const loadProfile = useCallback(async () => {
         if (!profileUserId) {
-        setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
-        return;
+            setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
+            return;
         }
 
         try {
-        setLoadingProfile(true);
-        setProfileError(null);
+            setLoadingProfile(true);
+            setProfileError(null);
 
-        const nextProfile = await getUserProfile(profileUserId);
+            const nextProfile = await getUserProfile(profileUserId);
 
-        setProfile(nextProfile);
+            setProfile(nextProfile);
         } catch {
-        setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
+            setProfileError(PROFILE_TEXTS.ERRORS.LOAD_PROFILE);
         } finally {
-        setLoadingProfile(false);
+            setLoadingProfile(false);
         }
     }, [profileUserId]);
 
     const loadPosts = useCallback(
         async ({ page = FEED_PAGINATION.INITIAL_PAGE, append = false } = {}) => {
-        if (!profileUserId) return;
+            if (!profileUserId) return;
 
-        try {
-            if (append) {
-            setLoadingMorePosts(true);
-            setPaginationError(null);
-            } else {
-            setLoadingPosts(true);
-            setPostsError(null);
-            setPaginationError(null);
+            try {
+                if (append) {
+                    setLoadingMorePosts(true);
+                    setPaginationError(null);
+                } else {
+                    setLoadingPosts(true);
+                    setPostsError(null);
+                    setPaginationError(null);
+                }
+
+                const postsData = await getPostsByUserId({
+                    userId: profileUserId,
+                    page,
+                    limit: FEED_PAGINATION.PAGE_SIZE,
+                    postType: activePostType,
+                });
+                const nextPosts = postsData.posts;
+                const nextMeta = postsData.meta;
+                const nextPage = Number(nextMeta.page) || page;
+                const nextLimit = Number(nextMeta.limit) || FEED_PAGINATION.PAGE_SIZE;
+                const nextTotal = Number.isFinite(Number(nextMeta.total))
+                    ? Number(nextMeta.total)
+                    : null;
+                const nextTotalPages = Number.isFinite(Number(nextMeta.totalPages))
+                    ? Number(nextMeta.totalPages)
+                    : null;
+
+                setPosts((currentPosts) =>
+                    append ? [...currentPosts, ...nextPosts] : nextPosts
+                );
+                setPagination({
+                    page: nextPage,
+                    limit: nextLimit,
+                    total: nextTotal,
+                    totalPages: nextTotalPages,
+                    hasMore: getHasMore({
+                        page: nextPage,
+                        totalPages: nextTotalPages,
+                        receivedPostsCount: nextPosts.length,
+                        limit: nextLimit,
+                    }),
+                });
+            } catch (error) {
+                const isNotFound = error?.response?.status === HTTP_STATUS.NOT_FOUND;
+
+                if (isNotFound) {
+                    if (!append) {
+                        setPosts([]);
+                        setPostsError(null);
+                    }
+
+                    setPagination((currentPagination) => ({
+                        ...currentPagination,
+                        hasMore: false,
+                    }));
+                    return;
+                }
+
+                if (append) {
+                    setPaginationError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
+                } else {
+                    setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
+                }
+            } finally {
+                setLoadingPosts(false);
+                setLoadingMorePosts(false);
             }
-
-            const postsData = await getPostsByUserId({
-            userId: profileUserId,
-            page,
-            limit: FEED_PAGINATION.PAGE_SIZE,
-            postType: activePostType,
-            });
-            const nextPosts = postsData.posts;
-            const nextMeta = postsData.meta;
-            const nextPage = Number(nextMeta.page) || page;
-            const nextLimit = Number(nextMeta.limit) || FEED_PAGINATION.PAGE_SIZE;
-            const nextTotal = Number.isFinite(Number(nextMeta.total))
-            ? Number(nextMeta.total)
-            : null;
-            const nextTotalPages = Number.isFinite(Number(nextMeta.totalPages))
-            ? Number(nextMeta.totalPages)
-            : null;
-
-            setPosts((currentPosts) =>
-            append ? [...currentPosts, ...nextPosts] : nextPosts
-            );
-            setPagination({
-            page: nextPage,
-            limit: nextLimit,
-            total: nextTotal,
-            totalPages: nextTotalPages,
-            hasMore: getHasMore({
-                page: nextPage,
-                totalPages: nextTotalPages,
-                receivedPostsCount: nextPosts.length,
-                limit: nextLimit,
-            }),
-            });
-        } catch (error) {
-            const isNotFound = error?.response?.status === HTTP_STATUS.NOT_FOUND;
-
-            if (isNotFound) {
-            if (!append) {
-                setPosts([]);
-                setPostsError(null);
-            }
-
-            setPagination((currentPagination) => ({
-                ...currentPagination,
-                hasMore: false,
-            }));
-            return;
-            }
-
-            if (append) {
-            setPaginationError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
-            } else {
-            setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
-            }
-        } finally {
-            setLoadingPosts(false);
-            setLoadingMorePosts(false);
-        }
         },
         [activePostType, profileUserId]
     );
@@ -157,28 +171,56 @@ export const usePublicProfile = () => {
         if (loadingMorePosts || !pagination.hasMore) return;
 
         await loadPosts({
-        page: pagination.page + 1,
-        append: true,
+            page: pagination.page + 1,
+            append: true,
         });
     };
 
     const handleDeletePost = async (postId) => {
         try {
-        setDeletingPostId(postId);
-        setPostsError(null);
-        setPaginationError(null);
+            setDeletingPostId(postId);
+            setPostsError(null);
+            setPaginationError(null);
 
-        await removePost(postId);
+            await removePost(postId);
+            savedPosts.removeSavedPostId(postId);
 
-        setPosts((currentPosts) =>
-            currentPosts.filter((post) => String(getPostId(post)) !== String(postId))
-        );
+            setPosts((currentPosts) =>
+                currentPosts.filter((post) => String(getPostId(post)) !== String(postId))
+            );
         } catch {
-        setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
+            setPostsError(PROFILE_TEXTS.ERRORS.LOAD_POSTS);
         } finally {
-        setDeletingPostId(null);
+            setDeletingPostId(null);
         }
     };
+
+    const handleUpdatePost = useCallback(async (postId, payload) => {
+        const updatedPost = await updatePost({
+            postId,
+            content: payload.content,
+            postType: payload.postType,
+        });
+
+        setPosts((currentPosts) => replacePostInList(currentPosts, updatedPost));
+
+        return updatedPost;
+    }, []);
+
+    const handleTogglePinnedPost = useCallback(async (postId, pinned) => {
+        const updatedPost = await togglePinnedPost({
+            postId,
+            pinned,
+        });
+
+        setPosts((currentPosts) => replacePostInList(currentPosts, updatedPost));
+
+        return updatedPost;
+    }, []);
+
+    const handleToggleSavedPost = useCallback((postId) => {
+        return savedPosts.toggleSavedPost(postId);
+    }, [savedPosts]);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -225,5 +267,9 @@ export const usePublicProfile = () => {
         handleProjectFilterChange: projectVisibility.onFilterChange,
         loadMorePosts,
         handleDeletePost,
+        handleUpdatePost,
+        handleTogglePinnedPost,
+        handleToggleSavedPost,
+        savedPosts,
     };
 };

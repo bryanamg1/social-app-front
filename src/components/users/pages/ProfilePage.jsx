@@ -4,9 +4,10 @@ import { PostList } from "../../feed/components/PostList";
 import { ProfileHeader } from "../components/ProfileHeader";
 import { ProfilePageSkeleton } from "../components/ProfilePageSkeleton";
 import { ProfilePostIntentFilter } from "../components/ProfilePostIntentFilter";
+import { ProfilePostsModeSelector } from "../components/ProfilePostsModeSelector";
 import { ProfileProjectsSection } from "../components/ProfileProjectsSection";
 import { useOwnProfile } from "../hooks/useOwnProfile";
-import { PROFILE_TEXTS } from "../../../constants";
+import { PROFILE_POST_VIEW_VALUES, PROFILE_TEXTS } from "../../../constants";
 
 import styles from "./ProfilePage.module.css";
 
@@ -14,6 +15,7 @@ export function ProfilePage() {
     const {
         currentUserId,
         profile,
+        profilePostsCount,
         projects,
         totalProjectsCount,
         visibleProjectsCount,
@@ -40,6 +42,7 @@ export function ProfilePage() {
         profileForm,
         projectForm,
         selectedPostType,
+        selectedPostsView,
         projectFilterOptions,
         selectedProjectFilter,
         projectSummary,
@@ -53,6 +56,7 @@ export function ProfilePage() {
         openEditProjectForm,
         cancelProjectForm,
         handlePostTypeFilterChange,
+        handlePostsViewChange,
         handleProjectFilterChange,
         handleProfileFieldChange,
         handleAvatarSelect,
@@ -61,6 +65,10 @@ export function ProfilePage() {
         submitProject,
         handleDeleteProject,
         handleDeletePost,
+        handleUpdatePost,
+        handleTogglePinnedPost,
+        handleToggleSavedPost,
+        savedPosts,
     } = useOwnProfile();
 
     if (loadingProfile && !profile) {
@@ -81,7 +89,7 @@ export function ProfilePage() {
         <main className={styles.page}>
         <ProfileHeader
             profile={profile}
-            postsCount={postsCount}
+            postsCount={profilePostsCount || postsCount}
             isEditing={isEditing}
             form={profileForm}
             updating={updatingProfile}
@@ -123,8 +131,15 @@ export function ProfilePage() {
 
         <section className={styles.postsSection}>
             <Typography variant="h5" className={styles.postsTitle}>
-            {PROFILE_TEXTS.POSTS.TITLE}
+            {selectedPostsView === PROFILE_POST_VIEW_VALUES.SAVED
+                ? PROFILE_TEXTS.POSTS.SAVED_TITLE
+                : PROFILE_TEXTS.POSTS.TITLE}
             </Typography>
+
+            <ProfilePostsModeSelector
+                selectedPostsView={selectedPostsView}
+                onSelectPostsView={handlePostsViewChange}
+            />
 
             <ProfilePostIntentFilter
                 selectedPostType={selectedPostType}
@@ -140,9 +155,17 @@ export function ProfilePage() {
             error={postsError}
             paginationError={paginationError}
             hasMore={pagination.hasMore}
-            emptyDescription={PROFILE_TEXTS.POSTS.EMPTY_BY_TYPE}
+            emptyDescription={
+                selectedPostsView === PROFILE_POST_VIEW_VALUES.SAVED
+                    ? PROFILE_TEXTS.POSTS.EMPTY_SAVED
+                    : PROFILE_TEXTS.POSTS.EMPTY_BY_TYPE
+            }
             onDeletePost={handleDeletePost}
             onLoadMorePosts={loadMorePosts}
+            onUpdatePost={handleUpdatePost}
+            onTogglePinnedPost={handleTogglePinnedPost}
+            onToggleSavedPost={handleToggleSavedPost}
+            savedPosts={savedPosts}
             />
         </section>
         </main>

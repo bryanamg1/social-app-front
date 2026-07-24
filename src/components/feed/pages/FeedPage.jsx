@@ -5,6 +5,7 @@ import { FEED_MODES, FEED_POST_TYPES, FEED_TEXTS } from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
 import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
 import { FeedIntentFilter } from "../components/FeedIntentFilter";
+import { FeedModeSelector } from "../components/FeedModeSelector";
 import { PostComposer } from "../components/PostComposer";
 import { PostList } from "../components/PostList";
 import { useCreatePostForm } from "../hooks/useCreatePostForm";
@@ -19,9 +20,11 @@ const getCurrentUserId = (user) => {
 const FeedPage = () => {
     const { user } = useAuth();
     const feedRefresh = useFeedRefresh();
+    const [selectedFeedMode, setSelectedFeedMode] = useState(FEED_MODES.FOLLOWING);
     const [selectedPostType, setSelectedPostType] = useState(FEED_POST_TYPES.ALL);
     const activePostType =
         selectedPostType === FEED_POST_TYPES.ALL ? null : selectedPostType;
+    const currentUserId = getCurrentUserId(user);
 
     const {
         posts,
@@ -36,8 +39,12 @@ const FeedPage = () => {
         loadMorePosts,
         handleCreatePost,
         handleDeletePost,
+        handleUpdatePost,
+        handleTogglePinnedPost,
+        savedPosts,
     } = useFeed({
-        mode: FEED_MODES.FOLLOWING,
+        currentUserId,
+        mode: selectedFeedMode,
         postType: activePostType,
     });
 
@@ -53,8 +60,6 @@ const FeedPage = () => {
         removeImage,
         resetForm,
     } = useCreatePostForm();
-
-    const currentUserId = getCurrentUserId(user);
 
     useEffect(() => {
         return feedRefresh.registerRefreshHandler(refreshFeed);
@@ -72,6 +77,16 @@ const FeedPage = () => {
 
         resetForm();
     };
+
+    const emptyTitle =
+        selectedFeedMode === FEED_MODES.FOLLOWING
+            ? FEED_TEXTS.POSTS.FOLLOWING_EMPTY_TITLE
+            : FEED_TEXTS.POSTS.EMPTY_TITLE;
+
+    const emptyDescription =
+        selectedFeedMode === FEED_MODES.FOLLOWING
+            ? FEED_TEXTS.POSTS.FOLLOWING_EMPTY_DESCRIPTION
+            : FEED_TEXTS.POSTS.EMPTY_DESCRIPTION;
 
     return (
         <main className={styles.feedPage}>
@@ -99,6 +114,11 @@ const FeedPage = () => {
             onSubmit={submitPost}
         />
 
+        <FeedModeSelector
+            selectedMode={selectedFeedMode}
+            onSelectMode={setSelectedFeedMode}
+        />
+
         <FeedIntentFilter
             selectedPostType={selectedPostType}
             onSelectPostType={setSelectedPostType}
@@ -114,11 +134,15 @@ const FeedPage = () => {
             error={error}
             paginationError={paginationError}
             hasMore={pagination.hasMore}
-            emptyTitle={FEED_TEXTS.POSTS.FOLLOWING_EMPTY_TITLE}
-            emptyDescription={FEED_TEXTS.POSTS.FOLLOWING_EMPTY_DESCRIPTION}
-            withSuggestions
+            emptyTitle={emptyTitle}
+            emptyDescription={emptyDescription}
+            withSuggestions={selectedFeedMode === FEED_MODES.FOLLOWING}
             onDeletePost={handleDeletePost}
             onLoadMorePosts={loadMorePosts}
+            onUpdatePost={handleUpdatePost}
+            onTogglePinnedPost={handleTogglePinnedPost}
+            onToggleSavedPost={savedPosts.toggleSavedPost}
+            savedPosts={savedPosts}
         />
         </main>
     );

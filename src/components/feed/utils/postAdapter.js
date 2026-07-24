@@ -40,6 +40,16 @@ export const getPostType = (post) => {
     );
 };
 
+export const getPostPinnedState = (post) => {
+    const value =
+        post?.is_pinned ??
+        post?.isPinned ??
+        post?.pinned ??
+        false;
+
+    return Boolean(Number(value) || value === true);
+};
+
 export const getPostAuthorName = (post) => {
     return (
         post?.user_name ??
@@ -159,6 +169,31 @@ export const getPostReactionsFromResponse = (response) => {
     };
 };
 
+export const getCommentReactionsFromResponse = (response) => {
+    const payload = response?.data?.data ?? response?.data;
+    const reactions = extractArray(payload?.reactions ?? payload);
+    const counts = reactions.reduce((accumulator, reaction) => {
+        const reactionType = getReactionType(reaction);
+
+        if (!reactionType) return accumulator;
+
+        return {
+            ...accumulator,
+            [reactionType]: getReactionCount(reaction),
+        };
+    }, {});
+
+    const total = Object.values(counts).reduce(
+        (currentTotal, count) => currentTotal + count,
+        0
+    );
+
+    return {
+        counts,
+        total,
+    };
+};
+
 export const getMyReactionFromResponse = (response) => {
     return response?.data?.data?.reaction ?? response?.data?.reaction ?? null;
 };
@@ -210,6 +245,37 @@ export const getCommentContent = (comment) => {
 
 export const getCommentCreatedAt = (comment) => {
     return comment?.createdAt ?? comment?.created_at ?? comment?.date ?? null;
+};
+
+export const getCommentOwnerId = (comment) => {
+    return (
+        comment?.userId ??
+        comment?.userid ??
+        comment?.user_id ??
+        comment?.authorId ??
+        comment?.user?.id ??
+        comment?.user?.user_id
+    );
+};
+
+export const getCommentParentId = (comment) => {
+    return (
+        comment?.parent_comment_id ??
+        comment?.parentCommentId ??
+        comment?.parentId ??
+        null
+    );
+};
+
+export const getPostFromResponse = (response) => {
+    const responseData = response?.data;
+
+    return (
+        responseData?.data ??
+        responseData?.post ??
+        responseData?.item ??
+        responseData
+    );
 };
 
 export const formatCommentDate = (date) => {

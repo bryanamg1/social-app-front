@@ -199,10 +199,56 @@
   background: rgba(15, 23, 42, 0.78);
 }
 
+.modePanel {
+  margin: 0 14px 14px;
+  padding: 16px 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.modeTitle,
 .filterTitle {
   color: #f8fafc;
   font-size: 0.9rem !important;
   font-weight: 900 !important;
+}
+
+.modeActions {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.modeButton,
+.modeButtonActive {
+  min-width: 0 !important;
+  display: flex !important;
+  justify-content: center;
+  border-radius: 999px !important;
+  padding: 9px 14px !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+}
+
+.modeButton {
+  color: #bae6fd !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+  background: rgba(14, 165, 233, 0.08) !important;
+}
+
+.modeButtonActive {
+  color: #020617 !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+}
+
+.modeDescription {
+  margin-top: 10px !important;
+  color: #94a3b8;
+  font-size: 0.82rem !important;
+  line-height: 1.5 !important;
 }
 
 .filterActions {
@@ -324,6 +370,19 @@
   text-align: left;
 }
 
+.postEditForm {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.postEditActions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .postImageWrapper {
   margin-top: 14px;
   overflow: hidden;
@@ -430,8 +489,23 @@
   padding-top: 12px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.postActionGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.deleteActionButton {
+  color: #f87171 !important;
+  font-weight: 800 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
 }
 
 .commentsSummary {
@@ -582,6 +656,100 @@
   white-space: pre-wrap;
 }
 
+.commentActions,
+.commentEditActions {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.commentEditForm {
+  margin-top: 8px;
+  display: grid;
+  gap: 10px;
+}
+
+.commentActionButton,
+.commentDeleteButton {
+  min-width: 0 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 4px 10px !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+}
+
+.commentActionButton {
+  color: #38bdf8 !important;
+}
+
+.commentDeleteButton {
+  color: #f87171 !important;
+}
+
+.commentReactionsBlock {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.commentReactionsSummary {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.commentReactionsLoadingText,
+.commentReactionsEmptyText,
+.commentReactionsActiveText {
+  color: #64748b;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+}
+
+.commentReactionChip {
+  color: #bae6fd !important;
+  background: rgba(14, 165, 233, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+}
+
+.commentReactionsAlert {
+  border-radius: 12px !important;
+}
+
+.commentReactionActions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.commentReactionButton,
+.commentReactionButtonActive {
+  min-width: 0 !important;
+  color: #38bdf8 !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+  border-radius: 999px !important;
+  padding: 6px 8px !important;
+  background: rgba(14, 165, 233, 0.08) !important;
+  border: 1px solid rgba(56, 189, 248, 0.14) !important;
+}
+
+.commentReactionButtonActive {
+  color: #020617 !important;
+  background: linear-gradient(135deg, #38bdf8, #22d3ee) !important;
+  border-color: transparent !important;
+}
+
+.commentReactionButton:disabled,
+.commentReactionButtonActive:disabled {
+  opacity: 0.58;
+}
+
 .commentsEmptyState {
   margin-top: 12px;
   padding: 16px;
@@ -713,6 +881,7 @@
   .composerCard,
   .postCard,
   .postSkeletonCard,
+  .modePanel,
   .filterPanel,
   .centerState,
   .emptyState {
@@ -746,6 +915,10 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .commentReactionActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .actionButton {
     min-width: 0 !important;
     padding-inline: 10px !important;
@@ -765,6 +938,7 @@
   .composerCard,
   .postCard,
   .postSkeletonCard,
+  .modePanel,
   .filterPanel,
   .centerState,
   .emptyState,
@@ -791,6 +965,10 @@
 
   .reactionActions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .modeActions {
+    grid-template-columns: 1fr;
   }
 
   .commentsSummary,

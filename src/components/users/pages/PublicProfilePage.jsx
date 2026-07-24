@@ -37,6 +37,10 @@ export function PublicProfilePage() {
         handleProjectFilterChange,
         loadMorePosts,
         handleDeletePost,
+        handleUpdatePost,
+        handleTogglePinnedPost,
+        handleToggleSavedPost,
+        savedPosts,
     } = usePublicProfile();
 
     if (loadingProfile && !profile) {
@@ -97,6 +101,10 @@ export function PublicProfilePage() {
             emptyDescription={PROFILE_TEXTS.POSTS.EMPTY_BY_TYPE}
             onDeletePost={handleDeletePost}
             onLoadMorePosts={loadMorePosts}
+            onUpdatePost={handleUpdatePost}
+            onTogglePinnedPost={handleTogglePinnedPost}
+            onToggleSavedPost={handleToggleSavedPost}
+            savedPosts={savedPosts}
             />
         </section>
         </main>

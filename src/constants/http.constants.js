@@ -61,18 +61,29 @@ export const API_ENDPOINTS = {
         ALL: "/posts/allpost",
         CREATE: "/posts",
         BY_USER: (userId) => `/posts/postByUserId/${userId}`,
+        DETAIL: (postId) => `/posts/postById/${postId}`,
+        UPDATE: (postId) => `/posts/${postId}`,
+        SAVED: "/posts/saved",
+        SAVED_IDS: "/posts/saved/ids",
+        SAVE: (postId) => `/posts/${postId}/save`,
+        PIN: (postId) => `/posts/${postId}/pin`,
         REMOVE: (postId) => `/posts/removePost/${postId}`,
     },
 
     COMMENTS: {
         READ_BY_POST: (postId) => `/comments/readComment/${postId}`,
         ADD: (postId) => `/comments/${postId}`,
+        UPDATE: (commentId) => `/comments/${commentId}`,
+        REMOVE: (commentId) => `/comments/${commentId}`,
     },
 
     REACTIONS: {
         TOGGLE_POST: (postId) => `/reactions/posts/${postId}`,
         BY_POST: (postId) => `/reactions/reactionsPost/${postId}`,
         MY_POST: (postId) => `/reactions/posts/${postId}/mine`,
+        TOGGLE_COMMENT: (commentId) => `/reactions/comments/${commentId}`,
+        BY_COMMENT: (commentId) => `/reactions/reactionComment/${commentId}`,
+        MY_COMMENT: (commentId) => `/reactions/comments/${commentId}/mine`,
     },
 
     NOTIFICATIONS: {

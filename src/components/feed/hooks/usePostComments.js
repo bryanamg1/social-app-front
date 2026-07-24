@@ -1,8 +1,16 @@
 import { useCallback, useState } from "react";
 
 import { FEED_TEXTS } from "../../../constants";
-import { getCommentId } from "../utils/postAdapter";
-import { createComment, getCommentsByPostId } from "../services/feedService";
+import {
+    createComment,
+    deleteCommentById,
+    getCommentsByPostId,
+    updateCommentById,
+} from "../services/feedService";
+import {
+    getCommentId,
+    getCommentParentId,
+} from "../utils/postAdapter";
 
 const getCurrentUserDisplayName = (user) => {
     return user?.name ?? user?.username ?? user?.email ?? "";
@@ -29,6 +37,35 @@ const hasCommentAuthorData = (comment) => {
     );
 };
 
+const getCommentActionKey = (postKey, commentKey) => {
+    return `${postKey}:${commentKey}`;
+};
+
+const getThreadCommentIds = (comments, rootCommentId) => {
+    const pendingIds = [String(rootCommentId)];
+    const removedIds = new Set();
+
+    while (pendingIds.length) {
+        const currentCommentId = pendingIds.shift();
+
+        if (!currentCommentId || removedIds.has(currentCommentId)) {
+            continue;
+        }
+
+        removedIds.add(currentCommentId);
+
+        comments.forEach((comment) => {
+            const parentCommentId = getCommentParentId(comment);
+
+            if (String(parentCommentId) === currentCommentId) {
+                pendingIds.push(String(getCommentId(comment)));
+            }
+        });
+    }
+
+    return removedIds;
+};
+
 export const usePostComments = () => {
     const [expandedPostIds, setExpandedPostIds] = useState(() => new Set());
     const [commentsByPostId, setCommentsByPostId] = useState({});
@@ -38,6 +75,11 @@ export const usePostComments = () => {
     const [creatingPostIds, setCreatingPostIds] = useState(() => new Set());
     const [createErrorsByPostId, setCreateErrorsByPostId] = useState({});
     const [commentsApiUnavailable, setCommentsApiUnavailable] = useState(false);
+    const [editingCommentKeyByPostId, setEditingCommentKeyByPostId] = useState({});
+    const [editDraftsByCommentKey, setEditDraftsByCommentKey] = useState({});
+    const [updatingCommentKeys, setUpdatingCommentKeys] = useState(() => new Set());
+    const [deletingCommentKeys, setDeletingCommentKeys] = useState(() => new Set());
+    const [commentActionErrorsByKey, setCommentActionErrorsByKey] = useState({});
 
     const isCommentsOpen = useCallback(
         (postKey) => expandedPostIds.has(String(postKey)),
@@ -46,245 +88,427 @@ export const usePostComments = () => {
 
     const getCommentsState = useCallback(
         (postKey) => {
-        const normalizedPostKey = String(postKey);
+            const normalizedPostKey = String(postKey);
 
-        return {
-            comments: commentsByPostId[normalizedPostKey] ?? [],
-            loading: loadingPostIds.has(normalizedPostKey),
-            error: errorsByPostId[normalizedPostKey] ?? null,
-        };
+            return {
+                comments: commentsByPostId[normalizedPostKey] ?? [],
+                loading: loadingPostIds.has(normalizedPostKey),
+                error: errorsByPostId[normalizedPostKey] ?? null,
+            };
         },
         [commentsByPostId, errorsByPostId, loadingPostIds]
     );
 
     const getCommentFormState = useCallback(
         (postKey) => {
-        const normalizedPostKey = String(postKey);
-        const value = commentDraftsByPostId[normalizedPostKey] ?? "";
+            const normalizedPostKey = String(postKey);
+            const value = commentDraftsByPostId[normalizedPostKey] ?? "";
 
-        return {
-            value,
-            canSubmit: Boolean(value.trim()),
-            creating: creatingPostIds.has(normalizedPostKey),
-            error: createErrorsByPostId[normalizedPostKey] ?? null,
-        };
+            return {
+                value,
+                canSubmit: Boolean(value.trim()),
+                creating: creatingPostIds.has(normalizedPostKey),
+                error: createErrorsByPostId[normalizedPostKey] ?? null,
+            };
         },
         [commentDraftsByPostId, createErrorsByPostId, creatingPostIds]
     );
 
     const setPostLoading = useCallback((postKey, loading) => {
         setLoadingPostIds((currentIds) => {
-        const nextIds = new Set(currentIds);
+            const nextIds = new Set(currentIds);
 
-        if (loading) {
-            nextIds.add(postKey);
-        } else {
-            nextIds.delete(postKey);
-        }
+            if (loading) {
+                nextIds.add(postKey);
+            } else {
+                nextIds.delete(postKey);
+            }
 
-        return nextIds;
+            return nextIds;
         });
     }, []);
 
     const setPostCreating = useCallback((postKey, creating) => {
         setCreatingPostIds((currentIds) => {
-        const nextIds = new Set(currentIds);
+            const nextIds = new Set(currentIds);
 
-        if (creating) {
-            nextIds.add(postKey);
-        } else {
-            nextIds.delete(postKey);
-        }
+            if (creating) {
+                nextIds.add(postKey);
+            } else {
+                nextIds.delete(postKey);
+            }
 
-        return nextIds;
+            return nextIds;
         });
+    }, []);
+
+    const setCommentMutating = useCallback((setState, actionKey, active) => {
+        setState((currentKeys) => {
+            const nextKeys = new Set(currentKeys);
+
+            if (active) {
+                nextKeys.add(actionKey);
+            } else {
+                nextKeys.delete(actionKey);
+            }
+
+            return nextKeys;
+        });
+    }, []);
+
+    const clearCommentActionError = useCallback((postKey, commentKey) => {
+        const actionKey = getCommentActionKey(postKey, commentKey);
+
+        setCommentActionErrorsByKey((currentErrors) => ({
+            ...currentErrors,
+            [actionKey]: null,
+        }));
     }, []);
 
     const handleCommentDraftChange = useCallback((postKey, value) => {
         const normalizedPostKey = String(postKey);
 
         setCommentDraftsByPostId((currentDrafts) => ({
-        ...currentDrafts,
-        [normalizedPostKey]: value,
+            ...currentDrafts,
+            [normalizedPostKey]: value,
         }));
 
         setCreateErrorsByPostId((currentErrors) => ({
-        ...currentErrors,
-        [normalizedPostKey]: null,
+            ...currentErrors,
+            [normalizedPostKey]: null,
         }));
     }, []);
 
     const loadComments = useCallback(
         async ({ postKey, postId, fallbackComments = [], forceRequest = false }) => {
-        const normalizedPostKey = String(postKey);
+            const normalizedPostKey = String(postKey);
 
-        if (!postId || (commentsApiUnavailable && !forceRequest)) {
-            setCommentsByPostId((currentComments) => ({
-            ...currentComments,
-            [normalizedPostKey]: fallbackComments,
-            }));
-            return fallbackComments;
-        }
-
-        try {
-            setPostLoading(normalizedPostKey, true);
-
-            const comments = await getCommentsByPostId(postId);
-
-            setCommentsByPostId((currentComments) => ({
-            ...currentComments,
-            [normalizedPostKey]: comments,
-            }));
-            setCommentsApiUnavailable(false);
-
-            return comments;
-        } catch (error) {
-            const status = error?.response?.status;
-
-            if (status >= 500) {
-            setCommentsApiUnavailable(true);
-            setCommentsByPostId((currentComments) => ({
-                ...currentComments,
-                [normalizedPostKey]: fallbackComments,
-            }));
-            return fallbackComments;
+            if (!postId || (commentsApiUnavailable && !forceRequest)) {
+                setCommentsByPostId((currentComments) => ({
+                    ...currentComments,
+                    [normalizedPostKey]: fallbackComments,
+                }));
+                return fallbackComments;
             }
 
-            setErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: FEED_TEXTS.ERRORS.LOAD_COMMENTS,
-            }));
+            try {
+                setPostLoading(normalizedPostKey, true);
 
-            return [];
-        } finally {
-            setPostLoading(normalizedPostKey, false);
-        }
+                const comments = await getCommentsByPostId(postId);
+
+                setCommentsByPostId((currentComments) => ({
+                    ...currentComments,
+                    [normalizedPostKey]: comments,
+                }));
+                setCommentsApiUnavailable(false);
+
+                return comments;
+            } catch (error) {
+                const status = error?.response?.status;
+
+                if (status >= 500) {
+                    setCommentsApiUnavailable(true);
+                    setCommentsByPostId((currentComments) => ({
+                        ...currentComments,
+                        [normalizedPostKey]: fallbackComments,
+                    }));
+                    return fallbackComments;
+                }
+
+                setErrorsByPostId((currentErrors) => ({
+                    ...currentErrors,
+                    [normalizedPostKey]: FEED_TEXTS.ERRORS.LOAD_COMMENTS,
+                }));
+
+                return [];
+            } finally {
+                setPostLoading(normalizedPostKey, false);
+            }
         },
         [commentsApiUnavailable, setPostLoading]
     );
 
     const toggleComments = useCallback(
         async ({ postKey, postId, fallbackComments = [] }) => {
-        const normalizedPostKey = String(postKey);
-        const isOpen = expandedPostIds.has(normalizedPostKey);
+            const normalizedPostKey = String(postKey);
+            const isOpen = expandedPostIds.has(normalizedPostKey);
 
-        setExpandedPostIds((currentIds) => {
-            const nextIds = new Set(currentIds);
+            setExpandedPostIds((currentIds) => {
+                const nextIds = new Set(currentIds);
 
-            if (isOpen) {
-            nextIds.delete(normalizedPostKey);
-            } else {
-            nextIds.add(normalizedPostKey);
-            }
+                if (isOpen) {
+                    nextIds.delete(normalizedPostKey);
+                } else {
+                    nextIds.add(normalizedPostKey);
+                }
 
-            return nextIds;
-        });
+                return nextIds;
+            });
 
-        if (isOpen || commentsByPostId[normalizedPostKey]) return;
+            if (isOpen || commentsByPostId[normalizedPostKey]) return;
 
-        setErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: null,
-        }));
+            setErrorsByPostId((currentErrors) => ({
+                ...currentErrors,
+                [normalizedPostKey]: null,
+            }));
 
-        await loadComments({ postKey: normalizedPostKey, postId, fallbackComments });
+            await loadComments({ postKey: normalizedPostKey, postId, fallbackComments });
         },
         [commentsByPostId, expandedPostIds, loadComments]
     );
 
     const submitComment = useCallback(
         async ({ postKey, postId, userId, currentUser }) => {
+            const normalizedPostKey = String(postKey);
+            const commentText = (commentDraftsByPostId[normalizedPostKey] ?? "").trim();
+
+            if (!userId) {
+                setCreateErrorsByPostId((currentErrors) => ({
+                    ...currentErrors,
+                    [normalizedPostKey]: FEED_TEXTS.COMMENTS.AUTH_REQUIRED,
+                }));
+                return;
+            }
+
+            if (!commentText) {
+                setCreateErrorsByPostId((currentErrors) => ({
+                    ...currentErrors,
+                    [normalizedPostKey]: FEED_TEXTS.COMMENTS.EMPTY_VALIDATION,
+                }));
+                return;
+            }
+
+            if (!postId) {
+                setCreateErrorsByPostId((currentErrors) => ({
+                    ...currentErrors,
+                    [normalizedPostKey]: FEED_TEXTS.ERRORS.ADD_COMMENT,
+                }));
+                return;
+            }
+
+            try {
+                setPostCreating(normalizedPostKey, true);
+                setCreateErrorsByPostId((currentErrors) => ({
+                    ...currentErrors,
+                    [normalizedPostKey]: null,
+                }));
+
+                const createdComment = await createComment({ userId, postId, commentText });
+                const comments = await loadComments({
+                    postKey: normalizedPostKey,
+                    postId,
+                    forceRequest: true,
+                });
+
+                const createdCommentId =
+                    createdComment?.commentId ?? createdComment?.data?.commentId;
+                const currentUserName = getCurrentUserDisplayName(currentUser);
+
+                if (createdCommentId && currentUserName) {
+                    setCommentsByPostId((currentComments) => {
+                        const nextComments = (currentComments[normalizedPostKey] ?? comments).map(
+                            (comment) => {
+                                if (String(getCommentId(comment)) !== String(createdCommentId)) {
+                                    return comment;
+                                }
+
+                                if (hasCommentAuthorData(comment)) {
+                                    return comment;
+                                }
+
+                                return {
+                                    ...comment,
+                                    authorName: currentUserName,
+                                };
+                            }
+                        );
+
+                        return {
+                            ...currentComments,
+                            [normalizedPostKey]: nextComments,
+                        };
+                    });
+                }
+
+                setCommentDraftsByPostId((currentDrafts) => ({
+                    ...currentDrafts,
+                    [normalizedPostKey]: "",
+                }));
+            } catch {
+                setCreateErrorsByPostId((currentErrors) => ({
+                    ...currentErrors,
+                    [normalizedPostKey]: FEED_TEXTS.ERRORS.ADD_COMMENT,
+                }));
+            } finally {
+                setPostCreating(normalizedPostKey, false);
+            }
+        },
+        [commentDraftsByPostId, loadComments, setPostCreating]
+    );
+
+    const startEditingComment = useCallback((postKey, commentKey, comment) => {
         const normalizedPostKey = String(postKey);
-        const commentText = (commentDraftsByPostId[normalizedPostKey] ?? "").trim();
+        const normalizedCommentKey = String(commentKey);
+        const actionKey = getCommentActionKey(normalizedPostKey, normalizedCommentKey);
 
-        if (!userId) {
-            setCreateErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: FEED_TEXTS.COMMENTS.AUTH_REQUIRED,
-            }));
-            return;
-        }
+        setEditingCommentKeyByPostId((currentState) => ({
+            ...currentState,
+            [normalizedPostKey]: normalizedCommentKey,
+        }));
+        setEditDraftsByCommentKey((currentDrafts) => ({
+            ...currentDrafts,
+            [actionKey]:
+                comment?.comment_text ??
+                comment?.commentText ??
+                comment?.content ??
+                "",
+        }));
+        clearCommentActionError(normalizedPostKey, normalizedCommentKey);
+    }, [clearCommentActionError]);
 
-        if (!commentText) {
-            setCreateErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: FEED_TEXTS.COMMENTS.EMPTY_VALIDATION,
-            }));
-            return;
-        }
+    const cancelEditingComment = useCallback((postKey, commentKey) => {
+        const normalizedPostKey = String(postKey);
+        const normalizedCommentKey = String(commentKey);
 
-        if (!postId) {
-            setCreateErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: FEED_TEXTS.ERRORS.ADD_COMMENT,
+        setEditingCommentKeyByPostId((currentState) => ({
+            ...currentState,
+            [normalizedPostKey]:
+                currentState[normalizedPostKey] === normalizedCommentKey
+                    ? null
+                    : currentState[normalizedPostKey],
+        }));
+        clearCommentActionError(normalizedPostKey, normalizedCommentKey);
+    }, [clearCommentActionError]);
+
+    const handleEditCommentDraftChange = useCallback((postKey, commentKey, value) => {
+        const actionKey = getCommentActionKey(postKey, commentKey);
+
+        setEditDraftsByCommentKey((currentDrafts) => ({
+            ...currentDrafts,
+            [actionKey]: value,
+        }));
+        clearCommentActionError(postKey, commentKey);
+    }, [clearCommentActionError]);
+
+    const submitEditedComment = useCallback(async ({
+        postKey,
+        commentKey,
+        commentId,
+    }) => {
+        const normalizedPostKey = String(postKey);
+        const normalizedCommentKey = String(commentKey);
+        const actionKey = getCommentActionKey(normalizedPostKey, normalizedCommentKey);
+        const nextCommentText = `${editDraftsByCommentKey[actionKey] ?? ""}`.trim();
+
+        if (!nextCommentText) {
+            setCommentActionErrorsByKey((currentErrors) => ({
+                ...currentErrors,
+                [actionKey]: FEED_TEXTS.COMMENTS.EMPTY_VALIDATION,
             }));
             return;
         }
 
         try {
-            setPostCreating(normalizedPostKey, true);
-            setCreateErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: null,
-            }));
+            setCommentMutating(setUpdatingCommentKeys, actionKey, true);
+            clearCommentActionError(normalizedPostKey, normalizedCommentKey);
 
-            const createdComment = await createComment({ userId, postId, commentText });
-            const comments = await loadComments({
-            postKey: normalizedPostKey,
-            postId,
-            forceRequest: true,
+            const updatedComment = await updateCommentById({
+                commentId,
+                commentText: nextCommentText,
             });
 
-            const createdCommentId = createdComment?.commentId ?? createdComment?.data?.commentId;
-            const currentUserName = getCurrentUserDisplayName(currentUser);
-
-            if (createdCommentId && currentUserName) {
-            setCommentsByPostId((currentComments) => {
-                const nextComments = (currentComments[normalizedPostKey] ?? comments).map(
-                (comment) => {
-                    if (String(getCommentId(comment)) !== String(createdCommentId)) {
-                    return comment;
-                    }
-
-                    if (hasCommentAuthorData(comment)) {
-                    return comment;
-                    }
-
-                    return {
-                    ...comment,
-                    authorName: currentUserName,
-                    };
-                }
-                );
-
-                return {
+            setCommentsByPostId((currentComments) => ({
                 ...currentComments,
-                [normalizedPostKey]: nextComments,
-                };
-            });
-            }
-
-            setCommentDraftsByPostId((currentDrafts) => ({
-            ...currentDrafts,
-            [normalizedPostKey]: "",
+                [normalizedPostKey]: (currentComments[normalizedPostKey] ?? []).map(
+                    (comment) =>
+                        String(getCommentId(comment)) === String(commentId)
+                            ? { ...comment, ...updatedComment }
+                            : comment
+                ),
+            }));
+            setEditingCommentKeyByPostId((currentState) => ({
+                ...currentState,
+                [normalizedPostKey]: null,
             }));
         } catch {
-            setCreateErrorsByPostId((currentErrors) => ({
-            ...currentErrors,
-            [normalizedPostKey]: FEED_TEXTS.ERRORS.ADD_COMMENT,
+            setCommentActionErrorsByKey((currentErrors) => ({
+                ...currentErrors,
+                [actionKey]: FEED_TEXTS.ERRORS.UPDATE_COMMENT,
             }));
         } finally {
-            setPostCreating(normalizedPostKey, false);
+            setCommentMutating(setUpdatingCommentKeys, actionKey, false);
         }
-        },
-        [commentDraftsByPostId, loadComments, setPostCreating]
-    );
+    }, [clearCommentActionError, editDraftsByCommentKey, setCommentMutating]);
+
+    const deleteComment = useCallback(async ({
+        postKey,
+        commentKey,
+        commentId,
+    }) => {
+        const normalizedPostKey = String(postKey);
+        const normalizedCommentKey = String(commentKey);
+        const actionKey = getCommentActionKey(normalizedPostKey, normalizedCommentKey);
+
+        try {
+            setCommentMutating(setDeletingCommentKeys, actionKey, true);
+            clearCommentActionError(normalizedPostKey, normalizedCommentKey);
+
+            await deleteCommentById(commentId);
+
+            setCommentsByPostId((currentComments) => {
+                const currentPostComments = currentComments[normalizedPostKey] ?? [];
+                const removedIds = getThreadCommentIds(currentPostComments, commentId);
+
+                return {
+                    ...currentComments,
+                    [normalizedPostKey]: currentPostComments.filter(
+                        (comment) => !removedIds.has(String(getCommentId(comment)))
+                    ),
+                };
+            });
+        } catch {
+            setCommentActionErrorsByKey((currentErrors) => ({
+                ...currentErrors,
+                [actionKey]: FEED_TEXTS.ERRORS.DELETE_COMMENT,
+            }));
+        } finally {
+            setCommentMutating(setDeletingCommentKeys, actionKey, false);
+        }
+    }, [clearCommentActionError, setCommentMutating]);
+
+    const getCommentActionState = useCallback((postKey, commentKey, comment, currentUserId) => {
+        const normalizedPostKey = String(postKey);
+        const normalizedCommentKey = String(commentKey);
+        const actionKey = getCommentActionKey(normalizedPostKey, normalizedCommentKey);
+        const ownerId = comment?.user_id ?? comment?.userId ?? comment?.authorId;
+
+        return {
+            isOwner: String(ownerId) === String(currentUserId),
+            isEditing:
+                editingCommentKeyByPostId[normalizedPostKey] === normalizedCommentKey,
+            draft:
+                editDraftsByCommentKey[actionKey] ??
+                comment?.comment_text ??
+                comment?.commentText ??
+                comment?.content ??
+                "",
+            updating: updatingCommentKeys.has(actionKey),
+            deleting: deletingCommentKeys.has(actionKey),
+            error: commentActionErrorsByKey[actionKey] ?? null,
+        };
+    }, [commentActionErrorsByKey, deletingCommentKeys, editDraftsByCommentKey, editingCommentKeyByPostId, updatingCommentKeys]);
 
     return {
         isCommentsOpen,
         getCommentsState,
         getCommentFormState,
+        getCommentActionState,
         handleCommentDraftChange,
+        startEditingComment,
+        cancelEditingComment,
+        handleEditCommentDraftChange,
+        submitEditedComment,
+        deleteComment,
         submitComment,
         toggleComments,
     };

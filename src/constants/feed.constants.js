@@ -1,16 +1,16 @@
 export const FEED_TEXTS = {
     EYEBROW: "Inicio",
     TITLE: "Feed",
-    COMPOSER_PLACEHOLDER: "¿Qué estás pensando?",
-    CREATE_POST: "Crear publicación",
+    COMPOSER_PLACEHOLDER: "Que estas pensando?",
+    CREATE_POST: "Crear publicacion",
     PREVIEW_AUTHOR: "Social App",
     PREVIEW_SUBTITLE: "Vista previa del feed",
     PREVIEW_DESCRIPTION:
-        "En la siguiente fase conectaremos esta sección con las publicaciones reales del backend.",
+        "En la siguiente fase conectaremos esta seccion con las publicaciones reales del backend.",
 
     HEADER: {
         TITLE: "Feed",
-        SUBTITLE: "Comparte publicaciones, imágenes y reacciones.",
+        SUBTITLE: "Comparte publicaciones, imagenes y reacciones.",
     },
 
     FILTERS: {
@@ -18,8 +18,17 @@ export const FEED_TEXTS = {
         ALL: "Todo",
     },
 
+    MODES: {
+        TITLE: "Modo del feed",
+        ALL: "Global",
+        FOLLOWING: "Siguiendo",
+        ALL_DESCRIPTION: "Muestra actividad reciente de toda la comunidad.",
+        FOLLOWING_DESCRIPTION:
+            "Prioriza publicaciones tuyas y de los perfiles que sigues.",
+    },
+
     COMPOSER: {
-        PLACEHOLDER: "¿Qué estás pensando?",
+        PLACEHOLDER: "Que estas pensando?",
         TYPE_LABEL: "Tipo de publicacion",
         IMAGE_BUTTON: "Imagen",
         SUBMIT_BUTTON: "Publicar",
@@ -32,15 +41,26 @@ export const FEED_TEXTS = {
 
     POSTS: {
         DEFAULT_AUTHOR: "Usuario",
-        IMAGE_ALT: "Publicación",
+        IMAGE_ALT: "Publicacion",
         LOADING: "Cargando publicaciones...",
         LOADING_MORE: "Cargando mas publicaciones...",
-        EMPTY_TITLE: "Todavía no hay publicaciones",
-        EMPTY_DESCRIPTION: "Sé el primero en compartir algo con la comunidad.",
+        EMPTY_TITLE: "Todavia no hay publicaciones",
+        EMPTY_DESCRIPTION: "Se el primero en compartir algo con la comunidad.",
         FOLLOWING_EMPTY_TITLE: "Tu feed aun no tiene actividad",
         FOLLOWING_EMPTY_DESCRIPTION:
             "Sigue perfiles para ver sus publicaciones aqui junto con las tuyas.",
-        DELETE_ARIA: "Eliminar publicación",
+        DELETE_ARIA: "Eliminar publicacion",
+        EDIT_BUTTON: "Editar",
+        SAVE_BUTTON: "Guardar",
+        SAVING_BUTTON: "Guardando...",
+        CANCEL_BUTTON: "Cancelar",
+        SAVE_POST_BUTTON: "Guardar post",
+        UNSAVE_POST_BUTTON: "Quitar de guardados",
+        PIN_POST_BUTTON: "Fijar",
+        UNPIN_POST_BUTTON: "Desfijar",
+        EDIT_CONTENT_LABEL: "Editar publicacion",
+        EDIT_TYPE_LABEL: "Tipo de publicacion",
+        EDIT_EMPTY_VALIDATION: "El contenido de la publicacion no puede quedar vacio.",
         REACT_BUTTON: "Reaccionar",
         COMMENTS_BUTTON: "Comentarios",
         LOAD_MORE_BUTTON: "Cargar mas",
@@ -58,11 +78,17 @@ export const FEED_TEXTS = {
         SECTION_ARIA: "Seccion de comentarios",
         LOADING: "Cargando comentarios...",
         EMPTY_TITLE: "Todavia no hay comentarios",
-        EMPTY_DESCRIPTION: "Los comentarios aparecerann aqui cuando esten disponibles.",
+        EMPTY_DESCRIPTION: "Los comentarios apareceran aqui cuando esten disponibles.",
         INPUT_PLACEHOLDER: "Escribe un comentario...",
         INPUT_ARIA: "Escribe un comentario para esta publicacion",
         SUBMIT_BUTTON: "Comentar",
         SUBMITTING_BUTTON: "Comentando...",
+        EDIT_BUTTON: "Editar",
+        DELETE_BUTTON: "Eliminar",
+        SAVE_BUTTON: "Guardar",
+        SAVING_BUTTON: "Guardando...",
+        CANCEL_BUTTON: "Cancelar",
+        EDIT_PLACEHOLDER: "Edita tu comentario...",
         EMPTY_VALIDATION: "Escribe un comentario antes de enviarlo.",
         AUTH_REQUIRED: "Inicia sesion para comentar.",
         DEFAULT_AUTHOR: "Usuario",
@@ -88,6 +114,14 @@ export const FEED_TEXTS = {
         ACTIVE_SUMMARY_PREFIX: "Tu reaccion actual",
     },
 
+    COMMENT_REACTIONS: {
+        SUMMARY_ARIA: "Resumen de reacciones del comentario",
+        GROUP_ARIA: "Acciones de reacciones del comentario",
+        LOADING: "Cargando reacciones del comentario...",
+        EMPTY_SUMMARY: "Sin reacciones en este comentario",
+        ACTIVE_SUMMARY_PREFIX: "Tu reaccion en este comentario",
+    },
+
     ERRORS: {
         LOAD_POSTS: "No se pudieron cargar las publicaciones.",
         LOAD_MORE_POSTS: "No se pudieron cargar mas publicaciones.",
@@ -98,9 +132,15 @@ export const FEED_TEXTS = {
         LOAD_REACTIONS: "No se pudieron cargar las reacciones.",
         TOGGLE_REACTION: "No se pudo actualizar la reaccion.",
         REACTION_AUTH_REQUIRED: "Inicia sesion para reaccionar.",
-        CREATE_POST: "No se pudo crear la publicación.",
-        DELETE_POST: "No se pudo eliminar la publicación.",
+        CREATE_POST: "No se pudo crear la publicacion.",
+        DELETE_POST: "No se pudo eliminar la publicacion.",
+        UPDATE_POST: "No se pudo actualizar la publicacion.",
+        SAVE_POST: "No se pudo actualizar el estado guardado del post.",
+        PIN_POST: "No se pudo actualizar el estado fijado del post.",
         INVALID_POST_TYPE: "El tipo de publicacion no es valido.",
+        LOAD_SAVED_POSTS: "No se pudieron cargar los posts guardados.",
+        UPDATE_COMMENT: "No se pudo actualizar el comentario.",
+        DELETE_COMMENT: "No se pudo eliminar el comentario.",
     },
 };
 
@@ -173,7 +213,7 @@ export const getFeedPostTypeLabel = (postType) => {
     return option?.label ?? FEED_POST_TYPE_OPTIONS[0].label;
 };
 
-export const PREVIEW_REACTIONS = ["👍 LIKE", "❤️ LOVE", "😮 WOW"];
+export const PREVIEW_REACTIONS = ["LIKE", "LOVE", "WOW"];
 
 export const FEED_REACTION_OPTIONS = [
     {
@@ -225,3 +265,16 @@ export const FEED_MODES = {
     ALL: "all",
     FOLLOWING: "following",
 };
+
+export const FEED_MODE_OPTIONS = [
+    {
+        value: FEED_MODES.FOLLOWING,
+        label: FEED_TEXTS.MODES.FOLLOWING,
+        description: FEED_TEXTS.MODES.FOLLOWING_DESCRIPTION,
+    },
+    {
+        value: FEED_MODES.ALL,
+        label: FEED_TEXTS.MODES.ALL,
+        description: FEED_TEXTS.MODES.ALL_DESCRIPTION,
+    },
+];

@@ -1,87 +1,105 @@
-import { Alert, Avatar, Box, CircularProgress, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 
-import { FEED_KEYS, FEED_TEXTS } from "../../../constants";
+import { FEED_TEXTS } from "../../../constants";
+import { getCommentId } from "../utils/postAdapter";
+import { CommentItem } from "./CommentItem";
 import {
-  formatCommentDate,
-  getCommentAuthorName,
-  getCommentContent,
-  getCommentCreatedAt,
-  getCommentId,
-} from "../utils/postAdapter";
+    getCommentReactionKey,
+    useCommentReactions,
+} from "../hooks/useCommentReactions";
 
 import styles from "../styles/FeedPage.module.css";
 
-export const PostComments = ({ comments = [], loading, error }) => {
+export const PostComments = ({
+    postKey,
+    comments = [],
+    loading,
+    error,
+    currentUserId,
+    getCommentActionState,
+    onStartEditingComment,
+    onCancelEditingComment,
+    onEditCommentChange,
+    onSubmitEditedComment,
+    onDeleteComment,
+}) => {
+    const { getReactionState, handleToggleReaction } = useCommentReactions({
+        comments,
+        currentUserId,
+    });
+
     if (loading) {
         return (
-        <Box className={styles.commentsLoadingState}>
-            <CircularProgress size={20} />
+            <Box className={styles.commentsLoadingState}>
+                <CircularProgress size={20} />
 
-            <Typography className={styles.commentsLoadingText}>
-            {FEED_TEXTS.COMMENTS.LOADING}
-            </Typography>
-        </Box>
+                <Typography className={styles.commentsLoadingText}>
+                    {FEED_TEXTS.COMMENTS.LOADING}
+                </Typography>
+            </Box>
         );
     }
 
     if (error) {
         return (
-        <Alert severity="error" className={styles.commentsAlert}>
-            {error}
-        </Alert>
+            <Alert severity="error" className={styles.commentsAlert}>
+                {error}
+            </Alert>
         );
     }
 
     if (!comments.length) {
         return (
-        <Box className={styles.commentsEmptyState}>
-            <Typography className={styles.commentsEmptyTitle}>
-            {FEED_TEXTS.COMMENTS.EMPTY_TITLE}
-            </Typography>
+            <Box className={styles.commentsEmptyState}>
+                <Typography className={styles.commentsEmptyTitle}>
+                    {FEED_TEXTS.COMMENTS.EMPTY_TITLE}
+                </Typography>
 
-            <Typography className={styles.commentsEmptyText}>
-            {FEED_TEXTS.COMMENTS.EMPTY_DESCRIPTION}
-            </Typography>
-        </Box>
+                <Typography className={styles.commentsEmptyText}>
+                    {FEED_TEXTS.COMMENTS.EMPTY_DESCRIPTION}
+                </Typography>
+            </Box>
         );
     }
 
     return (
         <Box className={styles.commentsList}>
-        {comments.map((comment, index) => {
-            const commentId = getCommentId(comment);
-            const authorName = getCommentAuthorName(comment);
-            const content = getCommentContent(comment);
-            const createdAt = getCommentCreatedAt(comment);
-            const avatarLetter = authorName.charAt(0).toUpperCase();
-            const commentKey = commentId
-            ? `${FEED_KEYS.COMMENT_PREFIX}-${commentId}`
-            : `${FEED_KEYS.COMMENT_FALLBACK_PREFIX}-${index}`;
+            {comments.map((comment, index) => {
+                const commentId = getCommentId(comment);
+                const commentKey = getCommentReactionKey({ comment, index });
+                const reactionState = getReactionState(commentKey);
+                const actionState = getCommentActionState(
+                    postKey,
+                    commentKey,
+                    comment,
+                    currentUserId
+                );
 
-            return (
-            <article key={commentKey} className={styles.commentItem}>
-                <Avatar className={styles.commentAvatar}>{avatarLetter}</Avatar>
-
-                <Box className={styles.commentBody}>
-                <Box className={styles.commentHeader}>
-                    <Typography className={styles.commentAuthor}>
-                    {authorName}
-                    </Typography>
-
-                    <Typography className={styles.commentDate}>
-                    {formatCommentDate(createdAt)}
-                    </Typography>
-                </Box>
-
-                {content && (
-                    <Typography className={styles.commentContent}>
-                    {content}
-                    </Typography>
-                )}
-                </Box>
-            </article>
-            );
-        })}
+                return (
+                    <CommentItem
+                        key={commentKey}
+                        comment={comment}
+                        reactionState={reactionState}
+                        actionState={actionState}
+                        onToggleReaction={(reactionType) =>
+                            handleToggleReaction({
+                                commentKey,
+                                commentId,
+                                reactionType,
+                            })
+                        }
+                        onStartEditing={() => onStartEditingComment(postKey, commentKey, comment)}
+                        onCancelEditing={() => onCancelEditingComment(postKey, commentKey)}
+                        onEditCommentChange={(value) =>
+                            onEditCommentChange(postKey, commentKey, value)
+                        }
+                        onSubmitEditedComment={() =>
+                            onSubmitEditedComment(postKey, commentKey, commentId)
+                        }
+                        onDeleteComment={() => onDeleteComment(postKey, commentKey, commentId)}
+                    />
+                );
+            })}
         </Box>
     );
 };
