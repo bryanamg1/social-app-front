@@ -1,7 +1,10 @@
 import {
+    FEED_QUERY_PARAMS,
+    MESSAGES_QUERY_PARAMS,
     NOTIFICATIONS_TEXTS,
     NOTIFICATIONS_TYPE_ALIASES,
     NOTIFICATIONS_TYPES,
+    ROUTES,
 } from "../../../constants";
 
 const VALID_NOTIFICATION_TYPES = new Set(Object.values(NOTIFICATIONS_TYPES));
@@ -70,6 +73,13 @@ const getStringValue = (...values) => {
     return match?.trim() ?? "";
 };
 
+const getNumberValue = (...values) => {
+    const match = values.find((value) => value !== null && value !== undefined && `${value}`.trim());
+    const nextValue = Number(match);
+
+    return Number.isFinite(nextValue) && nextValue > 0 ? nextValue : null;
+};
+
 const getNotificationSnippet = (notification) => {
     const snippet = getStringValue(
         notification?.post_content,
@@ -135,4 +145,71 @@ export const getNotificationDescription = (notification) => {
         NOTIFICATIONS_TEXTS.TYPE_DESCRIPTIONS.default;
 
     return formatter(fromUserLabel, relatedLabel);
+};
+
+const buildSearch = (params) => {
+    const searchParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === "") return;
+        searchParams.set(key, String(value));
+    });
+
+    const search = searchParams.toString();
+
+    return search ? `?${search}` : "";
+};
+
+export const getNotificationTarget = (notification) => {
+    const type = getNotificationType(notification);
+    const relatedUserId = getNumberValue(
+        notification?.from_user_id,
+        notification?.from_userId,
+        notification?.relate_id
+    );
+    const relatedConversationId = getNumberValue(
+        notification?.conversation_id,
+        notification?.relate_id
+    );
+    const relatedPostId = getNumberValue(
+        notification?.post_id,
+        notification?.relate_id
+    );
+
+    switch (type) {
+        case NOTIFICATIONS_TYPES.FOLLOW_USER:
+            return relatedUserId
+                ? {
+                      pathname: ROUTES.USER_PROFILE(relatedUserId),
+                  }
+                : null;
+        case NOTIFICATIONS_TYPES.MESSAGE:
+            return relatedConversationId
+                ? {
+                      pathname: ROUTES.MESSAGES,
+                      search: buildSearch({
+                          [MESSAGES_QUERY_PARAMS.CONVERSATION_ID]:
+                              relatedConversationId,
+                      }),
+                  }
+                : null;
+        case NOTIFICATIONS_TYPES.COMMENT_POST:
+        case NOTIFICATIONS_TYPES.REACTION_POST:
+        case NOTIFICATIONS_TYPES.REACTION_COMMENT:
+        case NOTIFICATIONS_TYPES.REPLY_COMMENT:
+        case NOTIFICATIONS_TYPES.REPOST:
+        case NOTIFICATIONS_TYPES.MENTION_USER:
+            return relatedPostId
+                ? {
+                      pathname: ROUTES.FEED,
+                      search: buildSearch({
+                          [FEED_QUERY_PARAMS.POST_ID]: relatedPostId,
+                      }),
+                  }
+                : {
+                      pathname: ROUTES.FEED,
+                  };
+        default:
+            return null;
+    }
 };

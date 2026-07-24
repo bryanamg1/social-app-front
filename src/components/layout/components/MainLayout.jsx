@@ -19,6 +19,10 @@ import { useNotifications } from "../../../hooks/useNotifications";
 import { getUserId } from "../../users/utils/userProfileAdapter";
 import { NotificationToggleButton } from "../../notifications/components/NotificationToggleButton";
 import { useNotificationPanel } from "../../notifications/hooks/useNotificationPanel";
+import {
+    getNotificationId,
+    isNotificationSeen,
+} from "../../notifications/utils/notificationAdapter";
 import { AuthenticatedRightSidebar } from "./AuthenticatedRightSidebar";
 import { SidebarPanelSkeleton } from "./SidebarPanelSkeleton";
 
@@ -63,6 +67,30 @@ export function MainLayout() {
     });
     const avatarLetter = userDisplayName.charAt(0).toUpperCase();
     const isFeedRoute = location.pathname === ROUTES.FEED;
+
+    const handleOpenNotification = async (notification, target) => {
+        const notificationId = getNotificationId(notification);
+
+        if (notificationId && !isNotificationSeen(notification)) {
+            await notificationsState.markNotificationSeen(notificationId);
+        }
+
+        notificationPanel.closePanel();
+
+        if (!target?.pathname) {
+            return;
+        }
+
+        navigate(
+            {
+                pathname: target.pathname,
+                search: target.search ?? "",
+            },
+            {
+                state: target.state,
+            }
+        );
+    };
 
     const handleFeedRefresh = async () => {
         if (isFeedRoute) {
@@ -205,6 +233,7 @@ export function MainLayout() {
             error={notificationsState.error}
             onMarkSeen={notificationsState.markNotificationSeen}
             onMarkAllSeen={notificationsState.markAllNotificationsSeen}
+            onOpenNotification={handleOpenNotification}
             onClose={notificationPanel.closePanel}
             styles={notificationStyles}
             />

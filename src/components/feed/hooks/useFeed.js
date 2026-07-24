@@ -10,6 +10,7 @@ import {
     createPost,
     getAllPosts,
     getFollowingFeed,
+    getPostById,
     removePost,
     togglePinnedPost,
     updatePost,
@@ -47,6 +48,21 @@ const replacePostInList = (currentPosts, updatedPost) => {
     );
 };
 
+const prioritizePostInList = (currentPosts, priorityPost) => {
+    const priorityPostId = String(getPostId(priorityPost));
+
+    if (!priorityPostId) {
+        return currentPosts;
+    }
+
+    return [
+        priorityPost,
+        ...currentPosts.filter(
+            (post) => String(getPostId(post)) !== String(priorityPostId)
+        ),
+    ];
+};
+
 const getHasMore = ({ page, totalPages, receivedPostsCount, limit }) => {
     if (Number.isFinite(totalPages)) {
         return page < totalPages;
@@ -63,7 +79,12 @@ const getFeedErrorMessage = (error, fallbackMessage) => {
     return fallbackMessage;
 };
 
-export const useFeed = ({ currentUserId, mode = FEED_MODES.ALL, postType = null } = {}) => {
+export const useFeed = ({
+    currentUserId,
+    mode = FEED_MODES.ALL,
+    postType = null,
+    highlightedPostId = null,
+} = {}) => {
     const [posts, setPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [loadingMorePosts, setLoadingMorePosts] = useState(false);
@@ -108,6 +129,7 @@ export const useFeed = ({ currentUserId, mode = FEED_MODES.ALL, postType = null 
 
                 const nextPosts = postsData.posts;
                 const nextMeta = postsData.meta;
+                let normalizedNextPosts = nextPosts;
                 const nextPage = Number(nextMeta.page) || page;
                 const nextLimit =
                     Number(nextMeta.limit) || FEED_PAGINATION.PAGE_SIZE;
@@ -118,10 +140,35 @@ export const useFeed = ({ currentUserId, mode = FEED_MODES.ALL, postType = null 
                     ? Number(nextMeta.totalPages)
                     : null;
 
+                if (!append && highlightedPostId) {
+                    const matchedPriorityPost = nextPosts.find(
+                        (post) =>
+                            String(getPostId(post)) === String(highlightedPostId)
+                    );
+
+                    if (matchedPriorityPost) {
+                        normalizedNextPosts = prioritizePostInList(
+                            nextPosts,
+                            matchedPriorityPost
+                        );
+                    } else {
+                        try {
+                            const highlightedPost = await getPostById(highlightedPostId);
+
+                            normalizedNextPosts = prioritizePostInList(
+                                nextPosts,
+                                highlightedPost
+                            );
+                        } catch {
+                            normalizedNextPosts = nextPosts;
+                        }
+                    }
+                }
+
                 setPosts((currentPosts) => {
                     const updatedPosts = append
                         ? getUniquePosts(currentPosts, nextPosts)
-                        : nextPosts;
+                        : normalizedNextPosts;
 
                     postsCountRef.current = updatedPosts.length;
 
@@ -171,7 +218,7 @@ export const useFeed = ({ currentUserId, mode = FEED_MODES.ALL, postType = null 
                 setLoadingMorePosts(false);
             }
         },
-        [mode, postType]
+        [highlightedPostId, mode, postType]
     );
 
     const loadMorePosts = async () => {

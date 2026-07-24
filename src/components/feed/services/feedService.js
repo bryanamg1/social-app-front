@@ -111,6 +111,12 @@ export const updatePost = async ({ postId, content, postType }) => {
     return getPostFromResponse(response);
 };
 
+export const getPostById = async (postId) => {
+    const response = await apiClient.get(API_ENDPOINTS.POSTS.DETAIL(postId));
+
+    return getPostFromResponse(response);
+};
+
 export const getSavedPosts = async ({ page, limit, postType } = {}) => {
     const response = await apiClient.get(API_ENDPOINTS.POSTS.SAVED, {
         params: {

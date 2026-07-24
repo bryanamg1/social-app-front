@@ -215,6 +215,10 @@ export const getFeedPostTypeLabel = (postType) => {
 
 export const PREVIEW_REACTIONS = ["LIKE", "LOVE", "WOW"];
 
+export const FEED_QUERY_PARAMS = {
+    POST_ID: "postId",
+};
+
 export const FEED_REACTION_OPTIONS = [
     {
         type: FEED_TEXTS.REACTIONS.LIKE,

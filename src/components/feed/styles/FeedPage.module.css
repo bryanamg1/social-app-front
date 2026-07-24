@@ -370,6 +370,13 @@
   text-align: left;
 }
 
+.postCardHighlighted {
+  border-color: rgba(56, 189, 248, 0.72) !important;
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.24),
+    0 18px 46px rgba(0, 0, 0, 0.26) !important;
+}
+
 .postEditForm {
   margin-top: 14px;
   display: grid;

@@ -2,7 +2,10 @@ import { useId } from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 import { NOTIFICATIONS_TEXTS } from "../../../constants";
-import { getNotificationKey } from "../utils/notificationAdapter";
+import {
+    getNotificationKey,
+    getNotificationTarget,
+} from "../utils/notificationAdapter";
 import { NotificationItem } from "./NotificationItem";
 
 export const NotificationPanel = ({
@@ -17,6 +20,7 @@ export const NotificationPanel = ({
     error,
     onMarkSeen,
     onMarkAllSeen,
+    onOpenNotification,
     onClose,
     styles,
 }) => {
@@ -131,14 +135,28 @@ export const NotificationPanel = ({
             </div>
             ) : (
             <div className={styles.panelList}>
-                {notifications.map((notification, index) => (
-                <NotificationItem
-                    key={getNotificationKey(notification, index)}
-                    notification={notification}
-                    styles={styles}
-                    onMarkSeen={onMarkSeen}
-                />
-                ))}
+                {notifications.map((notification, index) => {
+                    const notificationTarget = getNotificationTarget(notification);
+
+                    return (
+                        <NotificationItem
+                            key={getNotificationKey(notification, index)}
+                            notification={notification}
+                            styles={styles}
+                            canOpen={Boolean(notificationTarget)}
+                            onMarkSeen={onMarkSeen}
+                            onOpen={
+                                notificationTarget
+                                    ? () =>
+                                          onOpenNotification(
+                                              notification,
+                                              notificationTarget
+                                          )
+                                    : undefined
+                            }
+                        />
+                    );
+                })}
             </div>
             )}
         </section>

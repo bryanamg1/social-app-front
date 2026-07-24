@@ -43,6 +43,10 @@ export const NOTIFICATIONS_RUNTIME_CONFIG = {
     DEFERRED_BOOT_MS: 1200,
 };
 
+export const NOTIFICATIONS_TARGETS = {
+    DEFAULT_ACTION: "Abrir",
+};
+
 export const NOTIFICATIONS_TEXTS = {
     TOGGLE_LABEL: "Notificaciones",
     TOGGLE_LABEL_WITH_COUNT: (unreadCount) =>
@@ -63,6 +67,7 @@ export const NOTIFICATIONS_TEXTS = {
     MARK_ALL_READ: "Marcar todo",
     MARKING_ALL_READ: "Marcando...",
     MARK_READ: "Marcar leida",
+    OPEN_ACTION: "Abrir",
     READ_LABEL: "Leida",
     NOW: "Ahora",
     UNKNOWN_USER: "Alguien",

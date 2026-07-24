@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useEffect, useId, useRef } from "react";
 import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -62,6 +62,7 @@ export const PostCard = ({
     onEditCommentChange,
     onSubmitEditedComment,
     onDeleteComment,
+    isHighlighted = false,
 }) => {
     const postId = getPostId(post);
     const ownerId = getPostOwnerId(post);
@@ -77,9 +78,29 @@ export const PostCard = ({
     const commentsCount = comments?.length ?? 0;
     const commentsSectionId = useId();
     const commentsTitleId = useId();
+    const postCardRef = useRef(null);
+
+    useEffect(() => {
+        if (!isHighlighted || !postCardRef.current) {
+            return;
+        }
+
+        postCardRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
+    }, [isHighlighted]);
 
     return (
-        <Card className={styles.postCard}>
+        <Card
+            ref={postCardRef}
+            className={
+                isHighlighted
+                    ? `${styles.postCard} ${styles.postCardHighlighted}`
+                    : styles.postCard
+            }
+            data-post-id={postId}
+        >
             <CardContent>
                 <Box className={styles.postHeader}>
                     <Box className={styles.authorInfo}>

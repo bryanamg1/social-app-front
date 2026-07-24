@@ -62,6 +62,7 @@ export const PostList = ({
     onTogglePinnedPost,
     onToggleSavedPost,
     savedPosts,
+    highlightedPostId,
 }) => {
     const {
         getCommentFormState,
@@ -163,6 +164,7 @@ export const PostList = ({
                         commentForm={commentFormState}
                         reactionState={reactionState}
                         postActionState={postActionState}
+                        isHighlighted={String(postId) === String(highlightedPostId)}
                         onDeletePost={onDeletePost}
                         onToggleReaction={(reactionType) =>
                             handleToggleReaction({

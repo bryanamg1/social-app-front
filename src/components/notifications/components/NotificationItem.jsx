@@ -8,7 +8,13 @@ import {
 } from "../utils/notificationAdapter";
 import { NOTIFICATIONS_TEXTS } from "../../../constants";
 
-export const NotificationItem = ({ notification, styles, onMarkSeen }) => {
+export const NotificationItem = ({
+    notification,
+    styles,
+    onMarkSeen,
+    onOpen,
+    canOpen = false,
+}) => {
     const createdAt = getNotificationCreatedAt(notification);
     const notificationId = getNotificationId(notification);
     const seen = isNotificationSeen(notification);
@@ -35,19 +41,31 @@ export const NotificationItem = ({ notification, styles, onMarkSeen }) => {
             </p>
 
             <div className={styles.notificationFooter}>
-            {seen ? (
-                <span className={styles.notificationSeenLabel}>
-                {NOTIFICATIONS_TEXTS.READ_LABEL}
-                </span>
-            ) : (
-                <button
-                type="button"
-                className={styles.notificationActionButton}
-                onClick={() => onMarkSeen(notificationId)}
-                >
-                {NOTIFICATIONS_TEXTS.MARK_READ}
-                </button>
-            )}
+                <div className={styles.notificationFooterActions}>
+                    {canOpen ? (
+                        <button
+                            type="button"
+                            className={styles.notificationSecondaryButton}
+                            onClick={onOpen}
+                        >
+                            {NOTIFICATIONS_TEXTS.OPEN_ACTION}
+                        </button>
+                    ) : null}
+
+                    {seen ? (
+                        <span className={styles.notificationSeenLabel}>
+                            {NOTIFICATIONS_TEXTS.READ_LABEL}
+                        </span>
+                    ) : (
+                        <button
+                            type="button"
+                            className={styles.notificationActionButton}
+                            onClick={() => onMarkSeen(notificationId)}
+                        >
+                            {NOTIFICATIONS_TEXTS.MARK_READ}
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
         </article>

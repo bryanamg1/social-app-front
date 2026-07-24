@@ -1,7 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
-import { FEED_MODES, FEED_POST_TYPES, FEED_TEXTS } from "../../../constants";
+import {
+    FEED_MODES,
+    FEED_POST_TYPES,
+    FEED_QUERY_PARAMS,
+    FEED_TEXTS,
+} from "../../../constants";
 import { useAuth } from "../../../hooks/useAuth";
 import { useFeedRefresh } from "../../../hooks/useFeedRefresh";
 import { FeedIntentFilter } from "../components/FeedIntentFilter";
@@ -19,12 +25,14 @@ const getCurrentUserId = (user) => {
 
 const FeedPage = () => {
     const { user } = useAuth();
+    const [searchParams] = useSearchParams();
     const feedRefresh = useFeedRefresh();
     const [selectedFeedMode, setSelectedFeedMode] = useState(FEED_MODES.FOLLOWING);
     const [selectedPostType, setSelectedPostType] = useState(FEED_POST_TYPES.ALL);
     const activePostType =
         selectedPostType === FEED_POST_TYPES.ALL ? null : selectedPostType;
     const currentUserId = getCurrentUserId(user);
+    const highlightedPostId = searchParams.get(FEED_QUERY_PARAMS.POST_ID);
 
     const {
         posts,
@@ -46,6 +54,7 @@ const FeedPage = () => {
         currentUserId,
         mode: selectedFeedMode,
         postType: activePostType,
+        highlightedPostId,
     });
 
     const {
@@ -143,6 +152,7 @@ const FeedPage = () => {
             onTogglePinnedPost={handleTogglePinnedPost}
             onToggleSavedPost={savedPosts.toggleSavedPost}
             savedPosts={savedPosts}
+            highlightedPostId={highlightedPostId}
         />
         </main>
     );
